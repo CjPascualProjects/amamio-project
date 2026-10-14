@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}BOM · {{ product.name }}{% endblock %}
+{% block content %}
+<div class="flex gap mb" style="justify-content: space-between; flex-wrap: wrap;">
+  <div>
+    <h1 class="page-title" style="margin: 0;">Bill of Materials</h1>
+    <p class="muted" style="margin: 4px 0 0;">
+      {{ product.name }}{% if product.variant %} · {{ product.variant }}{% endif %}
+      {% if product.sku %} · SKU {{ product.sku }}{% endif %}
+    </p>
+  </div>
+  <a class="btn btn-ghost" href="{{ url_for('catalog.index') }}">&larr; Back to catalog</a>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <div class="card-title">Recipe — per 1 {{ product.unit or 'unit' }}</div>
+    {% if lines %}
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Material</th><th>Category</th>
+            <th class="text-right">Qty / unit</th><th>Unit</th>
+            <th class="text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for l in lines %}
+          <tr>
+            <td>{{ l.material_name }}</td>
+            <td>{% if l.category %}<span class="badge badge-muted">{{ l.category }}</span>{% endif %}</td>
+            <td class="text-right">{{ '%g'|format(l.qty_per_unit|float) }}</td>
+            <td>{{ l.unit }}</td>
+            <td class="text-right">
+              <form method="post" data-confirm="Remove this material from the recipe?"
+                    action="{{ url_for('catalog.bom_remove', bom_id=l.id) }}"
+                    style="display:inline;">
+                <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="muted">No components defined yet. Add materials on the right to
+      build this product's recipe.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <div class="card-title">Add / update component</div>
+    {% if available %}
+    <form class="form" method="post"
+          action="{{ url_for('catalog.product_bom', product_id=product.id) }}">
+      <div class="form-row">
+        <label class="form-label" for="material_id">Material</label>
+        <select id="material_id" name="material_id" required>
+          <option value="" disabled selected>Choose a material…</option>
+          {% for m in available %}
+          <option value="{{ m.id }}">{{ m.name }} ({{ m.unit or 'pc' }}, {{ m.category }}){% if m.id in used_ids %} · in recipe{% endif %}</option>
+          {% endfor %}
+        </select>
+        <p class="muted" style="margin-top:6px;">Picking a material already in the
+          recipe updates its quantity.</p>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="qty_per_unit">Quantity per unit</label>
+        <input id="qty_per_unit" name="qty_per_unit" type="number"
+               step="any" min="0" required placeholder="e.g. 0.1">
+      </div>
+      <button class="btn btn-primary" type="submit">Save component</button>
+    </form>
+    {% else %}
+    <p class="muted">No materials exist yet.
+      <a href="{{ url_for('catalog.materials') }}">Create materials</a> first.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

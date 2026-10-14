@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Product Catalog{% endblock %}
+{% block content %}
+<div class="flex gap mb" style="justify-content: space-between; flex-wrap: wrap;">
+  <h1 class="page-title" style="margin: 0;">Product Catalog</h1>
+  <button class="btn btn-primary" type="button"
+          data-modal-open="productModal" data-mode="create">
+    + Add product
+  </button>
+</div>
+
+<div class="card">
+  <div class="card-title">Finished products</div>
+  {% if products %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th><th>Name</th><th>SKU</th><th>Variant</th>
+          <th>Unit</th><th class="text-right">Stock</th>
+          <th>Recipe</th><th class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+        <tr>
+          <td>{{ p.id }}</td>
+          <td>{{ p.name }}</td>
+          <td>{{ p.sku or '—' }}</td>
+          <td>{{ p.variant or '—' }}</td>
+          <td>{{ p.unit or '—' }}</td>
+          <td class="text-right">{{ '%g'|format(p.stock_qty|float) }}</td>
+          <td>
+            {% set n = bom_counts.get(p.id, 0) %}
+            <a class="badge {{ 'badge-ok' if n else 'badge-muted' }}"
+               href="{{ url_for('catalog.product_bom', product_id=p.id) }}">
+              {{ n }} line{{ '' if n == 1 else 's' }}
+            </a>
+          </td>
+          <td class="text-right">
+            <button class="btn btn-ghost btn-sm" type="button"
+                    data-modal-open="productModal" data-mode="edit"
+                    data-id="{{ p.id }}" data-name="{{ p.name }}"
+                    data-sku="{{ p.sku or '' }}" data-variant="{{ p.variant or '' }}"
+                    data-unit="{{ p.unit or '' }}">Edit</button>
+            <a class="btn btn-ghost btn-sm"
+               href="{{ url_for('catalog.product_bom', product_id=p.id) }}">BOM</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">No products yet. Add your first finished product to start.</p>
+  {% endif %}
+</div>
+
+<!-- Add / edit product modal -->
+<div class="modal-backdrop" id="productModal">
+  <div class="modal">
+    <button class="modal-close" type="button" data-modal-close aria-label="Close">&times;</button>
+    <div class="card-title" id="productModalTitle">Add product</div>
+    <form class="form" method="post" action="{{ url_for('catalog.index') }}">
+      <input type="hidden" name="id" id="p_id" value="">
+      <div class="form-row">
+        <label class="form-label" for="p_name">Name</label>
+        <input id="p_name" name="name" type="text" required>
+      </div>
+      <div class="grid grid-2">
+        <div class="form-row">
+          <label class="form-label" for="p_sku">SKU</label>
+          <input id="p_sku" name="sku" type="text">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="p_variant">Variant / size</label>
+          <input id="p_variant" name="variant" type="text" placeholder="e.g. 100 mL">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="p_unit">Unit</label>
+        <input id="p_unit" name="unit" type="text" placeholder="pc" value="pc">
+      </div>
+      <p class="muted" id="p_stock_note" style="display:none;">
+        Finished-goods stock is driven by production runs and sales — edit it there,
+        not here.
+      </p>
+      <div class="flex gap" style="justify-content: flex-end;">
+        <button class="btn btn-ghost" type="button" data-modal-close>Cancel</button>
+        <button class="btn btn-primary" type="submit">Save product</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function () {
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest('[data-modal-open="productModal"]');
+    if (!btn) return;
+    var mode = btn.getAttribute("data-mode");
+    var title = document.getElementById("productModalTitle");
+    var note = document.getElementById("p_stock_note");
+    document.getElementById("p_id").value = btn.getAttribute("data-id") || "";
+    document.getElementById("p_name").value = btn.getAttribute("data-name") || "";
+    document.getElementById("p_sku").value = btn.getAttribute("data-sku") || "";
+    document.getElementById("p_variant").value = btn.getAttribute("data-variant") || "";
+    document.getElementById("p_unit").value = btn.getAttribute("data-unit") || "pc";
+    if (mode === "edit") {
+      title.textContent = "Edit product";
+      note.style.display = "";
+    } else {
+      title.textContent = "Add product";
+      note.style.display = "none";
+    }
+  });
+})();
+</script>
+{% endblock %}

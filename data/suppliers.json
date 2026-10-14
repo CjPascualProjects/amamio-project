@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Mindanao Forest Apiary",
+    "contact_person": "Ana Reyes",
+    "phone": "0917-100-2001",
+    "email": "orders@mindanaoapiary.ph",
+    "address": "Bukidnon, Mindanao",
+    "materials_supplied": "Raw forest honey by container",
+    "lead_time_days": 7,
+    "notes": "",
+    "created_at": "2026-10-14T13:50:22.725949+00:00",
+    "id": 1
+  },
+  {
+    "name": "Highland Produce Traders",
+    "contact_person": "Ben Cruz",
+    "phone": "0917-100-2002",
+    "email": "sales@highlandproduce.ph",
+    "address": "La Trinidad, Benguet",
+    "materials_supplied": "Ginger, turmeric, lemon by crate",
+    "lead_time_days": 3,
+    "notes": "",
+    "created_at": "2026-10-14T13:50:22.729512+00:00",
+    "id": 2
+  },
+  {
+    "name": "PackRight Supplies",
+    "contact_person": "Cora Lim",
+    "phone": "0917-100-2003",
+    "email": "sales@packright.ph",
+    "address": "Industrial Ave, Valenzuela",
+    "materials_supplied": "Bottles, jars, labels, cartons",
+    "lead_time_days": 4,
+    "notes": "",
+    "created_at": "2026-10-14T13:50:22.752385+00:00",
+    "id": 3
+  },
+  {
+    "name": "CleanCo Trading",
+    "contact_person": "Dino Santos",
+    "phone": "0917-100-2004",
+    "email": "hello@cleanco.ph",
+    "address": "Market St, Quezon City",
+    "materials_supplied": "Sanitizer and cleaning supplies",
+    "lead_time_days": 3,
+    "notes": "",
+    "created_at": "2026-10-14T13:50:22.774508+00:00",
+    "id": 4
+  }
+]

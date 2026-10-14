@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Approvals{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Approvals</h1>
+    <p class="page-sub">Requests from the teams, each with the reason it was raised.</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Purchase requests awaiting your decision</div>
+  {% if requests %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Type</th>
+          <th>Requestor</th>
+          <th class="wrap">Reason</th>
+          <th>Urgency</th>
+          <th class="num">Items</th>
+          <th>Needed by</th>
+          <th>Created</th>
+          <th class="text-right">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in requests %}
+        <tr>
+          <td>{{ r.id }}</td>
+          <td>
+            {% if r.type == 'production' %}
+              <span class="badge badge-ok">Recipe ingredients</span>
+            {% else %}
+              <span class="badge badge-muted">Supplies / equipment</span>
+            {% endif %}
+          </td>
+          <td>{{ r.requestor_name }}</td>
+          <td class="wrap">{{ r.reason or '—' }}</td>
+          <td><span class="badge {{ urgency_badge.get(r.urgency or 'Normal', 'badge-muted') }}">{{ r.urgency or 'Normal' }}</span></td>
+          <td class="num">{{ r['items']|length }}</td>
+          <td class="muted small">{{ r.needed_by or '—' }}</td>
+          <td class="muted small">{{ r.created_at[:16].replace('T', ' ') if r.created_at else '—' }}</td>
+          <td class="text-right">
+            <a class="btn btn-primary btn-sm"
+               href="{{ url_for('approvals.decide', request_id=r.id) }}">Review</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon">{{ icon('approvals', 30) }}</div>
+    <div class="empty-title">Nothing waiting</div>
+    <p class="muted">Every request has been decided.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

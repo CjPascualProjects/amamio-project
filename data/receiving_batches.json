@@ -1,0 +1,50 @@
+[
+  {
+    "ref_no": "RCV-2026-0001",
+    "supplier_id": 2,
+    "supplier_name": "Highland Produce Traders",
+    "delivery_ref": "DR-88412",
+    "received_date": "2026-10-08",
+    "received_by": 3,
+    "status": "Completed",
+    "remarks": "Weekly ginger and lemon delivery.",
+    "box_count": 6,
+    "total_good": 274.2,
+    "total_damaged": 9.8,
+    "created_at": "2026-10-14T13:50:23.657670+00:00",
+    "closed_at": "2026-10-14T13:50:25.189656+00:00",
+    "id": 1
+  },
+  {
+    "ref_no": "RCV-2026-0002",
+    "supplier_id": 3,
+    "supplier_name": "PackRight Supplies",
+    "delivery_ref": "PR-20915",
+    "received_date": "2026-10-11",
+    "received_by": 3,
+    "status": "Completed",
+    "remarks": "Bottles and labels for the next run.",
+    "box_count": 3,
+    "total_good": 900.0,
+    "total_damaged": 0.0,
+    "created_at": "2026-10-14T13:50:25.219376+00:00",
+    "closed_at": "2026-10-14T13:50:25.810401+00:00",
+    "id": 2
+  },
+  {
+    "ref_no": "RCV-2026-0003",
+    "supplier_id": 2,
+    "supplier_name": "Highland Produce Traders",
+    "delivery_ref": "DR-88630",
+    "received_date": "2026-10-14",
+    "received_by": 3,
+    "status": "Open",
+    "remarks": "Arrived this morning — awaiting count.",
+    "box_count": 4,
+    "total_good": 0.0,
+    "total_damaged": 0.0,
+    "created_at": "2026-10-14T13:50:25.833538+00:00",
+    "closed_at": null,
+    "id": 3
+  }
+]

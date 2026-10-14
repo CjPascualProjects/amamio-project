@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}New packing run{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">New packing run</h1>
+    <p class="page-sub">Pick the channel, the packer and what goes in the parcels.</p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('packing.index') }}">Back</a>
+  </div>
+</div>
+
+<form method="post" class="form">
+  <div class="card mb">
+    <div class="card-title">Run details</div>
+    <div class="form-grid cols-3">
+      <div class="form-row">
+        <label class="form-label" for="channel">Channel <span class="req">*</span></label>
+        <select id="channel" name="channel" required>
+          <option value="">Choose a channel…</option>
+          {% for c in channels %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="packer_id">Packer <span class="req">*</span></label>
+        <select id="packer_id" name="packer_id" required>
+          {% for p in packers %}
+            <option value="{{ p.id }}" {{ 'selected' if p.id == current_user.id }}>{{ p.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="pack_date">Pack date <span class="req">*</span></label>
+        <input type="date" id="pack_date" name="pack_date" value="{{ today }}" required>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="order_ref">Order reference</label>
+        <input type="text" id="order_ref" name="order_ref"
+               placeholder="e.g. SHP-2610107KMYDDCQ">
+        <div class="form-hint">The marketplace or walk-in reference for this parcel.</div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="sales_order_id">Internal sales order</label>
+        <select id="sales_order_id" name="sales_order_id">
+          <option value="">— none (platform / walk-in) —</option>
+          {% for o in orders %}
+            <option value="{{ o.id }}">#{{ o.id }} — {{ o.customer_name }} ({{ o.status }})</option>
+          {% endfor %}
+        </select>
+        <div class="form-hint">
+          Linked to an order, stock was already released when that order was
+          confirmed. Left blank, packing releases the stock itself.
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="courier">Courier</label>
+        <input type="text" id="courier" name="courier" placeholder="J&amp;T Express PH">
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-title">What goes in the parcels</div>
+    <div class="table-wrap">
+      <table class="line-table" id="lineTable">
+        <thead>
+          <tr>
+            <th style="min-width:240px">Product</th>
+            <th style="width:120px">Quantity</th>
+            <th style="width:120px">Damaged</th>
+            <th style="min-width:160px">Notes</th>
+            <th style="width:40px"></th>
+          </tr>
+        </thead>
+        <tbody id="lineBody">
+          <tr>
+            <td>
+              <select name="product_id" required>
+                <option value="">Choose a product…</option>
+                {% for p in products %}
+                  <option value="{{ p.id }}">{{ p.name }} — {{ '%g'|format(p.stock) }} in stock</option>
+                {% endfor %}
+              </select>
+            </td>
+            <td><input type="number" step="0.01" min="0" name="qty" value="1" required></td>
+            <td><input type="number" step="0.01" min="0" name="damaged_qty" value="0"></td>
+            <td><input type="text" name="line_notes" placeholder="optional"></td>
+            <td><button class="line-remove" type="button" data-remove title="Remove">&times;</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button class="btn btn-ghost btn-sm mt" type="button" id="addLine">+ Add another product</button>
+  </div>
+
+  <div class="card mb">
+    <div class="form-row">
+      <label class="form-label" for="remarks">Remarks</label>
+      <textarea id="remarks" name="remarks"
+                placeholder="Anything worth noting about this batch of parcels."></textarea>
+    </div>
+    <button class="btn btn-primary" type="submit">Open packing run</button>
+  </div>
+</form>
+
+<script>
+(function () {
+  var body = document.getElementById("lineBody");
+  var addBtn = document.getElementById("addLine");
+  if (!body || !addBtn) return;
+
+  addBtn.addEventListener("click", function () {
+    var row = body.rows[0].cloneNode(true);
+    row.querySelectorAll("input").forEach(function (input) {
+      input.value = input.name === "qty" ? "1"
+        : (input.name === "damaged_qty" ? "0" : "");
+    });
+    row.querySelector("select").selectedIndex = 0;
+    body.appendChild(row);
+  });
+
+  body.addEventListener("click", function (e) {
+    if (!e.target.closest("[data-remove]")) return;
+    if (body.rows.length > 1) e.target.closest("tr").remove();
+  });
+})();
+</script>
+{% endblock %}

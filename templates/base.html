@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Sales & Inventory{% endblock %} · Amamio</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/amamio-logo.jpg') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="{{ 'has-sidebar' if current_user else 'no-sidebar' }}">
+{% if current_user %}
+{% set _p = current_user.name.split() %}
+{% set initials = ((_p[0][0] if _p else current_user.name[0]) ~ (_p[1][0] if _p|length > 1 else ''))|upper %}
+
+<aside class="sidebar" id="navLinks">
+  <div class="sidebar-brand">
+    <a href="{{ url_for('auth.dashboard') }}">
+      <span class="brand-logo">
+        <img src="{{ url_for('static', filename='img/amamio-logo.jpg') }}"
+             alt="Amamio Farm Products">
+      </span>
+      <span class="brand-word">
+        <span class="brand-mark">Amamio</span>
+        <span class="brand-sub">Sales &amp; Inventory</span>
+      </span>
+    </a>
+  </div>
+
+  {# Each category is a collapsible group.  The group holding the current
+     page is always open; the others remember what the user last chose. #}
+  <nav class="sidebar-nav" aria-label="Main">
+    {% for section, items in nav_sections %}
+      {% set ns = namespace(any=false, active=false, badge=false) %}
+      {% for it in items %}
+        {% if can(it[0]) %}
+          {% set ns.any = true %}
+          {% set _bp = it[3].split('.')[0] %}
+          {% if request.endpoint == it[3] or (_bp != 'auth' and request.blueprint == _bp) %}{% set ns.active = true %}{% endif %}
+          {% if it[0] == 'notifications' and nav_unread %}{% set ns.badge = true %}{% endif %}
+        {% endif %}
+      {% endfor %}
+      {% if ns.any %}
+        {% set gid = 'grp-' ~ loop.index %}
+        <div class="side-group {{ 'is-open' if ns.active }} {{ 'has-active' if ns.active }}"
+             data-group="{{ section }}">
+          <button class="side-group-head" type="button"
+                  aria-expanded="{{ 'true' if ns.active else 'false' }}" aria-controls="{{ gid }}">
+            <span class="side-group-label">{{ section }}</span>
+            {% if ns.badge %}<span class="side-group-dot" aria-label="Unread notifications"></span>{% endif %}
+            {{ icon('chevron-down', 15, 'side-chevron') }}
+          </button>
+          <div class="side-group-body" id="{{ gid }}">
+            <div class="side-group-inner">
+              {% for module, label, ico, endpoint in items %}
+                {% if can(module) %}
+                  {% set bp = endpoint.split('.')[0] %}
+                  {% set active = (request.endpoint == endpoint) or (bp != 'auth' and request.blueprint == bp) %}
+                  <a class="side-link {{ 'active' if active }}" href="{{ url_for(endpoint) }}"
+                     {% if active %}aria-current="page"{% endif %}>
+                    <span class="side-ico">{{ icon(ico, 18) }}</span>
+                    <span class="side-text">{{ label }}</span>
+                    {% if module == 'notifications' and nav_unread %}<span class="nav-badge">{{ nav_unread }}</span>{% endif %}
+                  </a>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </nav>
+
+  <div class="sidebar-foot">
+    {% if can('chatbot') %}
+    <button class="side-link side-link-btn" type="button" data-chat-open>
+      <span class="side-ico">{{ icon('assistant', 18) }}</span>
+      <span class="side-text">AI Assistant</span>
+    </button>
+    {% endif %}
+    <a class="side-link" href="{{ url_for('auth.logout') }}">
+      <span class="side-ico">{{ icon('logout', 18) }}</span>
+      <span class="side-text">Log out</span>
+    </a>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<header class="topbar">
+  <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle navigation">{{ icon('menu', 20) }}</button>
+  <label class="topbar-search">
+    {{ icon('search', 17) }}
+    <input type="text" placeholder="Search codes, orders, products…" aria-label="Search">
+  </label>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-actions">
+    <span class="topbar-date">{{ today_label }}</span>
+    <a class="icon-btn" href="{{ url_for('notifications.index') }}" aria-label="Notifications">
+      {{ icon('notifications', 18) }}{% if nav_unread %}<span class="nav-badge">{{ nav_unread }}</span>{% endif %}
+    </a>
+    <div class="user-chip">
+      <span class="avatar">{{ initials }}</span>
+      <span class="user-meta">
+        <span class="user-name">{{ current_user.name }}</span>
+        <span class="user-role">{{ role_labels.get(current_user.role, current_user.role) }}</span>
+      </span>
+    </div>
+  </div>
+</header>
+{% endif %}
+
+<main class="main">
+  <div class="{% block wrap_class %}{{ 'content-inner' if current_user else 'auth-wrap' }}{% endblock %}">
+    {% if current_user %}
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-area">
+            {% for category, message in messages %}
+              <div class="flash flash-{{ 'error' if category == 'error' else 'success' }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+{% if current_user and can('chatbot') %}
+<!-- Floating AI assistant -->
+<button class="chat-fab no-print" id="chatFab" type="button"
+        aria-label="Open AI assistant" title="AI Assistant">{{ icon('assistant', 22) }}</button>
+<div class="chat-panel no-print" id="chatPanel" role="dialog" aria-label="AI Assistant">
+  <div class="chat-panel-head">
+    <span class="cp-avatar">{{ icon('assistant', 20) }}</span>
+    <span>
+      <span class="cp-title">AI Assistant</span><br>
+      <span class="cp-sub">Stock, QC, packing &amp; forecasts</span>
+    </span>
+    <button class="chat-panel-close" type="button" data-chat-close aria-label="Close">{{ icon('close', 18) }}</button>
+  </div>
+  <div class="chat-log" id="chatWLog"></div>
+  <div class="chat-suggest">
+    <button class="chat-chip" type="button" data-q="What products are low in stock?">Low stock</button>
+    <button class="chat-chip" type="button" data-q="What raw materials need to be reordered?">Reorders</button>
+    <button class="chat-chip" type="button" data-q="Show the best-selling products.">Best sellers</button>
+    <button class="chat-chip" type="button" data-q="What is the demand forecast?">Forecast</button>
+  </div>
+  <form class="chat-form" id="chatWForm">
+    <input type="text" id="chatWInput" placeholder="Ask a question…" autocomplete="off" required>
+    <button class="btn btn-primary" type="submit">Send</button>
+  </form>
+</div>
+<script>
+(function () {
+  var fab = document.getElementById("chatFab");
+  var panel = document.getElementById("chatPanel");
+  if (!fab || !panel) return;
+  var log = document.getElementById("chatWLog");
+  var form = document.getElementById("chatWForm");
+  var input = document.getElementById("chatWInput");
+  var ASK_URL = "{{ url_for('chatbot.ask') }}";
+  var greeted = false;
+
+  function addMsg(text, who) {
+    var d = document.createElement("div");
+    d.className = "chat-msg " + who;
+    d.textContent = text;
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+    return d;
+  }
+  function openPanel() {
+    panel.classList.add("open");
+    if (!greeted) {
+      addMsg("Hi! I'm the Amamio assistant. Ask me about stock, reorders, sales or forecasts — or tap a suggestion below.", "bot");
+      greeted = true;
+    }
+    input.focus();
+  }
+  function closePanel() { panel.classList.remove("open"); }
+  function ask(q) {
+    addMsg(q, "user");
+    var pending = addMsg("…", "bot");
+    window.IMS.fetchJSON(ASK_URL, { method: "POST", body: { question: q } })
+      .then(function (data) { pending.textContent = data.answer || "(no answer)"; log.scrollTop = log.scrollHeight; })
+      .catch(function () { pending.textContent = "Sorry, something went wrong."; });
+  }
+
+  fab.addEventListener("click", function () {
+    panel.classList.contains("open") ? closePanel() : openPanel();
+  });
+  document.addEventListener("click", function (e) {
+    if (e.target.closest("[data-chat-open]")) { e.preventDefault(); openPanel(); }
+    if (e.target.closest("[data-chat-close]")) { closePanel(); }
+  });
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var q = input.value.trim();
+    if (!q) return;
+    input.value = "";
+    ask(q);
+  });
+  panel.querySelectorAll(".chat-chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      if (!panel.classList.contains("open")) openPanel();
+      ask(chip.getAttribute("data-q"));
+    });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && panel.classList.contains("open")) closePanel();
+  });
+})();
+</script>
+{% endif %}
+</body>
+</html>

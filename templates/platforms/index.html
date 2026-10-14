@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% block title %}Sales platforms{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Sales platforms</h1>
+    <p class="page-sub">
+      Marketplace exports imported into one consolidated view —
+      {{ row_count }} sales line(s) on record.
+    </p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('platforms.template_list') }}">Templates</a>
+    <a class="btn btn-primary btn-sm" href="{{ url_for('platforms.import_file') }}">Import a file</a>
+  </div>
+</div>
+
+<div class="stat-grid mb">
+  <div class="stat-card is-primary">
+    <div class="stat-top"><span class="stat-label">Net sales</span></div>
+    <div class="stat-value">₱{{ '{:,.0f}'.format(totals.net) }}</div>
+    <div class="stat-caption">After discounts, across all platforms</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Gross sales</span></div>
+    <div class="stat-value">₱{{ '{:,.0f}'.format(totals.gross) }}</div>
+    <div class="stat-caption">Before discounts</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Orders</span></div>
+    <div class="stat-value">{{ totals.orders }}</div>
+    <div class="stat-caption">{{ totals.lines }} product line(s)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Units sold</span></div>
+    <div class="stat-value">{{ totals.qty }}</div>
+    <div class="stat-caption">Across every channel</div>
+  </div>
+</div>
+
+<form method="get" class="filter-bar">
+  <div class="field">
+    <label class="form-label" for="platform">Platform</label>
+    <select id="platform" name="platform">
+      <option value="">All platforms</option>
+      {% for p in platforms %}
+        <option value="{{ p }}" {{ 'selected' if platform == p }}>{{ p }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label class="form-label" for="from">From</label>
+    <input type="date" id="from" name="from" value="{{ date_from }}">
+  </div>
+  <div class="field">
+    <label class="form-label" for="to">To</label>
+    <input type="date" id="to" name="to" value="{{ date_to }}">
+  </div>
+  <div>
+    <button class="btn btn-primary btn-sm" type="submit">Apply</button>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('platforms.index') }}">Reset</a>
+  </div>
+</form>
+
+<div class="grid grid-2 mb">
+  <div class="card">
+    <div class="card-title">Per platform</div>
+    {% if summary %}
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th>Platform</th><th class="num">Orders</th><th class="num">Units</th>
+              <th class="num">Gross</th><th class="num">Net</th></tr>
+        </thead>
+        <tbody>
+          {% for row in summary %}
+          <tr>
+            <td><span class="badge badge-gold">{{ row.platform }}</span></td>
+            <td class="num">{{ row.orders }}</td>
+            <td class="num">{{ '%g'|format(row.qty) }}</td>
+            <td class="num">₱{{ '{:,.2f}'.format(row.gross) }}</td>
+            <td class="num">₱{{ '{:,.2f}'.format(row.net) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>Total</td><td class="num">{{ totals.orders }}</td>
+            <td class="num">{{ totals.qty }}</td>
+            <td class="num">₱{{ '{:,.2f}'.format(totals.gross) }}</td>
+            <td class="num">₱{{ '{:,.2f}'.format(totals.net) }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    {% else %}
+    <p class="muted">Nothing imported yet for this filter.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <div class="card-title">Best sellers</div>
+    {% if top %}
+    {% set max_net = top|map(attribute='net')|max %}
+    <div class="bars">
+      {% for row in top %}
+      <div class="bar-row">
+        <span class="bar-label" title="{{ row.name }}">{{ row.name }}</span>
+        <span class="bar-track">
+          <span class="bar-fill" style="width: {{ (100 * row.net / max_net)|round(1) if max_net else 0 }}%"></span>
+        </span>
+        <span class="bar-value">₱{{ '{:,.0f}'.format(row.net) }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="muted">No product names in the imported data yet.</p>
+    {% endif %}
+  </div>
+</div>
+
+{% if series %}
+<div class="card mb">
+  <div class="card-title">Daily net sales</div>
+  {% set max_day = series|map(attribute=1)|max %}
+  <div class="bars">
+    {% for day, value in series %}
+    <div class="bar-row">
+      <span class="bar-label">{{ day }}</span>
+      <span class="bar-track">
+        <span class="bar-fill" style="width: {{ (100 * value / max_day)|round(1) if max_day else 0 }}%"></span>
+      </span>
+      <span class="bar-value">₱{{ '{:,.0f}'.format(value) }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<div class="card mb">
+  <div class="card-title">Recent sales lines</div>
+  {% if recent %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th><th>Platform</th><th>Order</th><th class="wrap">Product</th>
+          <th>SKU</th><th class="num">Qty</th><th class="num">Net</th>
+          <th>Status</th><th>Region</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in recent %}
+        <tr>
+          <td>{{ row.order_date or '—' }}</td>
+          <td><span class="badge badge-gold">{{ row.platform }}</span></td>
+          <td><span class="code">{{ row.order_ref }}</span></td>
+          <td class="wrap">
+            {{ row.product_name or '—' }}
+            {% if row.variation %}<span class="cell-sub">{{ row.variation }}</span>{% endif %}
+          </td>
+          <td class="muted small">{{ row.sku or '—' }}</td>
+          <td class="num">{{ '%g'|format(row.qty|float) }}</td>
+          <td class="num">₱{{ '{:,.2f}'.format(row.net_amount|float) }}</td>
+          <td class="muted small">{{ row.order_status or '—' }}</td>
+          <td class="muted small">{{ row.region or '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon">{{ icon('platforms', 30) }}</div>
+    <div class="empty-title">No platform sales yet</div>
+    <p class="muted">
+      Drop a Shopee, TikTok or Lazada export into the sales-platform folder,
+      then import it here.
+    </p>
+    <a class="btn btn-primary btn-sm mt" href="{{ url_for('platforms.import_file') }}">Import a file</a>
+  </div>
+  {% endif %}
+</div>
+
+{% if imports %}
+<div class="card">
+  <div class="card-title">Import history</div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Imported</th><th>Platform</th><th class="wrap">File</th>
+          <th class="num">Rows</th><th class="num">Duplicates</th>
+          <th class="num">Net</th><th>Period</th><th>By</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in imports %}
+        <tr>
+          <td>{{ i.imported_at }}</td>
+          <td><span class="badge badge-gold">{{ i.platform }}</span></td>
+          <td class="wrap">{{ i.filename }}</td>
+          <td class="num">{{ i.rows_imported }}</td>
+          <td class="num muted">{{ i.duplicates }}</td>
+          <td class="num">₱{{ '{:,.2f}'.format(i.net_amount|float) }}</td>
+          <td class="muted small">{{ i.period_from or '—' }}<span class="cell-sub">to {{ i.period_to or '—' }}</span></td>
+          <td class="muted small">{{ i.imported_by }}</td>
+          <td>
+            <form method="post" action="{{ url_for('platforms.import_delete', import_id=i.id) }}"
+                  data-confirm="Remove this import and all the sales rows it created?">
+              <button class="btn btn-sm btn-ghost" type="submit">Undo</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

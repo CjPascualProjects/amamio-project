@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}QR labels — {{ batch.ref_no }}{% endblock %}
+{% block content %}
+<div class="page-head no-print">
+  <div>
+    <h1 class="page-title">QR labels</h1>
+    <p class="page-sub">{{ batch.ref_no }} · {{ batch.supplier_name }} · {{ batch.received_date }}</p>
+  </div>
+  <div class="page-head-actions">
+    <button class="btn btn-primary btn-sm" type="button" onclick="window.print()">Print</button>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('receiving.batch', batch_id=batch.id) }}">Back</a>
+  </div>
+</div>
+
+{% if boxes %}
+<div class="label-sheet">
+  {% for box in boxes %}
+  <div class="qr-label">
+    <img src="{{ url_for('qr.image', token=box.box_code) }}" alt="{{ box.box_code }}">
+    <div class="qr-code">{{ box.box_code }}</div>
+    <div class="qr-name">{{ box.material_name }}</div>
+    <div class="qr-meta">
+      {{ '%g'|format(box.declared_qty|float) }} {{ box.unit }} declared<br>
+      {{ batch.ref_no }} · {{ batch.received_date }}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card"><div class="empty">
+  <div class="empty-title">No boxes to label</div>
+  <p class="muted">Add boxes to this batch first.</p>
+</div></div>
+{% endif %}
+{% endblock %}

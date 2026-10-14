@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}Materials{% endblock %}
+{% block content %}
+<div class="flex gap mb" style="justify-content: space-between; flex-wrap: wrap;">
+  <h1 class="page-title" style="margin: 0;">Materials</h1>
+  <button class="btn btn-primary" type="button"
+          data-modal-open="materialModal" data-mode="create">
+    + Add material
+  </button>
+</div>
+
+<div class="card">
+  <div class="card-title">Materials, cleaning supplies &amp; assets</div>
+  {% if materials %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th><th>Name</th><th>Category</th><th>Unit</th><th>Counted by</th>
+          <th class="text-right">Stock</th><th class="text-right">Reorder level</th>
+          <th>Supplier</th><th>Expiry</th><th class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in materials %}
+        {% set stock = m.stock_qty|float %}
+        {% set reorder = m.reorder_level|float %}
+        <tr>
+          <td>{{ m.id }}</td>
+          <td>{{ m.name }}</td>
+          <td><span class="badge badge-muted">{{ m.category }}</span></td>
+          <td>{{ m.unit or '—' }}</td>
+          <td class="muted small">{{ track_labels.get(m.track_mode or 'weight') }}</td>
+          <td class="text-right">
+            {% if reorder > 0 and stock <= reorder %}
+              <span class="badge badge-danger">{{ '%g'|format(stock) }}</span>
+            {% else %}
+              {{ '%g'|format(stock) }}
+            {% endif %}
+          </td>
+          <td class="text-right">{{ '%g'|format(reorder) }}</td>
+          <td class="muted">
+            {%- for s in suppliers if s.id == m.supplier_id %}{{ s.name }}{% else %}—{% endfor -%}
+          </td>
+          <td class="muted">{{ m.expiry_date or '—' }}</td>
+          <td class="text-right">
+            <button class="btn btn-ghost btn-sm" type="button"
+                    data-modal-open="materialModal" data-mode="edit"
+                    data-id="{{ m.id }}" data-name="{{ m.name }}"
+                    data-category="{{ m.category }}" data-unit="{{ m.unit or '' }}"
+                    data-track="{{ m.track_mode or 'weight' }}"
+                    data-stock="{{ stock }}" data-reorder="{{ reorder }}"
+                    data-supplier="{{ m.supplier_id or '' }}"
+                    data-cost="{{ m.unit_cost or 0 }}"
+                    data-expiry="{{ m.expiry_date or '' }}">Edit</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">No materials yet. Add raw materials, cleaning supplies or assets.</p>
+  {% endif %}
+</div>
+
+<!-- Add / edit material modal -->
+<div class="modal-backdrop" id="materialModal">
+  <div class="modal">
+    <button class="modal-close" type="button" data-modal-close aria-label="Close">&times;</button>
+    <div class="card-title" id="materialModalTitle">Add material</div>
+    <form class="form" method="post" action="{{ url_for('catalog.materials') }}">
+      <input type="hidden" name="id" id="m_id" value="">
+      <div class="form-row">
+        <label class="form-label" for="m_name">Name</label>
+        <input id="m_name" name="name" type="text" required>
+      </div>
+      <div class="grid grid-2">
+        <div class="form-row">
+          <label class="form-label" for="m_category">Category</label>
+          <select id="m_category" name="category" required>
+            {% for c in categories %}
+            <option value="{{ c }}">{{ c }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="m_unit">Unit</label>
+          <input id="m_unit" name="unit" type="text" placeholder="pc" value="pc">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="m_track">How is it counted when received?</label>
+        <select id="m_track" name="track_mode">
+          {% for key, label in track_modes %}<option value="{{ key }}">{{ label }}</option>{% endfor %}
+        </select>
+        <div class="form-hint">
+          Ginger arrives by the kilo, lemons by the piece — the receiving area
+          uses this when counting each cage box.
+        </div>
+      </div>
+      <div class="grid grid-2">
+        <div class="form-row">
+          <label class="form-label" for="m_stock">Stock quantity</label>
+          <input id="m_stock" name="stock_qty" type="number" step="any" min="0" value="0">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="m_reorder">Reorder level</label>
+          <input id="m_reorder" name="reorder_level" type="number" step="any" min="0" value="0">
+        </div>
+      </div>
+      <div class="grid grid-2">
+        <div class="form-row">
+          <label class="form-label" for="m_supplier">Supplier</label>
+          <select id="m_supplier" name="supplier_id">
+            <option value="">— none —</option>
+            {% for s in suppliers %}
+            <option value="{{ s.id }}">{{ s.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="m_cost">Unit cost (₱)</label>
+          <input id="m_cost" name="unit_cost" type="number" step="any" min="0" value="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="m_expiry">Expiry date <span class="muted">(if applicable)</span></label>
+        <input id="m_expiry" name="expiry_date" type="date">
+      </div>
+      <p class="muted" id="m_stock_note" style="display:none;">
+        Changing stock here records an inventory adjustment in the ledger.
+      </p>
+      <div class="flex gap" style="justify-content: flex-end;">
+        <button class="btn btn-ghost" type="button" data-modal-close>Cancel</button>
+        <button class="btn btn-primary" type="submit">Save material</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function () {
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest('[data-modal-open="materialModal"]');
+    if (!btn) return;
+    var mode = btn.getAttribute("data-mode");
+    var title = document.getElementById("materialModalTitle");
+    var note = document.getElementById("m_stock_note");
+    document.getElementById("m_id").value = btn.getAttribute("data-id") || "";
+    document.getElementById("m_name").value = btn.getAttribute("data-name") || "";
+    document.getElementById("m_category").value = btn.getAttribute("data-category") || "raw";
+    document.getElementById("m_unit").value = btn.getAttribute("data-unit") || "pc";
+    document.getElementById("m_track").value = btn.getAttribute("data-track") || "weight";
+    document.getElementById("m_stock").value = btn.getAttribute("data-stock") || "0";
+    document.getElementById("m_reorder").value = btn.getAttribute("data-reorder") || "0";
+    document.getElementById("m_supplier").value = btn.getAttribute("data-supplier") || "";
+    document.getElementById("m_cost").value = btn.getAttribute("data-cost") || "0";
+    document.getElementById("m_expiry").value = btn.getAttribute("data-expiry") || "";
+    if (mode === "edit") {
+      title.textContent = "Edit material";
+      note.style.display = "";
+    } else {
+      title.textContent = "Add material";
+      note.style.display = "none";
+    }
+  });
+})();
+</script>
+{% endblock %}

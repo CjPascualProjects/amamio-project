@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Log honey containers{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Log honey containers</h1>
+    <p class="page-sub">Each container is given its own QR code and queued for the quality check.</p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('honey.index') }}">Back</a>
+  </div>
+</div>
+
+<div class="card" style="max-width:880px">
+  <form method="post" class="form">
+    <div class="form-grid cols-3">
+      <div class="form-row">
+        <label class="form-label" for="source">Source</label>
+        <select id="source" name="source">
+          {% for s in sources %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="supplier_id">Supplier</label>
+        <select id="supplier_id" name="supplier_id">
+          <option value="">— none (own harvest) —</option>
+          {% for s in suppliers %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="batch_ref">Batch reference</label>
+        <input type="text" id="batch_ref" name="batch_ref" placeholder="auto">
+        <div class="form-hint">Left blank, the system numbers it for you.</div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="net_weight_kg">Net weight per container (kg) <span class="req">*</span></label>
+        <input type="number" step="0.01" min="0.01" id="net_weight_kg"
+               name="net_weight_kg" required placeholder="28.5">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="gross_weight_kg">Gross weight (kg)</label>
+        <input type="number" step="0.01" min="0" id="gross_weight_kg" name="gross_weight_kg">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="tare_weight_kg">Tare / container (kg)</label>
+        <input type="number" step="0.01" min="0" id="tare_weight_kg" name="tare_weight_kg">
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="harvest_date">Harvest date</label>
+        <input type="date" id="harvest_date" name="harvest_date">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="received_date">Date received <span class="req">*</span></label>
+        <input type="date" id="received_date" name="received_date" value="{{ today }}" required>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="count">Number of containers</label>
+        <input type="number" min="1" max="50" id="count" name="count" value="1">
+        <div class="form-hint">Use this when several identical containers arrive together.</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" type="submit">Log &amp; queue for QC</button>
+  </form>
+</div>
+{% endblock %}

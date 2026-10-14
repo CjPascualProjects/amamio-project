@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}{{ run.run_code }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">{{ run.run_code }}</h1>
+    <p class="page-sub">
+      {{ run.channel }} · packed by {{ run.packer_name or '—' }} ·
+      {{ run.pack_date }}{% if run.order_ref %} · {{ run.order_ref }}{% endif %}
+    </p>
+  </div>
+  <div class="page-head-actions">
+    <span class="badge {{ badge }}">{{ run.status }}</span>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('packing.slip', run_id=run.id) }}">Packing slip</a>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('packing.index') }}">Back</a>
+  </div>
+</div>
+
+<div class="grid grid-2 mb">
+  <div class="card">
+    <div class="card-title">Contents</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th>Product</th><th class="num">Qty</th><th class="num">Damaged</th><th class="wrap">Notes</th></tr>
+        </thead>
+        <tbody>
+          {% for item in run['items'] %}
+          <tr>
+            <td>{{ item.name }}</td>
+            <td class="num">{{ '%g'|format(item.qty|float) }} {{ item.unit }}</td>
+            {% if item.damaged_qty %}
+              <td class="num num-bad">{{ '%g'|format(item.damaged_qty|float) }}</td>
+            {% else %}
+              <td class="num num-nil">—</td>
+            {% endif %}
+            <td class="wrap muted small">{{ item.notes or '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>Total</td>
+            <td class="num">{{ '%g'|format(run.total_qty|float) }}</td>
+            <td class="num">{{ '%g'|format(run.damaged_qty|float) }}</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Run record</div>
+    <div class="meta-grid">
+      <div class="meta-item">
+        <div class="meta-label">Channel</div>
+        <div class="meta-value">{{ run.channel }}</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Opened</div>
+        <div class="meta-value">{{ created_at }}<br><span class="muted small">by {{ created_by }}</span></div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Packed at</div>
+        <div class="meta-value">{{ packed_at or '—' }}</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Handed over</div>
+        <div class="meta-value">
+          {{ handed_at or '—' }}
+          {% if run.handed_to %}<br><span class="muted small">to {{ run.handed_to }}</span>{% endif %}
+        </div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Stock</div>
+        <div class="meta-value">
+          {% if run.sales_order_id %}
+            Released with order #{{ run.sales_order_id }}
+          {% elif run.stock_released %}
+            Released by this run
+          {% else %}
+            Not yet released
+          {% endif %}
+        </div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Tracking</div>
+        <div class="meta-value">
+          {{ run.courier or '—' }}
+          {% if run.tracking_no %}<br><span class="code">{{ run.tracking_no }}</span>{% endif %}
+        </div>
+      </div>
+    </div>
+    {% if run.remarks %}
+      <hr class="divider">
+      <div class="meta-label">Remarks</div>
+      <p class="muted">{{ run.remarks }}</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Move this run along</div>
+  {% if run.status == 'In Progress' %}
+    <form method="post" action="{{ url_for('packing.packed', run_id=run.id) }}"
+          class="mb" data-confirm="Mark this run packed? Finished goods are released now unless the run is tied to a sales order.">
+      <button class="btn btn-primary" type="submit">Mark as packed</button>
+      <span class="muted small">Confirms the parcels are sealed and counted.</span>
+    </form>
+    <form method="post" action="{{ url_for('packing.cancel', run_id=run.id) }}"
+          data-confirm="Cancel this packing run?">
+      <button class="btn btn-ghost btn-sm" type="submit">Cancel run</button>
+    </form>
+  {% elif run.status == 'Packed' %}
+    <form method="post" action="{{ url_for('packing.handover', run_id=run.id) }}" class="form">
+      <div class="form-grid cols-3">
+        <div class="form-row">
+          <label class="form-label" for="handed_to">Handed to <span class="req">*</span></label>
+          <input type="text" id="handed_to" name="handed_to" required
+                 placeholder="Rider name / pickup person">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="courier">Courier</label>
+          <input type="text" id="courier" name="courier" value="{{ run.courier or '' }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="tracking_no">Tracking number</label>
+          <input type="text" id="tracking_no" name="tracking_no" value="{{ run.tracking_no or '' }}">
+        </div>
+      </div>
+      <button class="btn btn-primary" type="submit">Record hand-over</button>
+    </form>
+  {% elif run.status == 'Handed Over' %}
+    <p class="muted">
+      This run was handed to <strong>{{ run.handed_to }}</strong> on {{ handed_at }}.
+      Nothing further to do.
+    </p>
+  {% else %}
+    <p class="muted">This run was cancelled; any stock it had released was returned.</p>
+  {% endif %}
+</div>
+{% endblock %}

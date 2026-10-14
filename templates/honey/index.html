@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Honey quality check{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Honey quality check</h1>
+    <p class="page-sub">
+      Monitored by container. Each one is checked on moisture content and
+      appearance — a <strong>Pass</strong> goes to selling stock, a
+      <strong>Failed</strong> is routed to other products.
+    </p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('honey.labels') }}">Print QR labels</a>
+    <a class="btn btn-primary btn-sm" href="{{ url_for('honey.new') }}">Log containers</a>
+  </div>
+</div>
+
+<div class="stat-grid mb">
+  <div class="stat-card is-primary">
+    <div class="stat-top"><span class="stat-label">Awaiting QC</span></div>
+    <div class="stat-value">{{ summary.pending }}</div>
+    <div class="stat-caption">{{ summary.pending_kg }} kg held</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Passed</span></div>
+    <div class="stat-value" style="color:var(--ok)">{{ summary.passed }}</div>
+    <div class="stat-caption">{{ summary.passed_kg }} kg for selling</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Failed</span></div>
+    <div class="stat-value" style="color:var(--danger)">{{ summary.failed }}</div>
+    <div class="stat-caption">{{ summary.failed_kg }} kg for other products</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Pass rate</span></div>
+    <div class="stat-value">{{ summary.pass_rate }}%</div>
+    <div class="stat-caption">Average moisture {{ summary.avg_moisture }}%</div>
+  </div>
+</div>
+
+<div class="pill-row mb">
+  <a class="pill {{ 'active' if not status }}" href="{{ url_for('honey.index') }}">All containers</a>
+  <a class="pill {{ 'active' if status == 'Pending QC' }}" href="{{ url_for('honey.index', status='Pending QC') }}">Awaiting QC</a>
+  <a class="pill {{ 'active' if status == 'Pass' }}" href="{{ url_for('honey.index', status='Pass') }}">Pass</a>
+  <a class="pill {{ 'active' if status == 'Failed' }}" href="{{ url_for('honey.index', status='Failed') }}">Failed</a>
+</div>
+
+<div class="card">
+  <div class="card-title">
+    Containers
+    <span class="muted">— pass limit is {{ moisture_max }}% moisture</span>
+  </div>
+  {% if containers %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Container</th><th class="wrap-sm">Source</th><th class="num">Net kg</th>
+          <th>Received</th><th class="num">Moisture</th><th class="wrap-sm">Appearance</th>
+          <th>Result</th><th class="wrap-sm">Used for</th><th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in containers %}
+        <tr>
+          <td>
+            <span class="code">{{ c.container_code }}</span>
+            <span class="cell-sub">{{ c.batch_ref }}</span>
+          </td>
+          <td class="wrap-sm muted">{{ c.supplier_name or c.source }}</td>
+          <td class="num">{{ '%g'|format(c.net_weight_kg|float) }}</td>
+          <td>{{ c.received_date }}</td>
+          <td class="num">
+            {% if c.moisture_pct %}
+              <span {% if c.moisture_pct|float > moisture_max %}style="color:var(--danger)"{% endif %}>
+                {{ '%g'|format(c.moisture_pct|float) }}%
+              </span>
+            {% else %}&mdash;{% endif %}
+          </td>
+          <td class="wrap-sm muted">{{ c.appearance or '—' }}</td>
+          <td>
+            <span class="badge {{ c.badge }}">{{ c.status }}</span>
+            {% if c.disposition %}<span class="cell-sub">{{ c.disposition }}</span>{% endif %}
+          </td>
+          <td class="wrap-sm muted small">{{ c.allocated_to or '—' }}</td>
+          <td>
+            <a class="btn btn-sm {{ 'btn-primary' if c.status == 'Pending QC' else 'btn-ghost' }}"
+               href="{{ url_for('honey.qc', container_id=c.id) }}">
+              {{ 'Check' if c.status == 'Pending QC' else 'View' }}
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon">{{ icon('honey', 30) }}</div>
+    <div class="empty-title">No containers here</div>
+    <p class="muted">Log the containers as they come in from the apiary.</p>
+    <a class="btn btn-primary btn-sm mt" href="{{ url_for('honey.new') }}">Log containers</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

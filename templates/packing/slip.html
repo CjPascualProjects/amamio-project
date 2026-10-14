@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Packing slip {{ run.run_code }}{% endblock %}
+{% block content %}
+<div class="page-head no-print">
+  <div>
+    <h1 class="page-title">Packing slip</h1>
+    <p class="page-sub">{{ run.run_code }} · {{ run.channel }}</p>
+  </div>
+  <div class="page-head-actions">
+    <button class="btn btn-primary btn-sm" type="button" onclick="window.print()">Print</button>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('packing.detail', run_id=run.id) }}">Back</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="flex-between mb">
+    <div>
+      <div class="card-title" style="margin-bottom:4px">Amamio Farm Products</div>
+      <div class="muted small">Packing slip · {{ run.channel }} channel</div>
+    </div>
+    <div class="qr-label" style="width:150px;padding:8px;border:none">
+      <img src="{{ url_for('qr.image', token=run.run_code) }}" alt="{{ run.run_code }}"
+           style="width:104px;height:104px">
+      <div class="qr-code">{{ run.run_code }}</div>
+    </div>
+  </div>
+
+  <div class="meta-grid mb">
+    <div class="meta-item">
+      <div class="meta-label">Pack date</div><div class="meta-value">{{ run.pack_date }}</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Packer</div><div class="meta-value">{{ run.packer_name or '—' }}</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Order reference</div>
+      <div class="meta-value">{{ run.order_ref or '—' }}</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Courier</div>
+      <div class="meta-value">{{ run.courier or '—' }}</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Tracking</div>
+      <div class="meta-value">{{ run.tracking_no or '—' }}</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Product</th><th class="num">Quantity</th><th class="wrap">Notes</th></tr></thead>
+      <tbody>
+        {% for item in run['items'] %}
+        <tr>
+          <td>{{ item.name }}</td>
+          <td class="num">{{ '%g'|format(item.qty|float) }} {{ item.unit }}</td>
+          <td class="wrap muted">{{ item.notes or '' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr><td>Total items</td><td class="num">{{ '%g'|format(run.total_qty|float) }}</td><td></td></tr>
+      </tfoot>
+    </table>
+  </div>
+
+  {% if run.remarks %}
+    <hr class="divider">
+    <div class="meta-label">Remarks</div>
+    <p class="muted">{{ run.remarks }}</p>
+  {% endif %}
+
+  <hr class="divider">
+  <div class="grid grid-2">
+    <div>
+      <div class="meta-label">Packed by</div>
+      <div style="height:42px;border-bottom:1px solid var(--border-strong)"></div>
+    </div>
+    <div>
+      <div class="meta-label">Received by (courier / customer)</div>
+      <div style="height:42px;border-bottom:1px solid var(--border-strong)"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

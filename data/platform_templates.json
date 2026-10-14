@@ -1,0 +1,54 @@
+[
+  {
+    "platform": "Shopee",
+    "name": "Shopee — Orders export",
+    "sheet_index": 0,
+    "header_row": 0,
+    "date_format": "auto",
+    "active": true,
+    "mapping_json": "{\"order_ref\": \"Order ID\", \"order_date\": \"Order Creation Date\", \"sku\": \"SKU Reference No.\", \"product_name\": \"Product Name\", \"variation\": \"Variation Name\", \"qty\": \"Quantity\", \"unit_price\": \"Deal Price\", \"gross_amount\": \"Product Subtotal\", \"discount\": \"Total Discount(PHP)\", \"shipping_fee\": \"Buyer Paid Shipping Fee\", \"net_amount\": \"Grand Total\", \"order_status\": \"Order Status\", \"buyer_name\": \"Username (Buyer)\", \"region\": \"Province\"}",
+    "notes": "Shopee Seller Centre > Orders > Export. One row per product line; orders with several products repeat the Order ID.",
+    "created_at": "2026-10-14T13:50:28.846330+00:00",
+    "updated_at": "2026-10-14T13:50:28.846364+00:00",
+    "id": 1
+  },
+  {
+    "platform": "Lazada",
+    "name": "Lazada — Orders export",
+    "sheet_index": 0,
+    "header_row": 0,
+    "date_format": "auto",
+    "active": true,
+    "mapping_json": "{\"order_ref\": \"orderNumber\", \"order_date\": \"createTime\", \"sku\": \"sellerSku\", \"product_name\": \"itemName\", \"variation\": \"variation\", \"qty\": \"\", \"unit_price\": \"unitPrice\", \"gross_amount\": \"unitPrice\", \"discount\": \"sellerDiscountTotal\", \"shipping_fee\": \"shippingFee\", \"net_amount\": \"paidPrice\", \"order_status\": \"status\", \"buyer_name\": \"customerName\", \"region\": \"shippingCity\"}",
+    "notes": "Lazada Seller Center > Orders > Export. One row per order item; paidPrice already includes the shipping fee.",
+    "created_at": "2026-10-14T13:50:28.852040+00:00",
+    "updated_at": "2026-10-14T13:50:28.852078+00:00",
+    "id": 2
+  },
+  {
+    "platform": "TikTok",
+    "name": "TikTok Shop — Order details (settlement)",
+    "sheet_index": 0,
+    "header_row": 0,
+    "date_format": "auto",
+    "active": true,
+    "mapping_json": "{\"order_ref\": \"Order/Adjustment ID\", \"order_date\": \"Order created time\", \"sku\": \"\", \"product_name\": \"\", \"variation\": \"\", \"qty\": \"\", \"unit_price\": \"\", \"gross_amount\": \"Total Revenue\", \"discount\": \"Seller discounts\", \"shipping_fee\": \"Customer shipping fee\", \"net_amount\": \"Total settlement amount\", \"order_status\": \"Transaction type\", \"buyer_name\": \"\", \"region\": \"\"}",
+    "notes": "TikTok Shop > Finance > Settlements > Order details. This export is settlement-level: it carries revenue per order but no SKU or quantity, so quantity defaults to 1 per order.",
+    "created_at": "2026-10-14T13:50:28.875379+00:00",
+    "updated_at": "2026-10-14T13:50:28.875401+00:00",
+    "id": 3
+  },
+  {
+    "platform": "Other",
+    "name": "Generic — blank template",
+    "sheet_index": 0,
+    "header_row": 0,
+    "date_format": "auto",
+    "active": true,
+    "mapping_json": "{\"order_ref\": \"\", \"order_date\": \"\", \"sku\": \"\", \"product_name\": \"\", \"variation\": \"\", \"qty\": \"\", \"unit_price\": \"\", \"gross_amount\": \"\", \"discount\": \"\", \"shipping_fee\": \"\", \"net_amount\": \"\", \"order_status\": \"\", \"buyer_name\": \"\", \"region\": \"\"}",
+    "notes": "Start here for a new marketplace: upload the file, then pick which of its columns feeds each field below.",
+    "created_at": "2026-10-14T13:50:28.898564+00:00",
+    "updated_at": "2026-10-14T13:50:28.898592+00:00",
+    "id": 4
+  }
+]

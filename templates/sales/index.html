@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Stock Release{% endblock %}
+{% block content %}
+{% set show_requester = role != 'packing_head' %}
+{% set show_actions = is_manager or role == 'production_head' %}
+
+<div class="page-head">
+  <div>
+    <h1 class="page-title">
+      {% if role == 'packing_head' %}My stock release requests
+      {% elif role == 'production_head' %}Approved releases to fulfil
+      {% else %}Stock release{% endif %}
+    </h1>
+    <p class="page-sub">
+      Finished goods taken out of the store outside a sales order — requested
+      by the Packing Team Head, approved by an Admin, fulfilled by the
+      Production Team Head.
+    </p>
+  </div>
+  {% if role == 'packing_head' or is_manager %}
+  <div class="page-head-actions">
+    <a class="btn btn-primary btn-sm" href="{{ url_for('sales.new') }}">New request</a>
+  </div>
+  {% endif %}
+</div>
+
+<div class="card">
+  {% if not requests %}
+    <div class="empty">
+      <div class="empty-icon">{{ icon('release', 30) }}</div>
+      <div class="empty-title">Nothing here yet</div>
+      <p class="muted">
+        {% if role == 'production_head' %}No approved stock releases are waiting to be fulfilled.
+        {% elif role == 'packing_head' %}You have not submitted any stock release requests yet.
+        {% else %}No stock release requests yet.{% endif %}
+      </p>
+    </div>
+  {% else %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="num">#</th>
+          <th class="wrap-sm">Product</th>
+          <th class="num">Qty</th>
+          {% if show_requester %}<th>Requested by</th>{% endif %}
+          <th>Status</th>
+          <th class="wrap-sm">Remarks</th>
+          <th>Created</th>
+          {% if show_actions %}<th class="actions"></th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in requests %}
+        <tr>
+          <td class="num muted">{{ r.id }}</td>
+          <td class="wrap-sm">{{ r.product_name }}</td>
+          <td class="num">{{ r.qty }} {{ r.product_unit }}</td>
+          {% if show_requester %}<td>{{ r.requestor_name }}</td>{% endif %}
+          <td><span class="badge {{ r.badge }}">{{ r.status }}</span></td>
+          <td class="wrap-sm muted">{{ r.remarks or '—' }}</td>
+          <td class="muted">{{ r.created_at }}</td>
+          {% if show_actions %}
+          <td class="actions">
+            {% if is_manager and r.status == 'Pending Approval' %}
+              <button class="btn btn-sm btn-primary" type="button" data-modal-open="decide-{{ r.id }}">Review</button>
+            {% elif r.can_fulfil %}
+              <form method="post" action="{{ url_for('sales.fulfil', id=r.id) }}"
+                    data-confirm="Fulfil request #{{ r.id }} — take {{ r.qty }} {{ r.product_unit }} of {{ r.product_name }} out of stock?">
+                <button class="btn btn-sm btn-primary" type="submit"
+                        title="In stock: {{ r.product_stock }} {{ r.product_unit }}">Fulfil</button>
+              </form>
+            {% else %}
+              <span class="muted">—</span>
+            {% endif %}
+          </td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+
+{% if is_manager %}
+  {% for r in requests %}
+    {% if r.status == 'Pending Approval' %}
+    <div class="modal-backdrop" id="decide-{{ r.id }}">
+      <div class="modal">
+        <button class="modal-close" type="button" data-modal-close aria-label="Close">&times;</button>
+        <div class="card-title">Review request #{{ r.id }}</div>
+        <p class="muted mb">
+          {{ r.requestor_name }} asked to release <strong>{{ r.qty }} {{ r.product_unit }}</strong>
+          of <strong>{{ r.product_name }}</strong>.
+          <br>Finished-goods stock now: {{ r.product_stock }} {{ r.product_unit }}.
+        </p>
+        <form class="form" method="post" action="{{ url_for('sales.decide', id=r.id) }}">
+          <div class="form-row">
+            <label class="form-label" for="remarks-{{ r.id }}">Remarks (optional)</label>
+            <textarea id="remarks-{{ r.id }}" name="remarks" rows="2"
+                      placeholder="e.g. Approved — release from finished goods.">{{ r.remarks or '' }}</textarea>
+          </div>
+          <div class="flex gap-sm wrap">
+            <button class="btn btn-primary" type="submit" name="decision" value="approve">Approve</button>
+            <button class="btn btn-danger" type="submit" name="decision" value="reject">Reject</button>
+            <button class="btn btn-ghost" type="button" data-modal-close>Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% endblock %}

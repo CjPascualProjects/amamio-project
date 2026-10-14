@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Sales Orders{% endblock %}
+{% block content %}
+<div class="flex gap mb" style="justify-content: space-between; flex-wrap: wrap;">
+  <h1 class="page-title" style="margin: 0;">Sales Orders</h1>
+  <a class="btn btn-primary" href="{{ url_for('orders.new') }}">+ New sales order</a>
+</div>
+
+<div class="card">
+  <div class="card-title">Customer orders</div>
+  {% if orders %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th><th>Date</th><th>Customer</th>
+          <th class="text-right">Items</th><th class="text-right">Total</th>
+          <th>Status</th><th>Payment</th><th class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+        <tr>
+          <td>{{ o.id }}</td>
+          <td class="muted">{{ o.order_date }}</td>
+          <td>{{ o.customer_name }}</td>
+          <td class="text-right">{{ o.item_count }}</td>
+          <td class="text-right">₱{{ '%.2f'|format(o.total) }}</td>
+          <td><span class="badge {{ o.status_badge }}">{{ o.status }}</span></td>
+          <td><span class="badge {{ o.payment_badge }}">{{ o.payment_status }}</span></td>
+          <td class="text-right"><a class="btn btn-ghost btn-sm" href="{{ url_for('orders.detail', id=o.id) }}">Open</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">No sales orders yet. Create one to invoice a customer, take payment and schedule delivery.</p>
+  {% endif %}
+</div>
+{% endblock %}

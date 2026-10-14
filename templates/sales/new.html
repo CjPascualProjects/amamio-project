@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}New Sales Request{% endblock %}
+{% block content %}
+<div class="row mb" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem">
+  <h1 class="page-title">Request a Product</h1>
+  <a class="btn btn-ghost" href="{{ url_for('sales.index') }}">Back to sales</a>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <div class="card-title">New request</div>
+    {% if not products %}
+      <p class="muted">No finished products are defined yet. Ask an admin to add products to the catalog.</p>
+    {% else %}
+    <form class="form" method="post" action="{{ url_for('sales.new') }}">
+      <div class="form-row">
+        <label class="form-label" for="product_id">Product</label>
+        <select id="product_id" name="product_id" required>
+          <option value="" disabled selected>Choose a product…</option>
+          {% for p in products %}
+          <option value="{{ p.id }}" data-stock="{{ p.stock_qty }}" data-unit="{{ p.unit }}">
+            {{ p.name }}{% if p.variant %} ({{ p.variant }}){% endif %} — {{ p.stock_qty }} {{ p.unit }} in stock
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="qty">Quantity</label>
+        <input id="qty" name="qty" type="number" step="any" min="0.0001" required>
+        <span class="muted" id="stockHint"></span>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="remarks">Remarks (optional)</label>
+        <textarea id="remarks" name="remarks" rows="2" placeholder="Customer / order reference, notes…"></textarea>
+      </div>
+      <button class="btn btn-primary" type="submit">Submit request</button>
+    </form>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <div class="card-title">How it works</div>
+    <ol class="muted" style="padding-left:1.2rem;line-height:1.7">
+      <li>Pick a finished product and quantity.</li>
+      <li>Your request goes to the Admin as <strong>Pending Approval</strong>.</li>
+      <li>Once approved, the Production team fulfils it from finished-goods stock.</li>
+      <li>You are notified when it is approved and again when it is fulfilled.</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var sel = document.getElementById("product_id");
+    var hint = document.getElementById("stockHint");
+    if (!sel || !hint) return;
+    function update() {
+      var opt = sel.options[sel.selectedIndex];
+      if (opt && opt.value) {
+        hint.textContent = "In stock: " + (opt.getAttribute("data-stock") || "0") +
+          " " + (opt.getAttribute("data-unit") || "");
+      } else {
+        hint.textContent = "";
+      }
+    }
+    sel.addEventListener("change", update);
+    update();
+  })();
+</script>
+{% endblock %}

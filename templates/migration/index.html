@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}MySQL export{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">MySQL export</h1>
+    <p class="page-sub">
+      The JSON store is already shaped as a relational database. Download the
+      schema and the data, and the system moves onto MySQL without a rewrite.
+    </p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('migration.download', kind='schema') }}">Download schema.sql</a>
+    <a class="btn btn-primary btn-sm" href="{{ url_for('migration.download', kind='data') }}">Download data.sql</a>
+  </div>
+</div>
+
+<div class="card mb">
+  <div class="card-title">How to migrate</div>
+  <ol class="muted" style="line-height:1.9;padding-left:20px">
+    <li>Download <span class="code">schema.sql</span> and <span class="code">data.sql</span> above.</li>
+    <li>On the server, create the database:
+      <br><span class="code">mysql -u root -p -e "CREATE DATABASE {{ database }} CHARACTER SET utf8mb4"</span></li>
+    <li>Load the structure:
+      <span class="code">mysql -u root -p {{ database }} &lt; schema.sql</span></li>
+    <li>Load the data:
+      <span class="code">mysql -u root -p {{ database }} &lt; data.sql</span></li>
+  </ol>
+  <p class="form-hint">
+    The same two files can be produced from the command line with
+    <span class="code">python mysql_export.py</span>, which writes them into
+    <span class="code">export/</span>.
+  </p>
+</div>
+
+<div class="card">
+  <div class="card-title">
+    Tables
+    <span class="muted">— {{ tables|length }} table(s), {{ total_rows }} row(s)</span>
+  </div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr><th>Table</th><th class="num">Columns</th><th class="num">Rows</th>
+            <th>Source</th><th class="wrap">Links to</th></tr>
+      </thead>
+      <tbody>
+        {% for t in tables %}
+        <tr>
+          <td><span class="code">{{ t.name }}</span></td>
+          <td class="num">{{ t.columns }}</td>
+          <td class="num">{{ t.rows }}</td>
+          <td>
+            {% if t.embedded %}
+              <span class="badge badge-muted">split from a parent record</span>
+            {% else %}
+              <span class="badge badge-gold">{{ t.name }}.json</span>
+            {% endif %}
+          </td>
+          <td class="wrap muted small">{{ t.links or '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="form-hint">
+    Tables marked <em>split from a parent record</em> are lists embedded in a
+    JSON record — an order's items, a run's packed products — which become
+    proper child tables with a foreign key on export.
+  </p>
+</div>
+{% endblock %}

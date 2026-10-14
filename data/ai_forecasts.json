@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "product_id": 5,
+    "product_name": "Honey Infused Ginger 200 mL",
+    "generated_at": "2026-10-14T13:50:28.754445+00:00",
+    "horizon_weeks": 4,
+    "model": "linear-trend",
+    "forecast": [
+      39.836364,
+      41.4,
+      42.963636,
+      44.527273
+    ],
+    "future_labels": [
+      "2026-W43",
+      "2026-W44",
+      "2026-W45",
+      "2026-W46"
+    ]
+  },
+  {
+    "id": 2,
+    "product_id": 4,
+    "product_name": "Honey Infused Turmeric Ginger 200 mL",
+    "generated_at": "2026-10-14T13:50:28.754472+00:00",
+    "horizon_weeks": 4,
+    "model": "linear-trend",
+    "forecast": [
+      35.878788,
+      37.655012,
+      39.431235,
+      41.207459
+    ],
+    "future_labels": [
+      "2026-W43",
+      "2026-W44",
+      "2026-W45",
+      "2026-W46"
+    ]
+  },
+  {
+    "id": 3,
+    "product_id": 3,
+    "product_name": "Raw Forest Honey 1 L",
+    "generated_at": "2026-10-14T13:50:28.754477+00:00",
+    "horizon_weeks": 4,
+    "model": "linear-trend",
+    "forecast": [
+      30.166667,
+      31.74359,
+      33.320513,
+      34.897436
+    ],
+    "future_labels": [
+      "2026-W43",
+      "2026-W44",
+      "2026-W45",
+      "2026-W46"
+    ]
+  },
+  {
+    "id": 4,
+    "product_id": 2,
+    "product_name": "Raw Forest Honey 250 mL",
+    "generated_at": "2026-10-14T13:50:28.754482+00:00",
+    "horizon_weeks": 4,
+    "model": "linear-trend",
+    "forecast": [
+      27.272727,
+      28.699301,
+      30.125874,
+      31.552448
+    ],
+    "future_labels": [
+      "2026-W43",
+      "2026-W44",
+      "2026-W45",
+      "2026-W46"
+    ]
+  },
+  {
+    "id": 5,
+    "product_id": 1,
+    "product_name": "Honey Lemon Ginger Concentrate 300 mL",
+    "generated_at": "2026-10-14T13:50:28.754486+00:00",
+    "horizon_weeks": 4,
+    "model": "linear-trend",
+    "forecast": [
+      19.318182,
+      20.251748,
+      21.185315,
+      22.118881
+    ],
+    "future_labels": [
+      "2026-W43",
+      "2026-W44",
+      "2026-W45",
+      "2026-W46"
+    ]
+  }
+]

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Honey container labels{% endblock %}
+{% block content %}
+<div class="page-head no-print">
+  <div>
+    <h1 class="page-title">Container labels</h1>
+    <p class="page-sub">Stick one on every container before it leaves the intake bay.</p>
+  </div>
+  <div class="page-head-actions">
+    <button class="btn btn-primary btn-sm" type="button" onclick="window.print()">Print</button>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('honey.index') }}">Back</a>
+  </div>
+</div>
+
+{% if containers %}
+<div class="label-sheet">
+  {% for c in containers %}
+  <div class="qr-label">
+    <img src="{{ url_for('qr.image', token=c.container_code) }}" alt="{{ c.container_code }}">
+    <div class="qr-code">{{ c.container_code }}</div>
+    <div class="qr-name">{{ '%g'|format(c.net_weight_kg|float) }} kg net</div>
+    <div class="qr-meta">
+      {{ c.batch_ref }} · {{ c.received_date }}<br>
+      {{ c.status }}{% if c.disposition %} · {{ c.disposition }}{% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card"><div class="empty">
+  <div class="empty-title">No containers to label</div>
+  <p class="muted">Log some containers first.</p>
+</div></div>
+{% endif %}
+{% endblock %}

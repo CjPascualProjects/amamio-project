@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Request #{{ req.id }}{% endblock %}
+{% block content %}
+<div class="flex gap mb" style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;">
+  <div>
+    <h1 class="page-title">Request #{{ req.id }}</h1>
+    <p class="muted">
+      {{ 'Production material request' if req.type == 'production' else 'New material / equipment request' }}
+      · <span class="badge {{ status_badge.get(req.status, 'badge-muted') }}">{{ req.status }}</span>
+    </p>
+  </div>
+  <div class="flex gap">
+    {% set ordered_items = (req['items'] or []) | selectattr('qr_token') | list %}
+    {% if ordered_items %}
+      <a class="btn btn-primary" href="{{ url_for('qr.print_codes', request_id=req.id) }}">Print QR codes</a>
+    {% endif %}
+    <a class="btn btn-ghost" href="{{ url_for('requests.index') }}">Back to requests</a>
+  </div>
+</div>
+
+<div class="card mb">
+  <div class="grid grid-3">
+    <div><div class="form-label">Requestor</div>{{ requestor.name if requestor else '—' }}</div>
+    <div><div class="form-label">Created</div>{{ (req.created_at or '')[:16].replace('T', ' ') or '—' }}</div>
+    <div><div class="form-label">Type</div>{{ 'Production (BOM)' if req.type == 'production' else 'Material / Equipment' }}</div>
+    {% if req.type == 'production' %}
+    <div><div class="form-label">Product</div>{{ req.product_name or '—' }}</div>
+    <div><div class="form-label">Quantity</div>{{ req.qty or '—' }}</div>
+    {% endif %}
+    <div><div class="form-label">Urgency</div>
+      <span class="badge {{ urgency_badge.get(req.urgency or 'Normal', 'badge-muted') }}">{{ req.urgency or 'Normal' }}</span>
+    </div>
+    <div><div class="form-label">Needed by</div>{{ req.needed_by or '—' }}</div>
+  </div>
+  <hr class="divider">
+  <div class="form-label">Reason for this request</div>
+  <p>{{ req.reason or 'No reason was recorded.' }}</p>
+  {% if req.remarks %}
+  <div class="mt"><div class="form-label">Requestor remarks</div><p class="muted">{{ req.remarks }}</p></div>
+  {% endif %}
+</div>
+
+<div class="card">
+  <div class="card-title">Items</div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Item</th>
+          {% if req.type == 'material' %}<th>Category</th>{% endif %}
+          <th class="text-right">Requested</th>
+          <th class="text-right">Approved</th>
+          <th>Status</th>
+          <th>Remarks / note</th>
+          <th>QR</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for it in (req['items'] or []) %}
+        <tr>
+          <td>{{ it.item_id }}</td>
+          <td>
+            {% if req.type == 'production' %}
+              {% set mat = materials_by_id.get(it.material_id) or {} %}
+              {{ mat.get('name', 'Material #' ~ it.material_id) }}
+              {% if mat.get('unit') %}<span class="muted">({{ mat.get('unit') }})</span>{% endif %}
+            {% else %}
+              {{ it.name }}
+              {% if it.material_id %}<span class="muted">· linked to inventory</span>{% endif %}
+              {% if it.description %}<div class="muted">{{ it.description }}</div>{% endif %}
+            {% endif %}
+          </td>
+          {% if req.type == 'material' %}<td>{{ it.category or '—' }}</td>{% endif %}
+          <td class="text-right">{{ it.requested_qty }}</td>
+          <td class="text-right">{{ it.approved_qty if it.approved_qty is not none else '—' }}</td>
+          <td><span class="badge {{ status_badge.get(it.status, 'badge-muted') }}">{{ it.status }}</span></td>
+          <td>{{ it.note or '' }}</td>
+          <td>
+            {% if it.qr_token %}
+              <a href="{{ url_for('qr.image', token=it.qr_token) }}" target="_blank" rel="noopener" title="{{ it.qr_token }}">View QR</a>
+            {% else %}
+              <span class="muted">—</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="muted mt">QR codes become available once the request is approved and its items are marked <strong>Ordered</strong>.</p>
+</div>
+{% endblock %}

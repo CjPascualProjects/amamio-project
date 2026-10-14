@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.id }}{% endblock %}
+{% block content %}
+<div class="flex gap mb" style="justify-content: space-between; align-items:flex-start; flex-wrap: wrap;">
+  <div>
+    <h1 class="page-title" style="margin:0;">Sales Order #{{ order.id }}</h1>
+    <p class="muted" style="margin:4px 0 0;">
+      {{ order.customer_name }} · {{ (order.order_date or '')[:10] }} ·
+      <span class="badge {{ status_badge.get(order.status, 'badge-muted') }}">{{ order.status }}</span>
+      <span class="badge {{ payment_badge.get(order.payment_status, 'badge-muted') }}">{{ order.payment_status }}</span>
+    </p>
+  </div>
+  <a class="btn btn-ghost" href="{{ url_for('orders.index') }}">Back to orders</a>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <div class="card-title">Invoice</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Product</th><th class="text-right">Unit price</th><th class="text-right">Qty</th><th class="text-right">Total</th></tr></thead>
+        <tbody>
+          {% for it in order['items'] %}
+          <tr>
+            <td>{{ it.name }}</td>
+            <td class="text-right">₱{{ '%.2f'|format(it.unit_price|float) }}</td>
+            <td class="text-right">{{ '%g'|format(it.qty|float) }}</td>
+            <td class="text-right">₱{{ '%.2f'|format(it.line_total|float) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr><td colspan="3" class="text-right muted">Subtotal</td><td class="text-right">₱{{ '%.2f'|format(order.subtotal|float) }}</td></tr>
+          <tr><td colspan="3" class="text-right muted">Discount</td><td class="text-right">− ₱{{ '%.2f'|format(order.discount|float) }}</td></tr>
+          <tr><td colspan="3" class="text-right"><strong>Total</strong></td><td class="text-right"><strong>₱{{ '%.2f'|format(order.total|float) }}</strong></td></tr>
+          <tr><td colspan="3" class="text-right muted">Paid</td><td class="text-right">₱{{ '%.2f'|format(paid) }}</td></tr>
+          <tr><td colspan="3" class="text-right"><strong>Balance</strong></td><td class="text-right"><strong>₱{{ '%.2f'|format(balance) }}</strong></td></tr>
+        </tfoot>
+      </table>
+    </div>
+    {% if order.remarks %}<p class="muted mt">Remarks: {{ order.remarks }}</p>{% endif %}
+  </div>
+
+  <div>
+    {% if order.status == 'Pending' %}
+    <div class="card mb">
+      <div class="card-title">Confirm order</div>
+      <p class="muted">Confirming releases finished goods from stock.</p>
+      <form method="post" action="{{ url_for('orders.confirm', id=order.id) }}"
+            data-confirm="Confirm order #{{ order.id }} and deduct stock?">
+        <button class="btn btn-primary" type="submit">Confirm &amp; release stock</button>
+      </form>
+    </div>
+    {% endif %}
+
+    <div class="card mb">
+      <div class="card-title">Record payment</div>
+      <form class="form" method="post" action="{{ url_for('orders.pay', id=order.id) }}">
+        <div class="grid grid-2">
+          <div class="form-row">
+            <label class="form-label" for="amount">Amount (₱)</label>
+            <input id="amount" name="amount" type="number" step="any" min="0"
+                   value="{{ '%.2f'|format(balance) }}" required>
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="method">Method</label>
+            <select id="method" name="method">
+              <option>Cash</option><option>Bank transfer</option>
+              <option>GCash</option><option>Cheque</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="reference">Reference</label>
+          <input id="reference" name="reference" type="text" placeholder="OR / TRX no.">
+        </div>
+        <button class="btn btn-primary" type="submit">Record payment</button>
+      </form>
+      {% if payments %}
+      <div class="table-wrap mt">
+        <table class="table">
+          <thead><tr><th>When</th><th>Method</th><th>Ref</th><th class="text-right">Amount</th></tr></thead>
+          <tbody>
+            {% for p in payments %}
+            <tr>
+              <td class="muted">{{ (p.paid_at or '')[:16].replace('T',' ') }}</td>
+              <td>{{ p.method }}</td>
+              <td class="muted">{{ p.reference or '—' }}</td>
+              <td class="text-right">₱{{ '%.2f'|format(p.amount|float) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="card mb">
+      <div class="card-title">Delivery</div>
+      <form class="form" method="post" action="{{ url_for('orders.deliver', id=order.id) }}">
+        <div class="grid grid-2">
+          <div class="form-row">
+            <label class="form-label" for="scheduled_date">Scheduled date</label>
+            <input id="scheduled_date" name="scheduled_date" type="date">
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="driver">Driver / courier</label>
+            <input id="driver" name="driver" type="text">
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="address">Address</label>
+          <input id="address" name="address" type="text">
+        </div>
+        <button class="btn btn-primary" type="submit">Schedule delivery</button>
+      </form>
+      {% if deliveries %}
+      <div class="table-wrap mt">
+        <table class="table">
+          <thead><tr><th>#</th><th>Status</th><th>Driver</th><th>Scheduled</th></tr></thead>
+          <tbody>
+            {% for d in deliveries %}
+            <tr>
+              <td>{{ d.id }}</td>
+              <td><span class="badge {{ delivery_badge.get(d.status, 'badge-muted') }}">{{ d.status }}</span></td>
+              <td>{{ d.driver or '—' }}</td>
+              <td class="muted">{{ d.scheduled_date or '—' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <div class="card-title">Record a return</div>
+      <form class="form" method="post" action="{{ url_for('orders.return_line', id=order.id) }}">
+        <div class="form-row">
+          <label class="form-label" for="ret_product">Product</label>
+          <select id="ret_product" name="product_id" required>
+            <option value="" disabled selected>Choose…</option>
+            {% for it in order['items'] %}
+            <option value="{{ it.product_id }}">{{ it.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="grid grid-2">
+          <div class="form-row">
+            <label class="form-label" for="ret_qty">Quantity</label>
+            <input id="ret_qty" name="qty" type="number" step="any" min="0" required>
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="ret_reason">Reason</label>
+            <input id="ret_reason" name="reason" type="text" placeholder="Damaged, wrong item…">
+          </div>
+        </div>
+        <button class="btn btn-danger" type="submit">Record return</button>
+      </form>
+      {% if returns %}
+      <div class="table-wrap mt">
+        <table class="table">
+          <thead><tr><th>Product</th><th class="text-right">Qty</th><th>Reason</th></tr></thead>
+          <tbody>
+            {% for r in returns %}
+            <tr>
+              <td>{{ r.product_name }}</td>
+              <td class="text-right">{{ '%g'|format(r.qty|float) }}</td>
+              <td class="muted">{{ r.reason or '—' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

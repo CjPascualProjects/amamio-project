@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Deliveries{% endblock %}
+{% block content %}
+<h1 class="page-title mb">Deliveries &amp; Distribution</h1>
+
+<div class="card">
+  <div class="card-title">Delivery schedule</div>
+  {% if deliveries %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th><th>Order</th><th>Customer</th><th>Driver / courier</th>
+          <th>Scheduled</th><th>Status</th><th>Customer confirmed</th>
+          <th class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in deliveries %}
+        <tr>
+          <td>{{ d.id }}</td>
+          <td>{% if can('orders') %}<a href="{{ url_for('orders.detail', id=d.sales_order_id) }}">#{{ d.sales_order_id }}</a>{% else %}#{{ d.sales_order_id }}{% endif %}</td>
+          <td>{{ d.customer_name }}</td>
+          <td>{{ d.driver or '—' }}</td>
+          <td class="muted">{{ d.scheduled_date or '—' }}</td>
+          <td><span class="badge {{ d.badge }}">{{ d.status }}</span></td>
+          <td>{% if d.confirmed_by_customer %}<span class="badge badge-ok">Yes</span>{% else %}<span class="badge badge-muted">No</span>{% endif %}</td>
+          <td class="text-right">
+            <button class="btn btn-ghost btn-sm" type="button" data-modal-open="delivery-{{ d.id }}">Update</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">No deliveries yet. Schedule one from a confirmed sales order.</p>
+  {% endif %}
+</div>
+
+{% for d in deliveries %}
+<div class="modal-backdrop" id="delivery-{{ d.id }}">
+  <div class="modal">
+    <button class="modal-close" type="button" data-modal-close aria-label="Close">&times;</button>
+    <div class="card-title">Update delivery #{{ d.id }}</div>
+    <p class="muted mb">Order #{{ d.sales_order_id }} · {{ d.customer_name }}</p>
+    <form class="form" method="post" action="{{ url_for('deliveries.update', id=d.id) }}">
+      <div class="form-row">
+        <label class="form-label" for="status-{{ d.id }}">Status</label>
+        <select id="status-{{ d.id }}" name="status">
+          {% for s in statuses %}
+          <option value="{{ s }}" {{ 'selected' if s == d.status }}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="driver-{{ d.id }}">Driver / courier</label>
+        <input id="driver-{{ d.id }}" name="driver" type="text" value="{{ d.driver or '' }}">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="notes-{{ d.id }}">Notes</label>
+        <textarea id="notes-{{ d.id }}" name="notes">{{ d.notes or '' }}</textarea>
+      </div>
+      <div class="form-row">
+        <label class="form-label"><input type="checkbox" name="confirmed" value="1"
+          {{ 'checked' if d.confirmed_by_customer }} style="width:auto"> Customer confirmed receipt</label>
+      </div>
+      <div class="flex gap" style="justify-content: flex-end;">
+        <button class="btn btn-ghost" type="button" data-modal-close>Cancel</button>
+        <button class="btn btn-primary" type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

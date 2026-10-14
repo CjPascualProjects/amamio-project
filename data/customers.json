@@ -1,0 +1,46 @@
+[
+  {
+    "name": "Metro Grocers",
+    "contact_person": "Liza Tan",
+    "phone": "0917-200-3001",
+    "email": "purchasing@metrogrocers.ph",
+    "address": "SM North EDSA, Quezon City",
+    "channel": "VIP",
+    "notes": "",
+    "created_at": "2026-10-14T13:50:22.795316+00:00",
+    "id": 1
+  },
+  {
+    "name": "Health Hub Store",
+    "contact_person": "Marco Dela Cruz",
+    "phone": "0917-200-3002",
+    "email": "orders@healthhub.ph",
+    "address": "BGC, Taguig",
+    "channel": "VIP",
+    "notes": "",
+    "created_at": "2026-10-14T13:50:22.800634+00:00",
+    "id": 2
+  },
+  {
+    "name": "Sunrise Cafe",
+    "contact_person": "Nina Santos",
+    "phone": "0917-200-3003",
+    "email": "nina@sunrisecafe.ph",
+    "address": "Session Rd, Baguio",
+    "channel": "Walk-in",
+    "notes": "",
+    "created_at": "2026-10-14T13:50:22.824588+00:00",
+    "id": 3
+  },
+  {
+    "name": "Wellness Mart",
+    "contact_person": "Oliver Yu",
+    "phone": "0917-200-3004",
+    "email": "buyer@wellnessmart.ph",
+    "address": "Ayala Center, Cebu",
+    "channel": "VIP",
+    "notes": "",
+    "created_at": "2026-10-14T13:50:22.847116+00:00",
+    "id": 4
+  }
+]

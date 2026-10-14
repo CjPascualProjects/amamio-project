@@ -1,0 +1,163 @@
+[
+  {
+    "product_id": 1,
+    "material_id": 1,
+    "qty_per_unit": 0.18,
+    "notes": "",
+    "id": 1
+  },
+  {
+    "product_id": 1,
+    "material_id": 4,
+    "qty_per_unit": 3,
+    "notes": "By piece — counted, not weighed",
+    "id": 2
+  },
+  {
+    "product_id": 1,
+    "material_id": 2,
+    "qty_per_unit": 0.08,
+    "notes": "By weight",
+    "id": 3
+  },
+  {
+    "product_id": 1,
+    "material_id": 6,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 4
+  },
+  {
+    "product_id": 1,
+    "material_id": 10,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 5
+  },
+  {
+    "product_id": 1,
+    "material_id": 11,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 6
+  },
+  {
+    "product_id": 2,
+    "material_id": 1,
+    "qty_per_unit": 0.32,
+    "notes": "",
+    "id": 7
+  },
+  {
+    "product_id": 2,
+    "material_id": 8,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 8
+  },
+  {
+    "product_id": 2,
+    "material_id": 10,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 9
+  },
+  {
+    "product_id": 2,
+    "material_id": 11,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 10
+  },
+  {
+    "product_id": 3,
+    "material_id": 1,
+    "qty_per_unit": 1.4,
+    "notes": "",
+    "id": 11
+  },
+  {
+    "product_id": 3,
+    "material_id": 9,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 12
+  },
+  {
+    "product_id": 3,
+    "material_id": 10,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 13
+  },
+  {
+    "product_id": 3,
+    "material_id": 11,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 14
+  },
+  {
+    "product_id": 4,
+    "material_id": 1,
+    "qty_per_unit": 0.15,
+    "notes": "",
+    "id": 15
+  },
+  {
+    "product_id": 4,
+    "material_id": 3,
+    "qty_per_unit": 0.05,
+    "notes": "",
+    "id": 16
+  },
+  {
+    "product_id": 4,
+    "material_id": 2,
+    "qty_per_unit": 0.05,
+    "notes": "",
+    "id": 17
+  },
+  {
+    "product_id": 4,
+    "material_id": 8,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 18
+  },
+  {
+    "product_id": 4,
+    "material_id": 10,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 19
+  },
+  {
+    "product_id": 5,
+    "material_id": 1,
+    "qty_per_unit": 0.16,
+    "notes": "",
+    "id": 20
+  },
+  {
+    "product_id": 5,
+    "material_id": 2,
+    "qty_per_unit": 0.09,
+    "notes": "",
+    "id": 21
+  },
+  {
+    "product_id": 5,
+    "material_id": 8,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 22
+  },
+  {
+    "product_id": 5,
+    "material_id": 10,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 23
+  }
+]

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Suppliers{% endblock %}
+{% block content %}
+<div class="flex gap mb" style="justify-content: space-between; flex-wrap: wrap;">
+  <h1 class="page-title" style="margin: 0;">Suppliers</h1>
+  <button class="btn btn-primary" type="button"
+          data-modal-open="supplierModal" data-mode="create">+ Add supplier</button>
+</div>
+
+<div class="card">
+  <div class="card-title">Supplier directory</div>
+  {% if suppliers %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th><th>Name</th><th>Contact</th><th>Phone</th>
+          <th>Materials supplied</th><th class="text-right">Lead time</th>
+          <th class="text-right">Deliveries</th><th class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in suppliers %}
+        <tr>
+          <td>{{ s.id }}</td>
+          <td>{{ s.name }}</td>
+          <td>{{ s.contact_person or '—' }}</td>
+          <td class="muted">{{ s.phone or '—' }}</td>
+          <td>{{ s.materials_supplied or '—' }}</td>
+          <td class="text-right">{{ s.lead_time_days or 0 }} d</td>
+          <td class="text-right">{{ received_counts.get(s.id, 0) }}</td>
+          <td class="text-right">
+            <button class="btn btn-ghost btn-sm" type="button"
+                    data-modal-open="supplierModal" data-mode="edit"
+                    data-id="{{ s.id }}" data-name="{{ s.name }}"
+                    data-contact="{{ s.contact_person or '' }}"
+                    data-phone="{{ s.phone or '' }}" data-email="{{ s.email or '' }}"
+                    data-address="{{ s.address or '' }}"
+                    data-materials="{{ s.materials_supplied or '' }}"
+                    data-lead="{{ s.lead_time_days or 0 }}"
+                    data-notes="{{ s.notes or '' }}">Edit</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">No suppliers yet. Add the businesses you buy raw materials from.</p>
+  {% endif %}
+</div>
+
+<div class="modal-backdrop" id="supplierModal">
+  <div class="modal">
+    <button class="modal-close" type="button" data-modal-close aria-label="Close">&times;</button>
+    <div class="card-title" id="supplierModalTitle">Add supplier</div>
+    <form class="form" method="post" action="{{ url_for('suppliers.index') }}">
+      <input type="hidden" name="id" id="s_id" value="">
+      <div class="form-row">
+        <label class="form-label" for="s_name">Name</label>
+        <input id="s_name" name="name" type="text" required>
+      </div>
+      <div class="grid grid-2">
+        <div class="form-row">
+          <label class="form-label" for="s_contact">Contact person</label>
+          <input id="s_contact" name="contact_person" type="text">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="s_phone">Phone</label>
+          <input id="s_phone" name="phone" type="text">
+        </div>
+      </div>
+      <div class="grid grid-2">
+        <div class="form-row">
+          <label class="form-label" for="s_email">Email</label>
+          <input id="s_email" name="email" type="email">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="s_lead">Lead time (days)</label>
+          <input id="s_lead" name="lead_time_days" type="number" min="0" value="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="s_address">Address</label>
+        <input id="s_address" name="address" type="text">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="s_materials">Materials supplied</label>
+        <input id="s_materials" name="materials_supplied" type="text"
+               placeholder="e.g. Bottles, labels">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="s_notes">Notes</label>
+        <textarea id="s_notes" name="notes"></textarea>
+      </div>
+      <div class="flex gap" style="justify-content: flex-end;">
+        <button class="btn btn-ghost" type="button" data-modal-close>Cancel</button>
+        <button class="btn btn-primary" type="submit">Save supplier</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function () {
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest('[data-modal-open="supplierModal"]');
+    if (!btn) return;
+    var edit = btn.getAttribute("data-mode") === "edit";
+    document.getElementById("supplierModalTitle").textContent = edit ? "Edit supplier" : "Add supplier";
+    var g = function (k) { return btn.getAttribute("data-" + k) || ""; };
+    document.getElementById("s_id").value = g("id");
+    document.getElementById("s_name").value = g("name");
+    document.getElementById("s_contact").value = g("contact");
+    document.getElementById("s_phone").value = g("phone");
+    document.getElementById("s_email").value = g("email");
+    document.getElementById("s_address").value = g("address");
+    document.getElementById("s_materials").value = g("materials");
+    document.getElementById("s_lead").value = g("lead") || "0";
+    document.getElementById("s_notes").value = g("notes");
+  });
+})();
+</script>
+{% endblock %}

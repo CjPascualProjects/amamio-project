@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}QR scanner{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">QR scanner</h1>
+    <p class="page-sub">
+      One screen for every code on the floor — receiving boxes, honey
+      containers, packing runs and approved purchase items.
+    </p>
+  </div>
+</div>
+
+<div class="scan-shell">
+  <div class="card mb">
+    <div class="card-title">Scan or type a code</div>
+    <form id="scanForm" class="flex gap-sm wrap" autocomplete="off">
+      <input type="text" id="token" name="token" style="flex:1 1 240px"
+             placeholder="RB-12 · HC-4 · PK-7 · PR-3-1" autofocus required>
+      <button class="btn btn-primary" type="submit">Look up</button>
+    </form>
+    <div class="form-hint">
+      A handheld scanner types the code and presses Enter for you — just keep
+      the cursor in the box.
+    </div>
+
+    <div class="pill-row mt">
+      <span class="pill"><strong>RB-</strong> receiving box</span>
+      <span class="pill"><strong>HC-</strong> honey container</span>
+      <span class="pill"><strong>PK-</strong> packing run</span>
+      <span class="pill"><strong>PR-</strong> purchase item</span>
+    </div>
+  </div>
+
+  <div id="scanResult" class="scan-result"></div>
+</div>
+
+<script>
+(function () {
+  var form = document.getElementById("scanForm");
+  var input = document.getElementById("token");
+  var out = document.getElementById("scanResult");
+  var LOOKUP = "{{ url_for('qr.lookup') }}";
+  var GO = "{{ url_for('qr.go') }}";
+
+  function esc(value) {
+    var d = document.createElement("div");
+    d.textContent = value === null || value === undefined ? "" : String(value);
+    return d.innerHTML;
+  }
+
+  function render(data) {
+    if (!data.ok) {
+      out.innerHTML = '<div class="card"><div class="flash flash-error">' +
+        esc(data.message) + "</div></div>";
+      return;
+    }
+    var rows = (data.details || []).map(function (pair) {
+      return '<div class="meta-item"><div class="meta-label">' + esc(pair[0]) +
+        '</div><div class="meta-value">' +
+        (pair[1] === null || pair[1] === "" ? "&mdash;" : esc(pair[1])) +
+        "</div></div>";
+    }).join("");
+
+    out.innerHTML =
+      '<div class="card">' +
+        '<div class="flex-between mb">' +
+          '<div><div class="result-title">' + esc(data.title) + "</div>" +
+          '<div class="muted small">' + esc(data.subtitle || "") + "</div></div>" +
+          '<span class="badge badge-gold">' + esc(data.status || "") + "</span>" +
+        "</div>" +
+        '<div class="meta-grid mb">' + rows + "</div>" +
+        '<a class="btn btn-primary" href="' + GO + "?token=" +
+          encodeURIComponent(data.token) + '">Open this record</a>' +
+      "</div>";
+  }
+
+  function lookup(token) {
+    out.innerHTML = '<div class="card"><p class="muted">Looking up ' +
+      esc(token) + "…</p></div>";
+    window.IMS.fetchJSON(LOOKUP + "?token=" + encodeURIComponent(token))
+      .then(render)
+      .catch(function (err) {
+        render((err && err.data) || {ok: false, message: "Code not recognised."});
+      });
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var token = input.value.trim();
+    if (!token) return;
+    lookup(token);
+    input.select();
+  });
+})();
+</script>
+{% endblock %}

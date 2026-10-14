@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}New Sales Order{% endblock %}
+{% block content %}
+<div class="flex gap mb" style="justify-content: space-between; flex-wrap: wrap;">
+  <h1 class="page-title" style="margin: 0;">New Sales Order</h1>
+  <a class="btn btn-ghost" href="{{ url_for('orders.index') }}">Back to orders</a>
+</div>
+
+{% if not customers %}
+  <div class="card"><p class="muted">Add a <a href="{{ url_for('customers.index') }}">customer</a> first.</p></div>
+{% elif not products %}
+  <div class="card"><p class="muted">Add a <a href="{{ url_for('catalog.index') }}">product</a> first.</p></div>
+{% else %}
+<form class="form" method="post" action="{{ url_for('orders.new') }}" id="orderForm">
+  <div class="card mb">
+    <div class="grid grid-2">
+      <div class="form-row">
+        <label class="form-label" for="customer_id">Customer</label>
+        <select id="customer_id" name="customer_id" required>
+          <option value="" disabled selected>Choose a customer…</option>
+          {% for c in customers %}
+          <option value="{{ c.id }}">{{ c.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="discount">Discount (₱)</label>
+        <input id="discount" name="discount" type="number" step="any" min="0" value="0">
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-title">Line items</div>
+    <div class="table-wrap">
+      <table class="table" id="lineTable">
+        <thead>
+          <tr>
+            <th>Product</th><th class="text-right">Unit price</th>
+            <th class="text-right">Qty</th><th class="text-right">Line total</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="lineBody"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" class="text-right"><strong>Total (before discount)</strong></td>
+            <td class="text-right"><strong id="grandTotal">₱0.00</strong></td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <button type="button" class="btn btn-ghost btn-sm mt" id="addLine">+ Add line</button>
+  </div>
+
+  <div class="card">
+    <div class="form-row">
+      <label class="form-label" for="remarks">Remarks (optional)</label>
+      <textarea id="remarks" name="remarks" placeholder="PO reference, delivery notes…"></textarea>
+    </div>
+    <div class="flex gap">
+      <button type="submit" class="btn btn-primary">Create order</button>
+      <a class="btn btn-ghost" href="{{ url_for('orders.index') }}">Cancel</a>
+    </div>
+  </div>
+</form>
+
+<script>
+(function () {
+  var products = [
+    {% for p in products %}{id:{{ p.id }}, name:{{ (p.name or '')|tojson }}, price:{{ (p.price or 0)|float }}},{% endfor %}
+  ];
+  var body = document.getElementById("lineBody");
+
+  function fmt(n) { return "₱" + (Number(n) || 0).toFixed(2); }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function options(sel) {
+    var html = '<option value="" disabled selected>Choose…</option>';
+    products.forEach(function (p) {
+      html += '<option value="' + escapeHtml(p.id) + '" data-price="' +
+        escapeHtml(p.price) + '">' + escapeHtml(p.name) + '</option>';
+    });
+    return html;
+  }
+
+  function recalc() {
+    var total = 0;
+    body.querySelectorAll("tr").forEach(function (tr) {
+      var price = Number(tr.querySelector('[name="unit_price"]').value) || 0;
+      var qty = Number(tr.querySelector('[name="qty"]').value) || 0;
+      var lt = price * qty;
+      tr.querySelector(".line-total").textContent = fmt(lt);
+      total += lt;
+    });
+    document.getElementById("grandTotal").textContent = fmt(total);
+  }
+
+  function addLine() {
+    var tr = document.createElement("tr");
+    tr.innerHTML =
+      '<td><select name="product_id" required>' + options() + '</select></td>' +
+      '<td class="text-right"><input name="unit_price" type="number" step="any" min="0" value="0" style="max-width:120px"></td>' +
+      '<td class="text-right"><input name="qty" type="number" step="any" min="0" value="1" style="max-width:90px"></td>' +
+      '<td class="text-right line-total">₱0.00</td>' +
+      '<td class="text-right"><button type="button" class="btn btn-ghost btn-sm remove">×</button></td>';
+    body.appendChild(tr);
+    var sel = tr.querySelector('[name="product_id"]');
+    sel.addEventListener("change", function () {
+      var opt = sel.options[sel.selectedIndex];
+      tr.querySelector('[name="unit_price"]').value = opt.getAttribute("data-price") || 0;
+      recalc();
+    });
+    tr.querySelector('[name="unit_price"]').addEventListener("input", recalc);
+    tr.querySelector('[name="qty"]').addEventListener("input", recalc);
+    tr.querySelector(".remove").addEventListener("click", function () {
+      tr.remove(); recalc();
+    });
+    recalc();
+  }
+
+  document.getElementById("addLine").addEventListener("click", addLine);
+  document.getElementById("orderForm").addEventListener("submit", function (e) {
+    if (!body.querySelector("tr")) { e.preventDefault(); alert("Add at least one line."); }
+  });
+  addLine();
+})();
+</script>
+{% endif %}
+{% endblock %}

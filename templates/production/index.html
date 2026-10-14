@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Production{% endblock %}
+
+{% block content %}
+<div class="row flex mb" style="justify-content: space-between; align-items: center;">
+  <h1 class="page-title">Production</h1>
+  <a class="btn btn-primary" href="{{ url_for('production.new') }}">Record Production</a>
+</div>
+
+<div class="card mb">
+  <div class="card-title">Finished goods</div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>SKU</th>
+          <th>Variant</th>
+          <th class="text-right">In stock</th>
+          <th class="text-right">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+        <tr>
+          <td>{{ p.name }}</td>
+          <td class="muted">{{ p.sku or '—' }}</td>
+          <td class="muted">{{ p.variant or '—' }}</td>
+          <td class="text-right">
+            {% if p.stock and p.stock > 0 %}
+              <span class="badge badge-ok">{{ "%g"|format(p.stock) }} {{ p.unit or '' }}</span>
+            {% else %}
+              <span class="badge badge-muted">0 {{ p.unit or '' }}</span>
+            {% endif %}
+          </td>
+          <td class="text-right">
+            <a class="btn btn-sm btn-primary"
+               href="{{ url_for('production.new', product_id=p.id) }}">Record Production</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="muted">No products defined yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Production history</div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>When</th>
+          <th>Product</th>
+          <th class="text-right">Qty produced</th>
+          <th>By</th>
+          <th>Run reference</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for h in history %}
+        <tr>
+          <td class="muted">{{ h.timestamp[:19].replace('T',' ') if h.timestamp else '—' }}</td>
+          <td>{{ h.product }}</td>
+          <td class="text-right">{{ "%g"|format(h.qty or 0) }}</td>
+          <td class="muted">{{ h.user }}</td>
+          <td class="muted">{{ h.reference_id or '—' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="muted">No production runs recorded yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Packing area{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Packing area</h1>
+    <p class="page-sub">
+      Every parcel is packed against a channel — VIP, Shopee, TikTok, Lazada or
+      walk-in — and tracked from In Progress through Packed to Handed Over.
+    </p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-primary btn-sm" href="{{ url_for('packing.new') }}">New packing run</a>
+  </div>
+</div>
+
+<div class="stat-grid mb">
+  <div class="stat-card is-primary">
+    <div class="stat-top"><span class="stat-label">Open runs</span></div>
+    <div class="stat-value">{{ summary.open_runs }}</div>
+    <div class="stat-caption">Still being packed</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Packed, awaiting pickup</span></div>
+    <div class="stat-value">{{ summary.packed_runs }}</div>
+    <div class="stat-caption">Ready to hand over</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Items packed</span></div>
+    <div class="stat-value">{{ summary.total_qty }}</div>
+    <div class="stat-caption">Across {{ summary.total_runs }} run(s)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Channels live</span></div>
+    <div class="stat-value">{{ summary.per_channel|selectattr('runs')|list|length }}</div>
+    <div class="stat-caption">Of {{ channels|length }} tracked</div>
+  </div>
+</div>
+
+<div class="grid grid-2 mb">
+  <div class="card">
+    <div class="card-title">Volume per channel</div>
+    {% set max_qty = summary.per_channel|map(attribute='qty')|max %}
+    <div class="bars">
+      {% for row in summary.per_channel %}
+      <div class="bar-row">
+        <span class="bar-label">{{ row.channel }}</span>
+        <span class="bar-track">
+          <span class="bar-fill" style="width: {{ (100 * row.qty / max_qty)|round(1) if max_qty else 0 }}%"></span>
+        </span>
+        <span class="bar-value">{{ '%g'|format(row.qty) }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Packers</div>
+    {% if leaderboard %}
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Packer</th><th class="num">Runs</th><th class="num">Items</th><th>Channels</th></tr></thead>
+        <tbody>
+          {% for row in leaderboard %}
+          <tr>
+            <td>{{ row.name }}</td>
+            <td class="num">{{ row.runs }}</td>
+            <td class="num">{{ '%g'|format(row.qty) }}</td>
+            <td class="muted small">{{ row.channels }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="muted">No packing runs recorded yet.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="field">
+    <div class="pill-row">
+      <a class="pill {{ 'active' if not channel }}" href="{{ url_for('packing.index', status=status) }}">All channels</a>
+      {% for c in channels %}
+        <a class="pill {{ 'active' if channel == c }}"
+           href="{{ url_for('packing.index', channel=c, status=status) }}">{{ c }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Packing runs</div>
+  {% if runs %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Run</th><th>Channel</th><th>Packer</th><th>Pack date</th>
+          <th class="num">Lines</th><th class="num">Qty</th><th class="num">Damaged</th>
+          <th>Status</th><th>Courier</th><th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in runs %}
+        <tr>
+          <td>
+            <span class="code">{{ r.run_code }}</span>
+            {% if r.order_ref %}<span class="cell-sub">{{ r.order_ref|truncate(22, true, '…') }}</span>{% endif %}
+          </td>
+          <td><span class="badge badge-gold">{{ r.channel }}</span></td>
+          <td>{{ r.packer_name or '—' }}</td>
+          <td>{{ r.pack_date }}</td>
+          <td class="num">{{ r.item_count }}</td>
+          <td class="num">{{ '%g'|format(r.total_qty|float) }}</td>
+          {% if r.damaged_qty %}
+            <td class="num num-bad">{{ '%g'|format(r.damaged_qty|float) }}</td>
+          {% else %}
+            <td class="num num-nil">—</td>
+          {% endif %}
+          <td><span class="badge {{ r.badge }}">{{ r.status }}</span></td>
+          <td>
+            {{ r.courier or '—' }}
+            {% if r.tracking_no %}<span class="cell-sub code">{{ r.tracking_no }}</span>{% endif %}
+          </td>
+          <td class="actions"><a class="btn btn-sm btn-ghost" href="{{ url_for('packing.detail', run_id=r.id) }}">Open</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon">{{ icon('packing', 30) }}</div>
+    <div class="empty-title">No packing runs here</div>
+    <p class="muted">Start a run when orders are ready to be packed.</p>
+    <a class="btn btn-primary btn-sm mt" href="{{ url_for('packing.new') }}">New packing run</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

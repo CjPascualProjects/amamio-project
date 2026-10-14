@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Assets &amp; maintenance{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Assets &amp; maintenance</h1>
+    <p class="page-sub">
+      Equipment and cleaning supplies, with the service history and what falls
+      due next.
+    </p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('assets.maintenance') }}">Maintenance log</a>
+    {% if can('requests') %}
+      <a class="btn btn-primary btn-sm" href="{{ url_for('requests.new_material') }}">Request a purchase</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="stat-grid mb">
+  <div class="stat-card is-primary">
+    <div class="stat-top"><span class="stat-label">Equipment</span></div>
+    <div class="stat-value">{{ stats.asset_count }}</div>
+    <div class="stat-caption">{{ stats.cleaning_count }} cleaning supply line(s)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Service due</span></div>
+    <div class="stat-value" {% if stats.due_count %}style="color:var(--warn)"{% endif %}>{{ stats.due_count }}</div>
+    <div class="stat-caption">Within the next 14 days</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Overdue</span></div>
+    <div class="stat-value" {% if stats.overdue_count %}style="color:var(--danger)"{% endif %}>{{ stats.overdue_count }}</div>
+    <div class="stat-caption">Past the scheduled date</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Maintenance spend</span></div>
+    <div class="stat-value">₱{{ '{:,.0f}'.format(stats.spend) }}</div>
+    <div class="stat-caption">Recorded to date</div>
+  </div>
+</div>
+
+{% if due %}
+<div class="card mb">
+  <div class="card-title">Falling due</div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Asset</th><th>Type</th><th>Due</th><th>When</th></tr></thead>
+      <tbody>
+        {% for d in due %}
+        <tr>
+          <td>{{ d.asset_name }}</td>
+          <td class="muted">{{ d.type }}</td>
+          <td>{{ d.due }}</td>
+          <td>
+            {% if d.overdue %}<span class="badge badge-danger">{{ -d.days }} day(s) overdue</span>
+            {% else %}<span class="badge badge-warn">in {{ d.days }} day(s)</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="card-title">Register</div>
+  {% if rows %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Item</th><th>Category</th><th class="num">On hand</th>
+          <th>Location</th><th>Last service</th><th>Next due</th>
+          <th>Status</th><th class="num">Logs</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td>{{ row.name }}</td>
+          <td><span class="badge badge-muted">{{ row.category }}</span></td>
+          <td class="num">{{ '%g'|format(row.stock_qty|float) }} {{ row.unit }}</td>
+          <td class="muted small">{{ row.location or '—' }}</td>
+          <td class="muted small">
+            {% if row.last_done %}{{ row.last_done }}<span class="cell-sub">{{ row.last_type }}</span>{% else %}—{% endif %}
+          </td>
+          <td>{{ row.next_due or '—' }}</td>
+          <td><span class="badge {{ row.badge }}">{{ row.status }}</span></td>
+          <td class="num">{{ row.log_count }}</td>
+          <td><a class="btn btn-sm btn-ghost" href="{{ url_for('assets.detail', asset_id=row.id) }}">History</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon">{{ icon('assets', 30) }}</div>
+    <div class="empty-title">No equipment registered</div>
+    <p class="muted">Add equipment and cleaning supplies under Recipes &amp; Items.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

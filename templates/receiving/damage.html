@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Damage log{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Damage log</h1>
+    <p class="page-sub">Every damaged item counted anywhere in the flow, with its reason and date.</p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('receiving.index') }}">Back to receiving</a>
+  </div>
+</div>
+
+{% if totals %}
+<div class="card mb">
+  <div class="card-title">Damaged quantity by item</div>
+  {% set max_qty = totals|map(attribute='qty')|max %}
+  <div class="bars">
+    {% for row in totals %}
+    <div class="bar-row">
+      <span class="bar-label">{{ row.name }}</span>
+      <span class="bar-track">
+        <span class="bar-fill" style="width: {{ (100 * row.qty / max_qty)|round(1) if max_qty else 0 }}%"></span>
+      </span>
+      <span class="bar-value">{{ '%g'|format(row.qty) }} {{ row.unit }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  <hr class="divider">
+  <div class="pill-row">
+    {% for source, qty in by_source.items() %}
+      <span class="pill">{{ source|capitalize }} · {{ '%g'|format(qty) }}</span>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="card-title">Damage records</div>
+  {% if rows %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Recorded</th><th class="wrap-sm">Where</th><th>Reference</th><th class="wrap-sm">Item</th>
+          <th class="num">Quantity</th><th class="wrap">Reason</th><th>By</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td>{{ row.recorded_at }}</td>
+          <td class="wrap-sm">{{ row.stage or row.source|capitalize }}</td>
+          <td><span class="code">{{ row.reference or '—' }}</span></td>
+          <td class="wrap-sm">{{ row.item_name }}</td>
+          <td class="num">{{ '%g'|format(row.qty|float) }} {{ row.unit }}</td>
+          <td class="wrap muted">{{ row.reason or '—' }}</td>
+          <td class="muted">{{ row.recorded_by }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon">{{ icon('check', 30) }}</div>
+    <div class="empty-title">No damage recorded</div>
+    <p class="muted">Damaged quantities logged while receiving or packing appear here.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

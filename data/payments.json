@@ -1,0 +1,11 @@
+[
+  {
+    "sales_order_id": 1,
+    "amount": 8638.0,
+    "method": "Bank transfer",
+    "reference": "TRX-0001",
+    "paid_at": "2026-10-14T13:50:28.537441+00:00",
+    "recorded_by": 4,
+    "id": 1
+  }
+]

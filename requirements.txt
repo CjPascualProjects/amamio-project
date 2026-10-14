@@ -1,0 +1,5 @@
+Flask==3.1.0
+Werkzeug==3.1.8
+qrcode==8.2
+Pillow==12.2.0
+gunicorn==23.0.0

@@ -1,0 +1,67 @@
+[
+  {
+    "name": "Amamio Super Admin",
+    "username": "superadmin",
+    "password_hash": "scrypt:32768:8:1$vGoktEJOBK4dljEa$ce393ab502c4b500a5888f19814053c96c5fc72452c1afd299683fe971c09f7a11a576a9a2021b7ff565f32a0af6af17ee67a051b1a9d3b19842488425eda716",
+    "role": "super_admin",
+    "email": "superadmin@amamio.ph",
+    "phone": "",
+    "team": "Super Admin",
+    "active": true,
+    "last_login": null,
+    "created_at": "2026-10-14T13:50:21.836988+00:00",
+    "id": 1
+  },
+  {
+    "name": "Amamio Admin",
+    "username": "admin",
+    "password_hash": "scrypt:32768:8:1$jd1MynrBCgYVoCJq$c8eea12b4ced3044e680d729819f66016d5902e6e9865cf6b4b1fc3b0ba5f7365b1e84bf9a091a251bf34a8df42f71532385773518c7c258740360aa68731624",
+    "role": "admin",
+    "email": "admin@amamio.ph",
+    "phone": "",
+    "team": "Admin",
+    "active": true,
+    "last_login": null,
+    "created_at": "2026-10-14T13:50:22.045753+00:00",
+    "id": 2
+  },
+  {
+    "name": "Production Team Head",
+    "username": "production",
+    "password_hash": "scrypt:32768:8:1$0cJ5f5LaNZOW19Rk$8409d38bd2138d4cecac328eb439c49684d1c32f2aedd47417d6115b6d4f57f32bc51281204b1acef30113653e1bdfb8544147cf6887b9d726e1cb3f415eb4fe",
+    "role": "production_head",
+    "email": "production@amamio.ph",
+    "phone": "",
+    "team": "Production Team Head",
+    "active": true,
+    "last_login": null,
+    "created_at": "2026-10-14T13:50:22.264252+00:00",
+    "id": 3
+  },
+  {
+    "name": "Packing Team Head",
+    "username": "packing",
+    "password_hash": "scrypt:32768:8:1$CpbJ2sJUHaoCqTnS$2af233332380bfc258123d77c5de2a505c786b1491230feaf198cb5ba0b4ecd05cd3418e380f3ff0f55f43e4d4a4aaa91e7ca158082aee422729bcd494e95df0",
+    "role": "packing_head",
+    "email": "packing@amamio.ph",
+    "phone": "",
+    "team": "Packing Team Head",
+    "active": true,
+    "last_login": null,
+    "created_at": "2026-10-14T13:50:22.489098+00:00",
+    "id": 4
+  },
+  {
+    "name": "Assets & Maintenance Head",
+    "username": "assets",
+    "password_hash": "scrypt:32768:8:1$8X4vRPfVQRSUcl6C$5c45e961e53ec544dc4cd105c88db0a6305d31414f811273823833545cc91a29836b1d8e27a0e31c6db087d4a08b78b6ec7709d925e8863b6562b62b20586d5f",
+    "role": "assets_head",
+    "email": "assets@amamio.ph",
+    "phone": "",
+    "team": "Assets & Maintenance Team Head",
+    "active": true,
+    "last_login": null,
+    "created_at": "2026-10-14T13:50:22.699143+00:00",
+    "id": 5
+  }
+]

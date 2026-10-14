@@ -1,0 +1,173 @@
+[
+  {
+    "type": "reorder",
+    "severity": "medium",
+    "subject": "Jar 200 mL",
+    "message": "Jar 200 mL may run low in ~2.72 weeks. Recommended reorder: 260.55 pc.",
+    "id": 1,
+    "generated_at": "2026-10-14T13:50:28.841322+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "reorder",
+    "severity": "medium",
+    "subject": "Raw Honey",
+    "message": "Raw Honey may run low in ~2.16 weeks. Recommended reorder: 156.167 kg.",
+    "id": 2,
+    "generated_at": "2026-10-14T13:50:28.841350+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "reorder",
+    "severity": "medium",
+    "subject": "Bottle 1 L",
+    "message": "Bottle 1 L may run low in ~2.77 weeks. Recommended reorder: 80.128 pc.",
+    "id": 3,
+    "generated_at": "2026-10-14T13:50:28.841357+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "production",
+    "severity": "info",
+    "subject": "Honey Infused Ginger 200 mL",
+    "message": "Based on recent demand, plan to produce ~40 units of Honey Infused Ginger 200 mL next week.",
+    "id": 4,
+    "generated_at": "2026-10-14T13:50:28.841361+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "production",
+    "severity": "info",
+    "subject": "Honey Infused Turmeric Ginger 200 mL",
+    "message": "Based on recent demand, plan to produce ~36 units of Honey Infused Turmeric Ginger 200 mL next week.",
+    "id": 5,
+    "generated_at": "2026-10-14T13:50:28.841366+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "production",
+    "severity": "info",
+    "subject": "Raw Forest Honey 1 L",
+    "message": "Based on recent demand, plan to produce ~30 units of Raw Forest Honey 1 L next week.",
+    "id": 6,
+    "generated_at": "2026-10-14T13:50:28.841370+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "production",
+    "severity": "info",
+    "subject": "Raw Forest Honey 250 mL",
+    "message": "Based on recent demand, plan to produce ~27 units of Raw Forest Honey 250 mL next week.",
+    "id": 7,
+    "generated_at": "2026-10-14T13:50:28.841375+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "production",
+    "severity": "info",
+    "subject": "Honey Lemon Ginger Concentrate 300 mL",
+    "message": "Based on recent demand, plan to produce ~19 units of Honey Lemon Ginger Concentrate 300 mL next week.",
+    "id": 8,
+    "generated_at": "2026-10-14T13:50:28.841379+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "stockout",
+    "severity": "high",
+    "subject": "Honey Infused Ginger 200 mL",
+    "message": "Honey Infused Ginger 200 mL may stock out within 4 weeks — projected demand 168.7 > 59 in stock.",
+    "id": 9,
+    "generated_at": "2026-10-14T13:50:28.841383+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "stockout",
+    "severity": "high",
+    "subject": "Honey Infused Turmeric Ginger 200 mL",
+    "message": "Honey Infused Turmeric Ginger 200 mL may stock out within 4 weeks — projected demand 154.2 > 54 in stock.",
+    "id": 10,
+    "generated_at": "2026-10-14T13:50:28.841387+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "stockout",
+    "severity": "high",
+    "subject": "Raw Forest Honey 1 L",
+    "message": "Raw Forest Honey 1 L may stock out within 4 weeks — projected demand 130.1 > 24 in stock.",
+    "id": 11,
+    "generated_at": "2026-10-14T13:50:28.841392+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "stockout",
+    "severity": "high",
+    "subject": "Raw Forest Honey 250 mL",
+    "message": "Raw Forest Honey 250 mL may stock out within 4 weeks — projected demand 117.7 > 42 in stock.",
+    "id": 12,
+    "generated_at": "2026-10-14T13:50:28.841396+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "stockout",
+    "severity": "high",
+    "subject": "Honey Lemon Ginger Concentrate 300 mL",
+    "message": "Honey Lemon Ginger Concentrate 300 mL may stock out within 4 weeks — projected demand 82.9 > 53 in stock.",
+    "id": 13,
+    "generated_at": "2026-10-14T13:50:28.841402+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "trend",
+    "severity": "low",
+    "subject": "Honey Lemon Ginger Concentrate 300 mL",
+    "message": "Honey Lemon Ginger Concentrate 300 mL demand down 38% recently — slow-moving item.",
+    "id": 14,
+    "generated_at": "2026-10-14T13:50:28.841408+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "trend",
+    "severity": "info",
+    "subject": "Raw Forest Honey 250 mL",
+    "message": "Raw Forest Honey 250 mL demand up 175% recently — fast-moving item.",
+    "id": 15,
+    "generated_at": "2026-10-14T13:50:28.841413+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "trend",
+    "severity": "info",
+    "subject": "Raw Forest Honey 1 L",
+    "message": "Raw Forest Honey 1 L demand up 121% recently — fast-moving item.",
+    "id": 16,
+    "generated_at": "2026-10-14T13:50:28.841417+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "anomaly",
+    "severity": "medium",
+    "subject": "Bottle 300 mL",
+    "message": "Large received movement of 200 detected — verify the transaction.",
+    "id": 17,
+    "generated_at": "2026-10-14T13:50:28.841422+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "anomaly",
+    "severity": "medium",
+    "subject": "Bottle 300 mL",
+    "message": "Large received movement of 200 detected — verify the transaction.",
+    "id": 18,
+    "generated_at": "2026-10-14T13:50:28.841425+00:00",
+    "acted_on": false
+  },
+  {
+    "type": "anomaly",
+    "severity": "medium",
+    "subject": "Label sticker",
+    "message": "Large received movement of 500 detected — verify the transaction.",
+    "id": 19,
+    "generated_at": "2026-10-14T13:50:28.841429+00:00",
+    "acted_on": false
+  }
+]

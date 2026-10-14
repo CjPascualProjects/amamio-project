@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Open a receiving batch{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Open a receiving batch</h1>
+    <p class="page-sub">One batch per delivery. Boxes are added on the next screen.</p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('receiving.index') }}">Back</a>
+  </div>
+</div>
+
+<div class="card" style="max-width:720px">
+  <form method="post" class="form">
+    <div class="form-grid cols-2">
+      <div class="form-row">
+        <label class="form-label" for="supplier_id">Supplier</label>
+        <select id="supplier_id" name="supplier_id">
+          <option value="">Walk-in / own harvest</option>
+          {% for s in suppliers %}
+            <option value="{{ s.id }}">{{ s.name }}</option>
+          {% endfor %}
+        </select>
+        <div class="form-hint">Leave blank for produce from the farm itself.</div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="received_date">Date received <span class="req">*</span></label>
+        <input type="date" id="received_date" name="received_date" value="{{ today }}" required>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="delivery_ref">Delivery receipt no.</label>
+        <input type="text" id="delivery_ref" name="delivery_ref"
+               placeholder="DR-88412">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="remarks">Remarks</label>
+        <input type="text" id="remarks" name="remarks"
+               placeholder="e.g. Weekly ginger and lemon delivery">
+      </div>
+    </div>
+    <button class="btn btn-primary" type="submit">Open batch &amp; add boxes</button>
+  </form>
+</div>
+{% endblock %}

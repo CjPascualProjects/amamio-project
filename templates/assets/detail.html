@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}{{ asset.name }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">{{ asset.name }}</h1>
+    <p class="page-sub">{{ asset.category|capitalize }} · {{ logs|length }} log entry(ies)</p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-primary btn-sm"
+       href="{{ url_for('assets.maintenance', asset_id=asset.id) }}">Record maintenance</a>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('assets.index') }}">Back</a>
+  </div>
+</div>
+
+<div class="card mb">
+  <div class="meta-grid">
+    <div class="meta-item">
+      <div class="meta-label">On hand</div>
+      <div class="meta-value big">{{ '%g'|format(asset.stock_qty|float) }} {{ asset.unit }}</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Unit cost</div>
+      <div class="meta-value big">₱{{ '{:,.2f}'.format(asset.unit_cost|float) }}</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Maintenance spend</div>
+      <div class="meta-value big">₱{{ '{:,.2f}'.format(spend) }}</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Location</div>
+      <div class="meta-value">{{ asset.storage_location or '—' }}</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Reorder level</div>
+      <div class="meta-value">{{ '%g'|format(asset.reorder_level|float) }} {{ asset.unit }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Service history</div>
+  {% if logs %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th><th>Type</th><th>By</th><th class="num">Cost</th>
+          <th class="num">Downtime</th><th>Next due</th><th>Status</th>
+          <th class="wrap">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td>{{ log.performed_on }}</td>
+          <td><span class="badge badge-muted">{{ log.type }}</span></td>
+          <td class="muted small">{{ log.performed_by or '—' }}</td>
+          <td class="num">₱{{ '{:,.2f}'.format(log.cost|float) }}</td>
+          <td class="num">{{ '%g'|format(log.downtime_hours|float) }} h</td>
+          <td>{{ log.next_due or '—' }}</td>
+          <td><span class="badge {{ badges.get(log.status, 'badge-muted') }}">{{ log.status }}</span></td>
+          <td class="wrap muted small">{{ log.notes or '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="empty-title">No service history</div>
+    <p class="muted">Nothing has been logged against this item yet.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

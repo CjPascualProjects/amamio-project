@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}New Material / Equipment Request{% endblock %}
+{% block content %}
+<h1 class="page-title">Request supplies or equipment</h1>
+<p class="page-sub">For cleaning supplies, equipment and anything else that is not a recipe ingredient.</p>
+
+<form class="form" method="post">
+  <div class="card mb">
+    <div class="grid grid-2">
+      <div class="form-row">
+        <label class="form-label" for="category">Category</label>
+        <select id="category" name="category" required>
+          <option value="">— Select category —</option>
+          <option value="cleaning">Cleaning material</option>
+          <option value="asset">Asset / Equipment</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="requested_qty">Quantity</label>
+        <input type="number" id="requested_qty" name="requested_qty" min="1" step="any" required placeholder="e.g. 5">
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-label" for="name">Item name</label>
+      <input type="text" id="name" name="name" required placeholder="e.g. Floor cleaner 5L">
+    </div>
+    <div class="form-row">
+      <label class="form-label" for="description">Description</label>
+      <textarea id="description" name="description"
+                placeholder="Size, brand, specification — anything the buyer needs."></textarea>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-title">Why is this needed? <span class="muted">— the approver sees this</span></div>
+    <div class="form-grid cols-3">
+      <div class="form-row">
+        <label class="form-label" for="reason">Reason <span class="req">*</span></label>
+        <input type="text" id="reason" name="reason" list="reasonOptions" required
+               placeholder="Pick one or type your own">
+        <datalist id="reasonOptions">
+          {% for r in reasons %}<option value="{{ r }}">{% endfor %}
+        </datalist>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="urgency">Urgency</label>
+        <select id="urgency" name="urgency">
+          {% for u in urgencies %}<option value="{{ u }}">{{ u }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="needed_by">Needed by</label>
+        <input type="date" id="needed_by" name="needed_by" min="{{ today }}">
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <div class="flex gap">
+      <button type="submit" class="btn btn-primary">Submit for approval</button>
+      <a class="btn btn-ghost" href="{{ url_for('requests.index') }}">Cancel</a>
+    </div>
+  </div>
+</form>
+{% endblock %}

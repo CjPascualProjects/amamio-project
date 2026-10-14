@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Requests{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Requests</h1>
+    <p class="page-sub">
+      {% if is_admin %}Every request raised by the teams, with the reason given.
+      {% else %}The requests you have raised, with the reason you gave.{% endif %}
+    </p>
+  </div>
+  <div class="page-head-actions">
+    {% if can('production') %}
+      <a class="btn btn-primary btn-sm" href="{{ url_for('requests.new_production') }}">Request recipe ingredients</a>
+    {% endif %}
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('requests.new_material') }}">Request supplies / equipment</a>
+  </div>
+</div>
+
+<div class="card">
+  {% if requests %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Type</th>
+          <th class="wrap-sm">Summary</th>
+          <th class="wrap-sm">Reason</th>
+          {% if is_admin %}<th>Requestor</th>{% endif %}
+          <th class="num">Items</th>
+          <th>Urgency</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in requests %}
+        <tr>
+          <td>{{ r.id }}</td>
+          <td>{{ 'Ingredients' if r.type == 'production' else 'Supplies' }}</td>
+          <td class="wrap-sm">
+            {% if r.type == 'production' %}
+              {{ r.product_name or 'Production run' }}{% if r.qty %} &times; {{ r.qty }}{% endif %}
+            {% else %}
+              {{ (r['items'] or [{}])[0].get('name', 'Material request') }}
+            {% endif %}
+          </td>
+          <td class="wrap-sm muted small">{{ r.reason or '—' }}</td>
+          {% if is_admin %}
+          <td>{{ (users_by_id.get(r.requestor_id) or {}).get('name', '—') }}</td>
+          {% endif %}
+          <td class="num">{{ (r['items'] or []) | length }}</td>
+          <td><span class="badge {{ urgency_badge.get(r.urgency or 'Normal', 'badge-muted') }}">{{ r.urgency or 'Normal' }}</span></td>
+          <td><span class="badge {{ status_badge.get(r.status, 'badge-muted') }}">{{ r.status }}</span></td>
+          <td class="muted">{{ (r.created_at or '')[:10] }}</td>
+          <td class="text-right"><a class="btn btn-ghost btn-sm" href="{{ url_for('requests.detail', id=r.id) }}">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon">{{ icon('requests', 30) }}</div>
+    <div class="empty-title">No requests yet</div>
+    <p class="muted">
+      Ask the admin to buy
+      {% if can('production') %}<a href="{{ url_for('requests.new_production') }}">recipe ingredients</a> or {% endif %}
+      <a href="{{ url_for('requests.new_material') }}">supplies and equipment</a> —
+      every request needs a reason.
+    </p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

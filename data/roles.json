@@ -1,0 +1,32 @@
+[
+  {
+    "key": "super_admin",
+    "name": "Super Admin",
+    "description": "Full system control: users, roles, settings and all operations",
+    "id": 1
+  },
+  {
+    "key": "admin",
+    "name": "Admin",
+    "description": "Approves requests, oversees operations, reviews reports",
+    "id": 2
+  },
+  {
+    "key": "production_head",
+    "name": "Production Team Head",
+    "description": "Receiving, recipe checking, honey QC and production runs",
+    "id": 3
+  },
+  {
+    "key": "packing_head",
+    "name": "Packing Team Head",
+    "description": "Packs per channel (VIP, Shopee, TikTok, Lazada, Walk-in) and ships out",
+    "id": 4
+  },
+  {
+    "key": "assets_head",
+    "name": "Assets & Maintenance Team Head",
+    "description": "Equipment, cleaning supplies, maintenance schedules and repairs",
+    "id": 5
+  }
+]

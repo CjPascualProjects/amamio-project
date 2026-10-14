@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}New Production Request{% endblock %}
+{% block content %}
+<h1 class="page-title">Request recipe ingredients</h1>
+<p class="page-sub">Choose the product and batch size. The system reads its recipe and asks only for the <strong>shortfall</strong> — what the run needs beyond what is already in stock.</p>
+
+<form class="form" method="post" id="prodForm">
+  <div class="card mb">
+    <div class="grid grid-2">
+      <div class="form-row">
+        <label class="form-label" for="product_id">Finished product</label>
+        <select id="product_id" name="product_id" required>
+          <option value="">— Select product —</option>
+          {% for p in products %}
+          <option value="{{ p.id }}">{{ p.name }}{% if p.sku %} ({{ p.sku }}){% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="qty">Quantity to produce</label>
+        <input type="number" id="qty" name="qty" min="1" step="any" placeholder="e.g. 10">
+      </div>
+    </div>
+    <button type="button" class="btn btn-ghost btn-sm" id="calcBtn">Calculate materials</button>
+  </div>
+
+  <div class="card mb" id="materialsCard" style="display:none;">
+    <div class="card-title">Required materials</div>
+    <p class="muted" id="materialsHint">Request quantity defaults to the shortfall. Edit as needed; set 0 to skip a line you already have in stock.</p>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Material</th>
+            <th class="text-right">Per unit</th>
+            <th class="text-right">Required</th>
+            <th class="text-right">On hand</th>
+            <th class="text-right">Shortfall</th>
+            <th class="text-right">Request qty</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody id="matBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-title">Why is this needed? <span class="muted">— the approver sees this</span></div>
+    <div class="form-grid cols-3">
+      <div class="form-row">
+        <label class="form-label" for="reason">Reason <span class="req">*</span></label>
+        <input type="text" id="reason" name="reason" list="reasonOptions" required
+               placeholder="Pick one or type your own">
+        <datalist id="reasonOptions">
+          {% for r in reasons %}<option value="{{ r }}">{% endfor %}
+        </datalist>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="urgency">Urgency</label>
+        <select id="urgency" name="urgency">
+          {% for u in urgencies %}<option value="{{ u }}">{{ u }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="needed_by">Needed by</label>
+        <input type="date" id="needed_by" name="needed_by" min="{{ today }}">
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <div class="form-row">
+      <label class="form-label" for="remarks">Remarks (optional)</label>
+      <textarea id="remarks" name="remarks" placeholder="Any notes for the approver…"></textarea>
+    </div>
+    <div class="flex gap">
+      <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Submit for approval</button>
+      <a class="btn btn-ghost" href="{{ url_for('requests.index') }}">Cancel</a>
+    </div>
+  </div>
+</form>
+
+<script>
+(function () {
+  "use strict";
+  var bomUrl = "{{ url_for('requests.bom_calc') }}";
+  var productSel = document.getElementById('product_id');
+  var qtyInput = document.getElementById('qty');
+  var calcBtn = document.getElementById('calcBtn');
+  var card = document.getElementById('materialsCard');
+  var body = document.getElementById('matBody');
+  var submitBtn = document.getElementById('submitBtn');
+
+  function fmt(n) {
+    n = Number(n) || 0;
+    return (Math.round(n * 1000) / 1000).toString();
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function shortfallBadge(shortfall) {
+    shortfall = Number(shortfall) || 0;
+    if (shortfall > 0) return '<span class="badge badge-danger">' + fmt(shortfall) + '</span>';
+    return '<span class="badge badge-ok">0</span>';
+  }
+
+  function render(rows) {
+    body.innerHTML = '';
+    card.style.display = '';
+    if (!rows.length) {
+      body.innerHTML = '<tr><td colspan="7" class="muted">No Bill of Materials defined for this product.</td></tr>';
+      submitBtn.disabled = true;
+      return;
+    }
+    rows.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + escapeHtml(r.material_name || ('Material #' + r.material_id)) +
+          ' <span class="muted">(' + escapeHtml(r.unit || '') + ')</span>' +
+          '<input type="hidden" name="material_id" value="' + escapeHtml(r.material_id) + '"></td>' +
+        '<td class="text-right">' + fmt(r.qty_per_unit) + '</td>' +
+        '<td class="text-right">' + fmt(r.required) + '</td>' +
+        '<td class="text-right">' + fmt(r.on_hand) + '</td>' +
+        '<td class="text-right">' + shortfallBadge(r.shortfall) + '</td>' +
+        '<td class="text-right"><input type="number" name="requested_qty" min="0" step="any" ' +
+          'style="max-width:110px" value="' + fmt(r.shortfall) + '"></td>' +
+        '<td><input type="text" name="note" placeholder="optional"></td>';
+      body.appendChild(tr);
+    });
+    submitBtn.disabled = false;
+  }
+
+  function calc() {
+    var pid = productSel.value;
+    var qty = qtyInput.value;
+    if (!pid) { alert('Select a product first.'); return; }
+    if (!qty || Number(qty) <= 0) { alert('Enter a quantity greater than zero.'); return; }
+    calcBtn.disabled = true;
+    calcBtn.textContent = 'Calculating…';
+    window.IMS.fetchJSON(bomUrl + '?product_id=' + encodeURIComponent(pid) +
+                         '&qty=' + encodeURIComponent(qty))
+      .then(function (data) { render((data && data.rows) || []); })
+      .catch(function () { alert('Could not calculate materials. Please try again.'); })
+      .then(function () {
+        calcBtn.disabled = false;
+        calcBtn.textContent = 'Calculate materials';
+      });
+  }
+
+  calcBtn.addEventListener('click', calc);
+
+  // Changing the product invalidates any previously computed lines.
+  productSel.addEventListener('change', function () {
+    card.style.display = 'none';
+    body.innerHTML = '';
+    submitBtn.disabled = true;
+  });
+
+  document.getElementById('prodForm').addEventListener('submit', function (e) {
+    if (submitBtn.disabled) { e.preventDefault(); return; }
+    var qtys = body.querySelectorAll('input[name="requested_qty"]');
+    var any = false;
+    qtys.forEach(function (i) { if (Number(i.value) > 0) any = true; });
+    if (!any) {
+      e.preventDefault();
+      alert('At least one material must have a request quantity greater than zero.');
+    }
+  });
+})();
+</script>
+{% endblock %}

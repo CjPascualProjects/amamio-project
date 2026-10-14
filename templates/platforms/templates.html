@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% block title %}Import templates{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Import templates</h1>
+    <p class="page-sub">
+      A template maps a marketplace's column names onto the fields this system
+      stores. Adding a new platform is a mapping, not a code change.
+    </p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('platforms.import_file') }}">Import a file</a>
+  </div>
+</div>
+
+<div class="card mb">
+  <div class="card-title">Saved templates</div>
+  {% if templates %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Platform</th><th class="wrap">Name</th><th class="num">Sheet</th>
+          <th class="num">Header row</th><th class="num">Fields mapped</th>
+          <th>Status</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in templates %}
+        <tr>
+          <td><span class="badge badge-gold">{{ t.platform }}</span></td>
+          <td class="wrap">
+            {{ t.name }}
+            {% if t.notes %}<span class="cell-sub">{{ t.notes }}</span>{% endif %}
+          </td>
+          <td class="num">{{ (t.sheet_index or 0) + 1 }}</td>
+          <td class="num">{{ (t.header_row or 0) + 1 }}</td>
+          <td class="num">{{ t.mapped_count }}</td>
+          <td>
+            {% if t.active %}<span class="badge badge-ok">Active</span>
+            {% else %}<span class="badge badge-muted">Inactive</span>{% endif %}
+          </td>
+          <td class="nowrap">
+            <a class="btn btn-sm btn-ghost" href="{{ url_for('platforms.template_list', edit=t.id) }}">Edit</a>
+            <form method="post" action="{{ url_for('platforms.template_delete', template_id=t.id) }}"
+                  style="display:inline" data-confirm="Delete this template?">
+              <button class="btn btn-sm btn-ghost" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">No templates yet.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <div class="card-title">
+    {{ 'Edit “' ~ editing.name ~ '”' if editing else 'New template' }}
+  </div>
+
+  <form method="get" class="filter-bar">
+    {% if editing %}<input type="hidden" name="edit" value="{{ editing.id }}">{% endif %}
+    <div class="field">
+      <label class="form-label" for="columns_from">Load column names from a file</label>
+      <select id="columns_from" name="columns_from" onchange="this.form.submit()">
+        <option value="">— type column names by hand —</option>
+        {% for f in files %}
+          <option value="{{ f.name }}" {{ 'selected' if columns_from == f.name }}>{{ f.name }}</option>
+        {% endfor %}
+      </select>
+      <div class="form-hint">
+        Pick the export you are mapping and every field below becomes a dropdown
+        of that file's real columns.
+      </div>
+    </div>
+  </form>
+
+  <form method="post" class="form">
+    {% if editing %}<input type="hidden" name="template_id" value="{{ editing.id }}">{% endif %}
+    <div class="form-grid cols-3">
+      <div class="form-row">
+        <label class="form-label" for="name">Template name <span class="req">*</span></label>
+        <input type="text" id="name" name="name" required
+               value="{{ editing.name if editing else '' }}"
+               placeholder="Shopee — Orders export">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="platform">Platform <span class="req">*</span></label>
+        <select id="platform" name="platform" required>
+          {% for p in platforms %}
+            <option value="{{ p }}" {{ 'selected' if editing and editing.platform == p }}>{{ p }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="active">Status</label>
+        <select id="active" name="active">
+          <option value="1" {{ 'selected' if not editing or editing.active }}>Active</option>
+          <option value="0" {{ 'selected' if editing and not editing.active }}>Inactive</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="sheet_index">Sheet number</label>
+        <input type="number" min="0" id="sheet_index" name="sheet_index"
+               value="{{ editing.sheet_index if editing else 0 }}">
+        <div class="form-hint">Zero-based: 0 is the first sheet.</div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="header_row">Header row</label>
+        <input type="number" min="0" id="header_row" name="header_row"
+               value="{{ editing.header_row if editing else 0 }}">
+        <div class="form-hint">Zero-based: 0 means the headers are on row 1.</div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="notes">Notes</label>
+        <input type="text" id="notes" name="notes"
+               value="{{ editing.notes if editing else '' }}"
+               placeholder="Where in the seller centre this export comes from">
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="card-title">Column mapping</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Field</th><th>Reads from this column</th><th class="wrap">What it is used for</th></tr></thead>
+        <tbody>
+          {% for key, label, required, kind in fields %}
+          {% set value = editing.mapping.get(key) if editing else '' %}
+          <tr>
+            <td>{{ label }}{% if required %} <span class="gold">*</span>{% endif %}</td>
+            <td>
+              {% if columns %}
+                <select name="map_{{ key }}">
+                  <option value="">— not mapped —</option>
+                  {% for column in columns %}
+                    <option value="{{ column }}" {{ 'selected' if value == column }}>{{ column }}</option>
+                  {% endfor %}
+                  {% if value and value not in columns %}
+                    <option value="{{ value }}" selected>{{ value }} (not in this file)</option>
+                  {% endif %}
+                </select>
+              {% else %}
+                <input type="text" name="map_{{ key }}" value="{{ value }}"
+                       placeholder="exact column header">
+              {% endif %}
+            </td>
+            <td class="wrap muted small">
+              {% if kind == 'money' %}Parsed as money — commas and currency text are stripped.
+              {% elif kind == 'number' %}Parsed as a number.
+              {% elif kind == 'date' %}Normalised to YYYY-MM-DD from any common date spelling.
+              {% else %}Stored as text.{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt">
+      <button class="btn btn-primary" type="submit">
+        {{ 'Save changes' if editing else 'Create template' }}
+      </button>
+      {% if editing %}
+        <a class="btn btn-ghost" href="{{ url_for('platforms.template_list') }}">Cancel</a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}

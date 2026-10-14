@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Forecast{% endblock %}
+{% block content %}
+<style>
+  .an-tabs { display: flex; gap: 6px; margin: 4px 0 20px; border-bottom: 1px solid var(--border); }
+  .an-tab {
+    padding: 9px 16px; font-weight: 600; font-size: .9rem; color: var(--muted);
+    border-bottom: 2px solid transparent; border-radius: 6px 6px 0 0;
+  }
+  .an-tab:hover { color: var(--text); text-decoration: none; background: var(--muted-bg); }
+  .an-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .chart { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 4px; }
+  .chart svg { display: block; min-width: 320px; }
+  .fc-meta { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: .82rem; color: var(--muted); margin-top: 6px; }
+  .fc-meta b { color: var(--text); font-weight: 600; }
+  .fc-note { font-size: .82rem; color: var(--warn); margin-top: 6px; }
+  .backend-pill {
+    display: inline-block; font-size: .76rem; font-weight: 600;
+    background: var(--muted-bg); color: var(--muted);
+    padding: 2px 10px; border-radius: 999px; margin-left: 8px;
+  }
+</style>
+
+<h1 class="page-title">Demand Forecast</h1>
+<p class="muted">
+  {{ periods }}-week demand projections with 95% confidence bands.
+  <span class="backend-pill">engine: {{ model_backend }}</span>
+</p>
+
+<div class="an-tabs">
+  <a class="an-tab" href="{{ url_for('analytics.index') }}">Overview</a>
+  <a class="an-tab active" href="{{ url_for('analytics.forecast') }}">Forecast</a>
+</div>
+
+{% if cards %}
+  {% for c in cards %}
+  <div class="card mb">
+    <div class="card-title">{{ c.product_name }}</div>
+    <div class="chart">{{ c.chart | safe }}</div>
+    <div class="fc-meta">
+      <span>Model: <b>{{ c.model }}</b></span>
+      <span>MAE: <b>{{ c.mae }}</b></span>
+      <span>MAPE: <b>{{ c.mape }}%</b></span>
+      <span>History: <b>{{ c.n }}</b> weeks</span>
+      {% if c.low_data %}<span class="badge badge-warn">low data</span>{% endif %}
+    </div>
+    {% if c.note %}<div class="fc-note">{{ c.note }}</div>{% endif %}
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="card mb"><p class="muted">No products to forecast yet.</p></div>
+{% endif %}
+
+<div class="card">
+  <div class="card-title">Material stockout risk</div>
+  <p class="muted" style="margin-top:-4px">
+    Consumption projected from forecasted product demand exploded through the BOM
+    over the next {{ periods }} weeks.
+  </p>
+  {% if risks %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Material</th>
+          <th>Risk</th>
+          <th class="text-right">In stock</th>
+          <th class="text-right">Reorder level</th>
+          <th class="text-right">Per week</th>
+          <th class="text-right">Weeks to stockout</th>
+          <th class="text-right">Recommended reorder</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in risks %}
+        <tr>
+          <td>{{ r.name }} <span class="muted">{{ r.unit }}</span></td>
+          <td><span class="badge {{ risk_badge.get(r.risk, 'badge-muted') }}">{{ r.risk | upper }}</span></td>
+          <td class="text-right">{{ r.current_stock }}</td>
+          <td class="text-right">{{ r.reorder_level }}</td>
+          <td class="text-right">{{ r.per_week_consumption }}</td>
+          <td class="text-right">
+            {% if r.weeks_to_stockout is none %}<span class="muted">—</span>
+            {% else %}{{ r.weeks_to_stockout }}{% endif %}
+          </td>
+          <td class="text-right">
+            {% if r.recommended_reorder > 0 %}<b>{{ r.recommended_reorder }}</b>
+            {% else %}<span class="muted">0</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">No materials on record.</p>
+  {% endif %}
+</div>
+{% endblock %}

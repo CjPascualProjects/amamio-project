@@ -1,0 +1,67 @@
+[
+  {
+    "name": "Honey Lemon Ginger Concentrate 300 mL",
+    "sku": "HLGC-300",
+    "variant": "300 mL",
+    "unit": "bottle",
+    "stock_qty": 53.0,
+    "reorder_level": 40,
+    "price": 487.0,
+    "location": "Shelf A1",
+    "category": "finished",
+    "created_at": "2026-10-14T13:50:23.282389+00:00",
+    "id": 1
+  },
+  {
+    "name": "Raw Forest Honey 250 mL",
+    "sku": "RFH-250",
+    "variant": "250 mL",
+    "unit": "jar",
+    "stock_qty": 42.0,
+    "reorder_level": 30,
+    "price": 499.0,
+    "location": "Shelf A2",
+    "category": "finished",
+    "created_at": "2026-10-14T13:50:23.285978+00:00",
+    "id": 2
+  },
+  {
+    "name": "Raw Forest Honey 1 L",
+    "sku": "RFH-1L",
+    "variant": "1 Litre",
+    "unit": "bottle",
+    "stock_qty": 24.0,
+    "reorder_level": 12,
+    "price": 1104.0,
+    "location": "Shelf A3",
+    "category": "finished",
+    "created_at": "2026-10-14T13:50:23.311791+00:00",
+    "id": 3
+  },
+  {
+    "name": "Honey Infused Turmeric Ginger 200 mL",
+    "sku": "HIT-200",
+    "variant": "200 mL",
+    "unit": "jar",
+    "stock_qty": 54.0,
+    "reorder_level": 25,
+    "price": 350.0,
+    "location": "Shelf B1",
+    "category": "finished",
+    "created_at": "2026-10-14T13:50:23.331248+00:00",
+    "id": 4
+  },
+  {
+    "name": "Honey Infused Ginger 200 mL",
+    "sku": "HIG-200",
+    "variant": "200 mL",
+    "unit": "jar",
+    "stock_qty": 59.0,
+    "reorder_level": 25,
+    "price": 325.0,
+    "location": "Shelf B2",
+    "category": "finished",
+    "created_at": "2026-10-14T13:50:23.356925+00:00",
+    "id": 5
+  }
+]

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Customers{% endblock %}
+{% block content %}
+<div class="flex gap mb" style="justify-content: space-between; flex-wrap: wrap;">
+  <h1 class="page-title" style="margin: 0;">Customers</h1>
+  <button class="btn btn-primary" type="button"
+          data-modal-open="customerModal" data-mode="create">+ Add customer</button>
+</div>
+
+<div class="card">
+  <div class="card-title">Customer directory</div>
+  {% if customers %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th><th>Name</th><th>Contact</th><th>Phone</th><th>Email</th>
+          <th class="text-right">Orders</th><th class="text-right">Total spend</th>
+          <th class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in customers %}
+        <tr>
+          <td>{{ c.id }}</td>
+          <td>{{ c.name }}</td>
+          <td>{{ c.contact_person or '—' }}</td>
+          <td class="muted">{{ c.phone or '—' }}</td>
+          <td class="muted">{{ c.email or '—' }}</td>
+          <td class="text-right">{{ order_counts.get(c.id, 0) }}</td>
+          <td class="text-right">₱{{ '%.2f'|format(spend.get(c.id, 0)) }}</td>
+          <td class="text-right">
+            <button class="btn btn-ghost btn-sm" type="button"
+                    data-modal-open="customerModal" data-mode="edit"
+                    data-id="{{ c.id }}" data-name="{{ c.name }}"
+                    data-contact="{{ c.contact_person or '' }}"
+                    data-phone="{{ c.phone or '' }}" data-email="{{ c.email or '' }}"
+                    data-address="{{ c.address or '' }}"
+                    data-notes="{{ c.notes or '' }}">Edit</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">No customers yet. Add the businesses or people you sell to.</p>
+  {% endif %}
+</div>
+
+<div class="modal-backdrop" id="customerModal">
+  <div class="modal">
+    <button class="modal-close" type="button" data-modal-close aria-label="Close">&times;</button>
+    <div class="card-title" id="customerModalTitle">Add customer</div>
+    <form class="form" method="post" action="{{ url_for('customers.index') }}">
+      <input type="hidden" name="id" id="c_id" value="">
+      <div class="form-row">
+        <label class="form-label" for="c_name">Name</label>
+        <input id="c_name" name="name" type="text" required>
+      </div>
+      <div class="grid grid-2">
+        <div class="form-row">
+          <label class="form-label" for="c_contact">Contact person</label>
+          <input id="c_contact" name="contact_person" type="text">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="c_phone">Phone</label>
+          <input id="c_phone" name="phone" type="text">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="c_email">Email</label>
+        <input id="c_email" name="email" type="email">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="c_address">Address</label>
+        <input id="c_address" name="address" type="text">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="c_notes">Notes</label>
+        <textarea id="c_notes" name="notes"></textarea>
+      </div>
+      <div class="flex gap" style="justify-content: flex-end;">
+        <button class="btn btn-ghost" type="button" data-modal-close>Cancel</button>
+        <button class="btn btn-primary" type="submit">Save customer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function () {
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest('[data-modal-open="customerModal"]');
+    if (!btn) return;
+    var edit = btn.getAttribute("data-mode") === "edit";
+    document.getElementById("customerModalTitle").textContent = edit ? "Edit customer" : "Add customer";
+    var g = function (k) { return btn.getAttribute("data-" + k) || ""; };
+    document.getElementById("c_id").value = g("id");
+    document.getElementById("c_name").value = g("name");
+    document.getElementById("c_contact").value = g("contact");
+    document.getElementById("c_phone").value = g("phone");
+    document.getElementById("c_email").value = g("email");
+    document.getElementById("c_address").value = g("address");
+    document.getElementById("c_notes").value = g("notes");
+  });
+})();
+</script>
+{% endblock %}

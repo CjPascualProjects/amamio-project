@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<style>
+  .notif-list { list-style: none; margin: 0; padding: 0; }
+  .notif-item {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    padding: .85rem 1rem;
+    border: 1px solid var(--border, #e2e2e2);
+    border-radius: 8px;
+    margin-bottom: .6rem;
+    background: var(--card-bg, #fff);
+  }
+  .notif-item.is-unread {
+    border-left: 4px solid var(--accent, #2563eb);
+    background: var(--unread-bg, #f5f8ff);
+    font-weight: 600;
+  }
+  .notif-dot {
+    flex: 0 0 auto;
+    width: 10px; height: 10px;
+    margin-top: .35rem;
+    border-radius: 50%;
+    background: transparent;
+  }
+  .notif-item.is-unread .notif-dot { background: var(--accent, #2563eb); }
+  .notif-body { flex: 1 1 auto; min-width: 0; }
+  .notif-msg { margin: 0 0 .2rem; word-break: break-word; }
+  .notif-meta { font-size: .8rem; }
+  .notif-actions {
+    flex: 0 0 auto;
+    display: flex;
+    gap: .4rem;
+    align-items: center;
+  }
+  .notif-actions form { margin: 0; }
+</style>
+
+<div class="row flex mb" style="justify-content: space-between; align-items: center;">
+  <h1 class="page-title" style="margin: 0;">Notifications</h1>
+  {% if unread %}
+    <form method="post" action="{{ url_for('notifications.mark_all_read') }}">
+      <button type="submit" class="btn btn-ghost btn-sm">Mark all read ({{ unread }})</button>
+    </form>
+  {% endif %}
+</div>
+
+{% if not notes %}
+  <div class="card">
+    <p class="muted" style="margin: 0;">You have no notifications.</p>
+  </div>
+{% else %}
+  <ul class="notif-list">
+    {% for n in notes %}
+      <li class="notif-item {{ 'is-unread' if not n.is_read else '' }}">
+        <span class="notif-dot" aria-hidden="true"></span>
+        <div class="notif-body">
+          <p class="notif-msg">{{ n.message }}</p>
+          <div class="notif-meta muted">
+            <span>{{ n.created_at }}</span>
+            {% if not n.is_read %}
+              <span class="badge badge-warn">Unread</span>
+            {% else %}
+              <span class="badge badge-muted">Read</span>
+            {% endif %}
+          </div>
+        </div>
+        <div class="notif-actions">
+          {% if n.link %}
+            <a class="btn btn-ghost btn-sm" href="{{ n.link }}">Open</a>
+          {% endif %}
+          {% if not n.is_read %}
+            <form method="post" action="{{ url_for('notifications.mark_read', note_id=n.id) }}">
+              <button type="submit" class="btn btn-primary btn-sm">Mark read</button>
+            </form>
+          {% endif %}
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+{% endblock %}

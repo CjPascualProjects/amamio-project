@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Inventory Ledger{% endblock %}
+{% block content %}
+{% set txn_badge = {
+  'received': 'badge-ok',
+  'produced': 'badge-ok',
+  'consumed': 'badge-danger',
+  'sold': 'badge-warn',
+  'adjusted': 'badge-muted'
+} %}
+<div class="flex gap mb" style="justify-content: space-between; flex-wrap: wrap;">
+  <div>
+    <h1 class="page-title">Inventory Ledger</h1>
+    <p class="muted">Every stock movement, newest first.</p>
+  </div>
+  <a class="btn btn-ghost btn-sm" href="{{ url_for('inventory.index') }}">Back to stock</a>
+</div>
+
+<div class="card">
+  <div class="card-title">Transactions ({{ rows|length }})</div>
+  {% if rows %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>When</th>
+          <th>Item</th>
+          <th>Type</th>
+          <th>Movement</th>
+          <th class="text-right">Change</th>
+          <th>Reference</th>
+          <th>By</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr>
+          <td class="muted">{{ r.timestamp }}</td>
+          <td class="wrap-sm">
+            {{ r.item_name }}
+            <span class="cell-sub">{{ r.item_type }}</span>
+          </td>
+          <td>
+            <span class="badge {{ txn_badge.get(r.txn_type, 'badge-muted') }}">{{ r.txn_type }}</span>
+          </td>
+          <td class="{{ 'txn-in' if r.change_positive else 'txn-out' }}">
+            {{ '▲ in' if r.change_positive else '▼ out' }}
+          </td>
+          <td class="text-right {{ 'txn-in' if r.change_positive else 'txn-out' }}">
+            {{ '+' if r.change_positive else '' }}{{ r.change_qty }}{% if r.item_unit %} {{ r.item_unit }}{% endif %}
+          </td>
+          <td class="muted">{% if r.reference_id is not none %}{{ r.reference_id }}{% else %}—{% endif %}</td>
+          <td>{{ r.user_name }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">No inventory transactions recorded yet.</p>
+  {% endif %}
+</div>
+
+<style>
+  .txn-in { color: var(--ok); font-weight: 600; }
+  .txn-out { color: var(--danger); font-weight: 600; }
+</style>
+{% endblock %}

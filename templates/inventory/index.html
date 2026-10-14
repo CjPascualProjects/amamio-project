@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Inventory{% endblock %}
+{% block content %}
+<div class="flex gap mb" style="justify-content: space-between; flex-wrap: wrap;">
+  <div>
+    <h1 class="page-title">Inventory</h1>
+    <p class="muted">Current stock on hand. Read-only.</p>
+  </div>
+  <a class="btn btn-ghost btn-sm" href="{{ url_for('inventory.transactions') }}">View transaction ledger</a>
+</div>
+
+<div class="card mb">
+  <div class="card-title">Materials &amp; Equipment</div>
+  {% if materials %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Material</th>
+          <th>Category</th>
+          <th>Unit</th>
+          <th class="text-right">Stock</th>
+          <th class="text-right">Reorder level</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in materials %}
+        <tr>
+          <td>{{ m.name }}</td>
+          <td><span class="badge badge-muted">{{ m.category }}</span></td>
+          <td>{{ m.unit }}</td>
+          <td class="text-right">{{ m.stock_qty }}</td>
+          <td class="text-right">{{ m.reorder_level }}</td>
+          <td>
+            {% if m.low %}
+              <span class="badge badge-danger">LOW</span>
+            {% else %}
+              <span class="badge badge-ok">OK</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">No materials on record.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <div class="card-title">Finished Goods</div>
+  {% if products %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>SKU</th>
+          <th>Variant</th>
+          <th>Unit</th>
+          <th class="text-right">Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+        <tr>
+          <td>{{ p.name }}</td>
+          <td class="muted">{{ p.sku }}</td>
+          <td>{{ p.variant }}</td>
+          <td>{{ p.unit }}</td>
+          <td class="text-right">
+            {% if p.stock_qty and p.stock_qty > 0 %}
+              {{ p.stock_qty }}
+            {% else %}
+              <span class="badge badge-warn">0</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">No finished goods on record.</p>
+  {% endif %}
+</div>
+{% endblock %}

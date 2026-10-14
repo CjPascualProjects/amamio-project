@@ -1,0 +1,62 @@
+[
+  {
+    "asset_id": 15,
+    "asset_name": "Bottle filling machine",
+    "type": "Preventive",
+    "performed_on": "2026-09-24",
+    "performed_by": "In-house technician",
+    "cost": 2500.0,
+    "next_due": "2026-10-24",
+    "status": "Completed",
+    "downtime_hours": 2.0,
+    "notes": "Nozzle cleaning and seal replacement.",
+    "recorded_by": 5,
+    "created_at": "2026-10-14T13:50:28.016611+00:00",
+    "id": 1
+  },
+  {
+    "asset_id": 16,
+    "asset_name": "Digital moisture meter",
+    "type": "Calibration",
+    "performed_on": "2026-09-09",
+    "performed_by": "Precision Lab Services",
+    "cost": 1800.0,
+    "next_due": "2026-11-08",
+    "status": "Completed",
+    "downtime_hours": 0.5,
+    "notes": "Annual calibration certificate on file.",
+    "recorded_by": 5,
+    "created_at": "2026-10-14T13:50:28.021307+00:00",
+    "id": 2
+  },
+  {
+    "asset_id": 18,
+    "asset_name": "Stainless steaming vat",
+    "type": "Repair",
+    "performed_on": "2026-10-06",
+    "performed_by": "Weld Masters",
+    "cost": 4200.0,
+    "next_due": "2027-01-02",
+    "status": "Completed",
+    "downtime_hours": 6.0,
+    "notes": "Re-welded the drain valve.",
+    "recorded_by": 5,
+    "created_at": "2026-10-14T13:50:28.044565+00:00",
+    "id": 3
+  },
+  {
+    "asset_id": 17,
+    "asset_name": "Weighing scale (50 kg)",
+    "type": "Inspection",
+    "performed_on": "2026-10-12",
+    "performed_by": "In-house technician",
+    "cost": 0.0,
+    "next_due": "2026-10-17",
+    "status": "Scheduled",
+    "downtime_hours": 0.0,
+    "notes": "Monthly accuracy check against test weights.",
+    "recorded_by": 5,
+    "created_at": "2026-10-14T13:50:28.067064+00:00",
+    "id": 4
+  }
+]

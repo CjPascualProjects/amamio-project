@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Users &amp; roles</h1>
+    <p class="page-sub">
+      Five roles cover the business: Super Admin, Admin, and the three team heads.
+    </p>
+  </div>
+</div>
+
+<div class="card mb">
+  <div class="card-title">The roles</div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Role</th><th class="wrap">What they do</th><th class="num">People</th></tr></thead>
+      <tbody>
+        {% for key in roles %}
+        <tr>
+          <td><span class="badge badge-gold">{{ role_labels[key] }}</span></td>
+          <td class="wrap muted">{{ role_descriptions[key] }}</td>
+          <td class="num">{{ users|selectattr('role', 'equalto', key)|list|length }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card mb">
+  <div class="card-title">Add a user</div>
+  <form method="post" class="form">
+    <div class="form-grid cols-3">
+      <div class="form-row">
+        <label class="form-label" for="name">Full name <span class="req">*</span></label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="username">Username <span class="req">*</span></label>
+        <input type="text" id="username" name="username" required autocomplete="off">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="password">Password <span class="req">*</span></label>
+        <input type="password" id="password" name="password" required
+               autocomplete="new-password" minlength="6">
+        <div class="form-hint">At least 6 characters.</div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="role">Role <span class="req">*</span></label>
+        <select id="role" name="role" required>
+          {% for key in roles %}
+            {% if key != 'super_admin' or can_manage_super %}
+              <option value="{{ key }}">{{ role_labels[key] }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="email">Email</label>
+        <input type="email" id="email" name="email">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="phone">Phone</label>
+        <input type="text" id="phone" name="phone">
+      </div>
+    </div>
+    <button class="btn btn-primary" type="submit">Create user</button>
+  </form>
+</div>
+
+<div class="card">
+  <div class="card-title">All users</div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="wrap-sm">Name</th><th>Username</th><th class="wrap-sm">Contact</th><th>Role</th>
+          <th>Status</th><th>Last login</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td class="wrap-sm">
+            {{ u.name }}
+            {% if u.id == current_user.id %}<span class="badge badge-gold">you</span>{% endif %}
+          </td>
+          <td class="code">{{ u.username }}</td>
+          <td class="wrap-sm muted small">
+            {{ u.email or '—' }}{% if u.phone %}<span class="cell-sub">{{ u.phone }}</span>{% endif %}
+          </td>
+          <td>
+            <form method="post" action="{{ url_for('auth.change_role', id=u.id) }}">
+              <select name="role" onchange="this.form.submit()" style="width:168px"
+                      {{ 'disabled' if u.role == 'super_admin' and not can_manage_super }}>
+                {% for key in roles %}
+                  {% if key != 'super_admin' or can_manage_super or u.role == 'super_admin' %}
+                    <option value="{{ key }}" {{ 'selected' if u.role == key }}>{{ role_labels[key] }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            </form>
+          </td>
+          <td>
+            {% if u.active %}<span class="badge badge-ok">Active</span>
+            {% else %}<span class="badge badge-danger">Disabled</span>{% endif %}
+          </td>
+          <td class="muted small">{{ u.last_login }}</td>
+          <td class="nowrap">
+            <form method="post" action="{{ url_for('auth.toggle_user', id=u.id) }}"
+                  style="display:inline"
+                  data-confirm="{{ 'Disable' if u.active else 'Enable' }} {{ u.username }}?">
+              <button class="btn btn-sm btn-ghost" type="submit"
+                      {{ 'disabled' if u.id == current_user.id }}>
+                {{ 'Disable' if u.active else 'Enable' }}
+              </button>
+            </form>
+            <button class="btn btn-sm btn-ghost" type="button"
+                    data-modal-open="pw{{ u.id }}">Reset password</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% for u in users %}
+<div class="modal-backdrop" id="pw{{ u.id }}">
+  <div class="modal">
+    <button class="modal-close" type="button" data-modal-close>&times;</button>
+    <div class="card-title">Reset password — {{ u.name }}</div>
+    <form method="post" action="{{ url_for('auth.reset_password', id=u.id) }}" class="form">
+      <div class="form-row">
+        <label class="form-label" for="pw-input-{{ u.id }}">New password</label>
+        <input type="password" id="pw-input-{{ u.id }}" name="password" required
+               minlength="6" autocomplete="new-password">
+        <div class="form-hint">At least 6 characters. Tell them to change it after signing in.</div>
+      </div>
+      <button class="btn btn-primary" type="submit">Set password</button>
+      <button class="btn btn-ghost" type="button" data-modal-close>Cancel</button>
+    </form>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

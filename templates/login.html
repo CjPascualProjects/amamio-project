@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block wrap_class %}login-wrap{% endblock %}
+
+{% block content %}
+<div class="login-shell">
+  <span class="login-orb orb-1" aria-hidden="true"></span>
+  <span class="login-orb orb-2" aria-hidden="true"></span>
+  <span class="login-orb orb-3" aria-hidden="true"></span>
+
+  <section class="login-hero">
+    <img class="login-hero-logo"
+         src="{{ url_for('static', filename='img/amamio-logo.jpg') }}"
+         alt="Amamio Farm Products">
+    <h1 class="login-welcome">Welcome</h1>
+    <div class="login-headline">Amamio Farm Products</div>
+    <p class="login-lede">
+      From the receiving area to the parcel in the courier's hands — every
+      crate, every honey container and every packing run, dated and traceable
+      in one place.
+    </p>
+  </section>
+
+  <section class="login-card" aria-labelledby="signinTitle">
+    <h2 class="login-title" id="signinTitle">Sign in</h2>
+    <p class="login-sub">Sales &amp; Inventory Management System</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="login-flash {{ 'is-error' if category == 'error' else 'is-ok' }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="post" class="login-form">
+      <input class="login-input" type="text" id="username" name="username"
+             placeholder="Username" aria-label="Username"
+             autocomplete="username" autofocus required>
+
+      <div class="login-password">
+        <input class="login-input" type="password" id="password" name="password"
+               placeholder="Password" aria-label="Password"
+               autocomplete="current-password" required>
+        <button class="login-show" type="button" id="togglePassword"
+                aria-controls="password" aria-pressed="false">Show</button>
+      </div>
+
+      <div class="login-row">
+        <label class="login-remember">
+          <input type="checkbox" name="remember" value="1">
+          Remember me
+        </label>
+        <button class="login-link" type="button" id="forgotToggle"
+                aria-expanded="false" aria-controls="forgotNote">Forgot password?</button>
+      </div>
+      <p class="login-note" id="forgotNote" hidden>
+        Ask your Admin or Super Admin to reset it under <strong>Users &amp; roles</strong>.
+      </p>
+
+      <button class="login-submit" type="submit">Sign in</button>
+    </form>
+
+    <p class="login-foot">
+      Need an account? <span>Ask your administrator.</span>
+    </p>
+
+    <details class="login-demo">
+      <summary>Demo accounts</summary>
+      <table>
+        <tr><td>Super Admin</td><td>superadmin / super123</td></tr>
+        <tr><td>Admin</td><td>admin / admin123</td></tr>
+        <tr><td>Production Team Head</td><td>production / prod123</td></tr>
+        <tr><td>Packing Team Head</td><td>packing / pack123</td></tr>
+        <tr><td>Assets &amp; Maintenance</td><td>assets / assets123</td></tr>
+      </table>
+    </details>
+  </section>
+</div>
+
+<script>
+(function () {
+  var pw = document.getElementById("password");
+  var show = document.getElementById("togglePassword");
+  show.addEventListener("click", function () {
+    var hidden = pw.type === "password";
+    pw.type = hidden ? "text" : "password";
+    show.textContent = hidden ? "Hide" : "Show";
+    show.setAttribute("aria-pressed", hidden ? "true" : "false");
+    pw.focus();
+  });
+
+  var forgot = document.getElementById("forgotToggle");
+  var note = document.getElementById("forgotNote");
+  forgot.addEventListener("click", function () {
+    note.hidden = !note.hidden;
+    forgot.setAttribute("aria-expanded", note.hidden ? "false" : "true");
+  });
+})();
+</script>
+{% endblock %}

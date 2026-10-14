@@ -1,0 +1,9 @@
+# Python bytecode caches — rebuilt automatically every time the app runs
+__pycache__/
+*.pyc
+
+# Output of `python mysql_export.py` (regenerate whenever needed)
+export/
+
+# Half-written files left only if the app is killed mid-save
+*.tmp

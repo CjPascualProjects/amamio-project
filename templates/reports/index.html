@@ -1,0 +1,436 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+{% set sev_badge = {'high':'badge-danger','medium':'badge-warn','low':'badge-muted','info':'badge-ok'} %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Reports</h1>
+    <p class="page-sub">Receiving, quality, packing, platforms and the money — all dated.</p>
+  </div>
+  <div class="page-head-actions no-print">
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">Print</button>
+  </div>
+</div>
+
+<div class="pill-row mb no-print">
+  <a class="pill" href="#r-receiving">Receiving</a>
+  <a class="pill" href="#r-honey">Honey QC</a>
+  <a class="pill" href="#r-packing">Packing</a>
+  <a class="pill" href="#r-platforms">Sales platforms</a>
+  <a class="pill" href="#r-damage">Damage</a>
+  <a class="pill" href="#r-maintenance">Maintenance</a>
+</div>
+
+<div class="stat-grid mb">
+  <div class="stat-card is-primary"><div class="stat-top"><span class="stat-label">Revenue</span></div><div class="stat-value">₱{{ '%.0f'|format(profit.revenue) }}</div><div class="stat-caption">Confirmed &amp; delivered orders</div></div>
+  <div class="stat-card"><div class="stat-top"><span class="stat-label">Gross profit</span></div><div class="stat-value">₱{{ '%.0f'|format(profit.gross_profit) }}</div><div class="stat-caption">Revenue − est. material cost</div></div>
+  <div class="stat-card"><div class="stat-top"><span class="stat-label">Outstanding</span></div><div class="stat-value">₱{{ '%.0f'|format(profit.outstanding) }}</div><div class="stat-caption">Unpaid balance</div></div>
+  <div class="stat-card"><div class="stat-top"><span class="stat-label">Units produced</span></div><div class="stat-value">{{ '%g'|format(prod_summary.output) }}</div><div class="stat-caption">{{ prod_summary.runs }} production runs</div></div>
+</div>
+
+
+<h2 class="card-title" id="r-receiving" style="font-size:1.3rem;margin-top:30px">Receiving area</h2>
+<div class="stat-grid mb">
+  <div class="stat-card is-primary">
+    <div class="stat-top"><span class="stat-label">Good received</span></div>
+    <div class="stat-value">{{ '%g'|format(receiving.good) }}</div>
+    <div class="stat-caption">Across {{ receiving.boxes }} box(es)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Damaged</span></div>
+    <div class="stat-value" style="color:var(--danger)">{{ '%g'|format(receiving.damaged) }}</div>
+    <div class="stat-caption">{{ receiving.damage_rate }}% of everything received</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Batches</span></div>
+    <div class="stat-value">{{ receiving.batches }}</div>
+    <div class="stat-caption">{{ receiving.pending }} box(es) still to check</div>
+  </div>
+</div>
+
+<div class="card mb">
+  <div class="card-title">Deliveries received</div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Reference</th><th>Supplier</th><th>Date</th><th class="num">Boxes</th>
+          <th class="num">Good</th><th class="num">Damaged</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for r in receiving_rows %}
+        <tr>
+          <td><span class="code">{{ r.ref_no }}</span></td>
+          <td>{{ r.supplier }}</td>
+          <td>{{ r.date }}</td>
+          <td class="num">{{ r.boxes }}</td>
+          <td class="num">{{ '%g'|format(r.good|float) }}</td>
+          <td class="num">{{ '%g'|format(r.damaged|float) }}</td>
+          <td><span class="badge {{ r.badge }}">{{ r.status }}</span></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="muted">No deliveries recorded yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<h2 class="card-title" id="r-honey" style="font-size:1.3rem;margin-top:30px">Honey quality</h2>
+<div class="stat-grid mb">
+  <div class="stat-card is-primary">
+    <div class="stat-top"><span class="stat-label">Pass rate</span></div>
+    <div class="stat-value">{{ honey.pass_rate }}%</div>
+    <div class="stat-caption">Average moisture {{ honey.avg_moisture }}%</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Passed</span></div>
+    <div class="stat-value" style="color:var(--ok)">{{ honey.passed }}</div>
+    <div class="stat-caption">{{ honey.passed_kg }} kg for selling</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Failed</span></div>
+    <div class="stat-value" style="color:var(--danger)">{{ honey.failed }}</div>
+    <div class="stat-caption">{{ honey.failed_kg }} kg to other products</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Awaiting QC</span></div>
+    <div class="stat-value">{{ honey.pending }}</div>
+    <div class="stat-caption">{{ honey.pending_kg }} kg held</div>
+  </div>
+</div>
+
+<div class="card mb">
+  <div class="card-title">Container quality log</div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Container</th><th>Received</th><th class="num">Net kg</th>
+          <th class="num">Moisture</th><th>Appearance</th><th>Result</th>
+          <th>Routed to</th><th>Used for</th></tr></thead>
+      <tbody>
+        {% for r in honey_rows %}
+        <tr>
+          <td><span class="code">{{ r.code }}</span></td>
+          <td>{{ r.date }}</td>
+          <td class="num">{{ '%g'|format(r.kg|float) }}</td>
+          <td class="num">{% if r.moisture %}{{ '%g'|format(r.moisture|float) }}%{% else %}&mdash;{% endif %}</td>
+          <td class="muted">{{ r.appearance or '—' }}</td>
+          <td><span class="badge {{ r.badge }}">{{ r.status }}</span></td>
+          <td class="muted small">{{ r.disposition or '—' }}</td>
+          <td class="muted small">{{ r.used_for or '—' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="muted">No containers logged yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<h2 class="card-title" id="r-packing" style="font-size:1.3rem;margin-top:30px">Packing</h2>
+<div class="grid grid-2 mb">
+  <div class="card">
+    <div class="card-title">Per channel</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Channel</th><th class="num">Runs</th><th class="num">Items</th>
+            <th class="num">Damaged</th><th class="num">Open</th></tr></thead>
+        <tbody>
+          {% for row in packing.per_channel %}
+          <tr>
+            <td><span class="badge badge-gold">{{ row.channel }}</span></td>
+            <td class="num">{{ row.runs }}</td>
+            <td class="num">{{ '%g'|format(row.qty) }}</td>
+            <td class="num">{{ '%g'|format(row.damaged) }}</td>
+            <td class="num">{{ row.open }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot><tr><td>Total</td><td class="num">{{ packing.total_runs }}</td>
+            <td class="num">{{ packing.total_qty }}</td><td></td>
+            <td class="num">{{ packing.open_runs }}</td></tr></tfoot>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Per packer</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Packer</th><th class="num">Runs</th><th class="num">Items</th><th>Channels</th></tr></thead>
+        <tbody>
+          {% for row in packers %}
+          <tr>
+            <td>{{ row.name }}</td>
+            <td class="num">{{ row.runs }}</td>
+            <td class="num">{{ '%g'|format(row.qty) }}</td>
+            <td class="muted small">{{ row.channels }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" class="muted">No packing runs recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<h2 class="card-title" id="r-platforms" style="font-size:1.3rem;margin-top:30px">Sales platforms</h2>
+<div class="grid grid-2 mb">
+  <div class="card">
+    <div class="card-title">Per platform</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Platform</th><th class="num">Orders</th><th class="num">Units</th>
+            <th class="num">Gross</th><th class="num">Net</th></tr></thead>
+        <tbody>
+          {% for row in platform_rows %}
+          <tr>
+            <td><span class="badge badge-gold">{{ row.platform }}</span></td>
+            <td class="num">{{ row.orders }}</td>
+            <td class="num">{{ '%g'|format(row.qty) }}</td>
+            <td class="num">₱{{ '%.2f'|format(row.gross) }}</td>
+            <td class="num">₱{{ '%.2f'|format(row.net) }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" class="muted">Nothing imported yet.</td></tr>
+          {% endfor %}
+        </tbody>
+        <tfoot><tr><td>Total</td><td class="num">{{ platform_totals.orders }}</td>
+            <td class="num">{{ platform_totals.qty }}</td>
+            <td class="num">₱{{ '%.2f'|format(platform_totals.gross) }}</td>
+            <td class="num">₱{{ '%.2f'|format(platform_totals.net) }}</td></tr></tfoot>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Best sellers online</div>
+    {% if platform_top %}
+    {% set max_net = platform_top|map(attribute='net')|max %}
+    <div class="bars">
+      {% for row in platform_top %}
+      <div class="bar-row">
+        <span class="bar-label" title="{{ row.name }}">{{ row.name }}</span>
+        <span class="bar-track">
+          <span class="bar-fill" style="width: {{ (100 * row.net / max_net)|round(1) if max_net else 0 }}%"></span>
+        </span>
+        <span class="bar-value">₱{{ '%.0f'|format(row.net) }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="muted">No product names in the imported data yet.</p>
+    {% endif %}
+  </div>
+</div>
+
+<h2 class="card-title" id="r-damage" style="font-size:1.3rem;margin-top:30px">Damage &amp; losses</h2>
+<div class="card mb">
+  <div class="card-title">Damaged quantity by item</div>
+  {% if damage_rows %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Item</th><th class="num">Damaged</th></tr></thead>
+      <tbody>
+        {% for row in damage_rows %}
+        <tr><td>{{ row.name }}</td><td class="num">{{ '%g'|format(row.qty) }} {{ row.unit }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="pill-row mt">
+    {% for source, qty in damage_by_source.items() %}
+      <span class="pill">{{ source|capitalize }} · {{ '%g'|format(qty) }}</span>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted">No damage recorded — nothing lost so far.</p>
+  {% endif %}
+</div>
+
+<h2 class="card-title" id="r-maintenance" style="font-size:1.3rem;margin-top:30px">Maintenance</h2>
+<div class="stat-grid mb">
+  <div class="stat-card is-primary">
+    <div class="stat-top"><span class="stat-label">Maintenance spend</span></div>
+    <div class="stat-value">₱{{ '%.0f'|format(maintenance.spend) }}</div>
+    <div class="stat-caption">{{ maintenance.logs }} log entry(ies)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Downtime</span></div>
+    <div class="stat-value">{{ maintenance.downtime }}</div>
+    <div class="stat-caption">Hours recorded</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-top"><span class="stat-label">Falling due</span></div>
+    <div class="stat-value" {% if maintenance.due %}style="color:var(--warn)"{% endif %}>{{ maintenance.due|length }}</div>
+    <div class="stat-caption">Within the next 14 days</div>
+  </div>
+</div>
+
+<h2 class="card-title" style="font-size:1.3rem;margin-top:30px">Inventory, production &amp; sales</h2>
+<div class="card mb">
+  <div class="card-title">AI recommendations</div>
+  {% if recommendations %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Type</th><th>Priority</th><th class="wrap-sm">Subject</th><th class="wrap">Recommendation</th></tr></thead>
+      <tbody>
+        {% for r in recommendations %}
+        <tr>
+          <td><span class="badge badge-muted">{{ r.type|capitalize }}</span></td>
+          <td><span class="badge {{ sev_badge.get(r.severity, 'badge-muted') }}">{{ r.severity|upper }}</span></td>
+          <td>{{ r.subject }}</td>
+          <td class="wrap">{{ r.message }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">No recommendations right now — inventory and demand look balanced.</p>
+  {% endif %}
+</div>
+
+<div class="grid grid-2 mb">
+  <div class="card">
+    <div class="card-title">Inventory report — raw materials</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Material</th><th>Category</th><th class="text-right">Stock</th><th class="text-right">Value</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for m in inv_materials %}
+          <tr>
+            <td>{{ m.name }}</td>
+            <td><span class="badge badge-muted">{{ m.category }}</span></td>
+            <td class="text-right">{{ '%g'|format(m.stock) }} {{ m.unit }}</td>
+            <td class="text-right">₱{{ '%.2f'|format(m.value) }}</td>
+            <td>{% if m.low %}<span class="badge badge-danger">LOW</span>{% else %}<span class="badge badge-ok">OK</span>{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Inventory report — finished goods</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Product</th><th>SKU</th><th class="text-right">Stock</th><th class="text-right">Value</th></tr></thead>
+        <tbody>
+          {% for p in inv_products %}
+          <tr>
+            <td>{{ p.name }}</td>
+            <td class="muted">{{ p.sku or '—' }}</td>
+            <td class="text-right">{{ '%g'|format(p.stock) }}</td>
+            <td class="text-right">₱{{ '%.2f'|format(p.value) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-2 mb">
+  <div class="card">
+    <div class="card-title">Fast- &amp; slow-moving products</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Product</th><th class="text-right">Demand</th><th>Class</th></tr></thead>
+        <tbody>
+          {% for m in movers %}
+          <tr>
+            <td>{{ m.name }}</td>
+            <td class="text-right">{{ '%g'|format(m.demand) }}</td>
+            <td><span class="badge {{ 'badge-ok' if m.class=='Fast' else 'badge-warn' if m.class=='Medium' else 'badge-muted' }}">{{ m.class }}</span></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="3" class="muted">No demand recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Damaged / rejected items</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Batch</th><th>Product</th><th class="text-right">Rejected</th><th class="text-right">Damaged</th></tr></thead>
+        <tbody>
+          {% for o in damaged %}
+          <tr>
+            <td class="muted">{{ o.batch_no or o.id }}</td>
+            <td>{{ o.product_name }}</td>
+            <td class="text-right">{{ '%g'|format(o.rejected_qty|float) }}</td>
+            <td class="text-right">{{ '%g'|format(o.damaged_qty|float) }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" class="muted">No damaged or rejected items recorded.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card mb">
+  <div class="card-title">Production report</div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>When</th><th>Batch</th><th>Product</th><th class="text-right">Output</th><th class="text-right">Rejected</th><th class="text-right">Damaged</th></tr></thead>
+      <tbody>
+        {% for o in prod_rows %}
+        <tr>
+          <td class="muted">{{ (o.timestamp or '')[:16].replace('T',' ') }}</td>
+          <td class="muted">{{ o.batch_no or o.id }}</td>
+          <td>{{ o.product_name }}</td>
+          <td class="text-right">{{ '%g'|format(o.output_qty|float) }}</td>
+          <td class="text-right">{{ '%g'|format(o.rejected_qty|float) }}</td>
+          <td class="text-right">{{ '%g'|format(o.damaged_qty|float) }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="muted">No production runs recorded yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <div class="card-title">Supplier report</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Supplier</th><th>Materials</th><th class="text-right">Lead (d)</th><th class="text-right">Deliveries</th></tr></thead>
+        <tbody>
+          {% for s in supplier_rows %}
+          <tr>
+            <td>{{ s.name }}</td>
+            <td class="muted">{{ s.materials or '—' }}</td>
+            <td class="text-right">{{ s.lead or 0 }}</td>
+            <td class="text-right">{{ s.received }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" class="muted">No suppliers on record.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Customer purchase history</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Customer</th><th class="text-right">Orders</th><th class="text-right">Total spend</th></tr></thead>
+        <tbody>
+          {% for c in cust_rows %}
+          <tr>
+            <td>{{ c.name }}</td>
+            <td class="text-right">{{ c.orders }}</td>
+            <td class="text-right">₱{{ '%.2f'|format(c.spend) }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="3" class="muted">No customers on record.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
