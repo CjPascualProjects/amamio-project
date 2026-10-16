@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Keep a retention sample{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('production.retention') }}">{{ icon('arrow-left', 15) }} Retention Samples</a>
+
+{% set source = form.source or ('batch' if batches else 'manual') %}
+<form method="post" class="wizard" id="retForm" data-wizard data-wizard-start="{{ start }}"
+      data-submit-label="Save sample" data-cancel="{{ url_for('production.retention') }}">
+
+  <section class="wz-step" data-title="Where is the sample from?"
+           data-hint="Usually from a batch recorded here. Older batches can be typed in.">
+    <div class="choice-grid cols-2" data-review-label="Source">
+      <label class="choice"><input type="radio" name="source" value="batch" required data-autonext {{ 'checked' if source == 'batch' }} {{ 'disabled' if not batches }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('clipboard', 20) }}</span>
+        <span><span class="choice-title">A batch record</span><span class="choice-sub">{{ batches|length }} finished batch(es) to choose from</span></span></span></label>
+      <label class="choice"><input type="radio" name="source" value="manual" data-autonext {{ 'checked' if source == 'manual' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('production', 20) }}</span>
+        <span><span class="choice-title">Type the batch no.</span><span class="choice-sub">A batch made before it was recorded here</span></span></span></label>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Which batch?" data-when="source=batch">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="batch_record_id">Batch record <span class="req">*</span></label>
+        <select id="batch_record_id" name="batch_record_id" required>
+          <option value="">Choose a batch…</option>
+          {% for b in batches %}
+          <option value="{{ b.id }}" data-prod="{{ b.production_date }}" data-exp="{{ b.expiry_date }}"
+                  data-product="{{ b.product_id }}" {{ 'selected' if form.batch_record_id == b.id|string }}>
+            {{ b.batch_no }} — {{ b.product_name }} ({{ b.production_date }}{% if b.disposition %}, {{ b.disposition }}{% endif %})</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Batch and product" data-when="source=manual">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="batch_no">Batch number <span class="req">*</span></label>
+        <input type="text" id="batch_no" name="batch_no" maxlength="40" required value="{{ form.batch_no or '' }}" placeholder="As printed on the label">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="product_id">Product <span class="req">*</span></label>
+        <select id="product_id" name="product_id" required>
+          <option value="">Choose a product…</option>
+          {% for group, products in groups %}
+          <optgroup label="{{ group }}">
+            {% for p in products %}<option value="{{ p.id }}" {{ 'selected' if form.product_id == p.id|string }}>{{ p.name }}</option>{% endfor %}
+          </optgroup>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" id="datesStep" data-title="Dates and quantity"
+           data-hint="Taken from the batch — keep the sample until its expiry date.">
+    <div class="wz-body">
+      <div class="form-grid cols-2">
+        <div class="form-row">
+          <label class="form-label" for="prod_date">Production date <span class="req">*</span></label>
+          <input type="date" id="prod_date" name="prod_date" required value="{{ form.prod_date or '' }}" max="{{ today }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="exp_date">Expiry date <span class="req">*</span></label>
+          <input type="date" id="exp_date" name="exp_date" required value="{{ form.exp_date or '' }}">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="qty">Quantity kept <span class="req">*</span></label>
+        <div class="big-field">
+          <input type="number" id="qty" name="qty" min="1" step="1" required inputmode="numeric" value="{{ form.qty or 2 }}">
+          <span class="unit">units</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="description">Product description</label>
+        <input type="text" id="description" name="description" maxlength="300" value="{{ form.description or '' }}" placeholder="e.g. sealed pouch, as sold">
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Sign-off">
+    <div class="wz-body">
+      <div class="form-grid cols-2">
+        <div class="form-row">
+          <label class="form-label" for="inspected_by">Inspected by <span class="req">*</span></label>
+          <input type="text" id="inspected_by" name="inspected_by" maxlength="80" required value="{{ form.inspected_by or me }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="approved_by">Approved by <span class="req">*</span></label>
+          <input type="text" id="approved_by" name="approved_by" maxlength="80" required value="{{ form.approved_by or '' }}">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="remarks">Remarks</label>
+        <textarea id="remarks" name="remarks" rows="2" maxlength="500" placeholder="e.g. where it is stored">{{ form.remarks or '' }}</textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Check and save" data-review>
+    <div class="wz-body"></div>
+  </section>
+</form>
+
+<script>
+(function () {
+  var sel = document.getElementById("batch_record_id");
+  var prod = document.getElementById("prod_date"), exp = document.getElementById("exp_date");
+  var picked = null;
+  document.querySelector("#retForm .wz-step").reviewHtml = function () {
+    var src = (sel.form.querySelector("[name=source]:checked") || {}).value;
+    return "<dt>Source</dt><dd>" + (src === "batch" ? "A batch record" : "Typed batch no.") + "</dd>";
+  };
+  // Fill the dates from the chosen batch (once per batch, so edits stick).
+  document.getElementById("datesStep").addEventListener("wz:enter", function () {
+    var form = sel.form;
+    var src = (form.querySelector("[name=source]:checked") || {}).value;
+    if (src !== "batch" || !sel.value || sel.value === picked) return;
+    var opt = sel.options[sel.selectedIndex];
+    prod.value = opt.getAttribute("data-prod") || prod.value;
+    exp.value = opt.getAttribute("data-exp") || exp.value;
+    picked = sel.value;
+  });
+  if (sel.value && prod.value) picked = sel.value;
+  document.getElementById("datesStep").addEventListener("wz:validate", function (e) {
+    if (prod.value && exp.value && exp.value <= prod.value) {
+      e.preventDefault(); e.detail.message = "The expiry date must be after the production date.";
+    }
+  });
+})();
+</script>
+{% endblock %}

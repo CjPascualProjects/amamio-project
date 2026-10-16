@@ -1,23 +1,40 @@
 """Idempotent demo seeding for the Amamio Sales & Inventory Management System.
 
-Seeds only when there are no users yet.  Creates the five team roles, the
-suppliers and customers, Amamio's honey catalog with its recipes, ~12 weeks of
-backdated demand/production history (so the AI has data to forecast), and live
-examples of every monitored flow the client described: receiving boxes with
-damage counts, honey containers that passed and failed QC, packing runs per
-channel, maintenance logs, and open customer orders.
+Seeds only when there are no users yet.  Master data comes from the client's
+own paper forms (``seed_catalog.py``): the product list of the Daily
+Production Report, the supplies on the four month-end reports, the asset
+register and the supplier directory.  On top of that it creates a login per
+role, ~12 weeks of backdated history (so the AI has data to forecast), and
+live examples of every monitored flow: deliveries received and inspected,
+honey containers that passed and failed, packing runs that were disbursed or
+handed to the courier, and the sample marketplace exports imported.
 """
+import importlib
+import os
 import random
 from datetime import datetime, timedelta, timezone
 
 from werkzeug.security import generate_password_hash
 
 import db
+import seed_catalog as cat
 import services
-from security import ROLES
+from security import ROLE_LABELS, ROLES
 
 WEEKS = 12
 TAG = "seed-history"
+
+# (name, username, password, role) — change these before going live.
+DEMO_USERS = [
+    ("Amamio Super Admin", "superadmin", "super123", "super_admin"),
+    ("Amamio Admin", "admin", "admin123", "admin"),
+    ("Receiving Team Head", "receiving", "recv123", "receiving_head"),
+    ("Production Team Head", "production", "prod123", "production_head"),
+    ("Packing Team Head", "packing", "pack123", "packing_head"),
+    ("Packer — Joy", "packer1", "member123", "packing_member"),
+    ("Packer — Mark", "packer2", "member123", "packing_member"),
+    ("Assets Maintenance Head", "assets", "assets123", "assets_head"),
+]
 
 
 def _iso(dt):
@@ -44,14 +61,50 @@ def seed_if_empty():
     _seed_customers()
     materials = _seed_materials(suppliers)
     products = _seed_products()
+    _seed_assets()
     _seed_bom(materials, products)
     _seed_history(users, materials, products)
     _seed_receiving(users, suppliers, materials)
     _seed_honey(users, suppliers, materials)
     _seed_packing(users, products)
-    _seed_maintenance(users, materials)
     _seed_live_docs(users, products, materials)
+    _seed_platform_sales(users)
+    _seed_module_demos(users)
+    _reconcile_opening_balances()
     _seed_ai_snapshots()
+
+
+def _reconcile_opening_balances():
+    """Make the backdated demo ledger agree with the demo stock levels.
+
+    Stock levels are set directly, but the history adds backdated
+    movements; walking the ledger backwards from today's stock could then
+    dip below zero (a report would show a negative balance).  Where it
+    would, an opening balance is booked before the first movement and the
+    stock raised by the same amount, so every running balance is >= 0."""
+    txns = db.read("inventory_transactions")
+    by_item = {}
+    for t in txns:
+        by_item.setdefault((t["item_type"], t["item_id"]), []).append(t)
+    openings = []
+    for (item_type, item_id), rows in by_item.items():
+        rows.sort(key=lambda t: t.get("timestamp") or "")
+        current = services.current_stock(item_type, item_id)
+        running = current - sum(float(t["change_qty"]) for t in rows)
+        lowest = running
+        for t in rows:
+            running += float(t["change_qty"])
+            lowest = min(lowest, running)
+        if lowest >= -1e-9:
+            continue
+        deficit = round(-lowest, 3)
+        first = datetime.fromisoformat(rows[0]["timestamp"]) - timedelta(minutes=1)
+        openings.append(_txn_dict(item_type, item_id, deficit, "adjusted",
+                                  _iso(first), None))
+        openings[-1]["reference_id"] = "opening balance"
+        table = "raw_materials" if item_type == "material" else "products"
+        db.update(table, item_id, {"stock_qty": round(current + deficit, 3)})
+    db.insert_many("inventory_transactions", openings)
 
 
 def _seed_ai_snapshots():
@@ -66,66 +119,59 @@ def _seed_roles():
         db.insert("roles", {"key": key, "name": name, "description": desc})
 
 
+def make_user(name, username, password, role):
+    return db.insert("users", {
+        "name": name, "username": username,
+        "password_hash": generate_password_hash(password),
+        "role": role, "email": "%s@amamio.ph" % username,
+        "phone": "", "team": ROLE_LABELS.get(role, role),
+        "active": True, "last_login": None,
+        "created_at": services.now_iso(),
+    })
+
+
 def _seed_users():
-    people = [
-        ("Amamio Super Admin", "superadmin", "super123", "super_admin"),
-        ("Amamio Admin", "admin", "admin123", "admin"),
-        ("Production Team Head", "production", "prod123", "production_head"),
-        ("Packing Team Head", "packing", "pack123", "packing_head"),
-        ("Assets & Maintenance Head", "assets", "assets123", "assets_head"),
-    ]
-    from security import ROLE_LABELS
     users = {}
-    for name, username, pw, role in people:
-        u = db.insert("users", {
-            "name": name, "username": username,
-            "password_hash": generate_password_hash(pw),
-            "role": role, "email": "%s@amamio.ph" % username,
-            "phone": "", "team": ROLE_LABELS.get(role, role),
-            "active": True, "last_login": None,
-            "created_at": services.now_iso(),
-        })
-        users[role] = u
+    for name, username, pw, role in DEMO_USERS:
+        u = make_user(name, username, pw, role)
+        users.setdefault(role, u)
+        users[username] = u
     return users
 
 
 def _seed_suppliers():
-    data = [
-        ("Mindanao Forest Apiary", "Ana Reyes", "0917-100-2001",
-         "orders@mindanaoapiary.ph", "Bukidnon, Mindanao",
-         "Raw forest honey by container", 7),
-        ("Highland Produce Traders", "Ben Cruz", "0917-100-2002",
-         "sales@highlandproduce.ph", "La Trinidad, Benguet",
-         "Ginger, turmeric, lemon by crate", 3),
-        ("PackRight Supplies", "Cora Lim", "0917-100-2003",
-         "sales@packright.ph", "Industrial Ave, Valenzuela",
-         "Bottles, jars, labels, cartons", 4),
-        ("CleanCo Trading", "Dino Santos", "0917-100-2004",
-         "hello@cleanco.ph", "Market St, Quezon City",
-         "Sanitizer and cleaning supplies", 3),
-    ]
     suppliers = {}
-    for name, contact, phone, email, addr, supplies, lead in data:
-        s = db.insert("suppliers", {
-            "name": name, "contact_person": contact, "phone": phone,
-            "email": email, "address": addr, "materials_supplied": supplies,
-            "lead_time_days": lead, "notes": "",
-            "created_at": services.now_iso(),
-        })
-        suppliers[name] = s
+    now = services.now_iso()
+    rows = []
+    for name, category, items, contact in cat.DEMO_RAW_SUPPLIERS:
+        rows.append({"name": name, "tin": "", "category": category,
+                     "contact_person": "", "phone": contact, "email": "",
+                     "address": "", "materials_supplied": items,
+                     "buy_from": "", "lead_time_days": 3, "notes": "Demo supplier",
+                     "created_at": now})
+    for name, tin, category, items, contact in cat.SUPPLIERS:
+        is_phone = any(ch.isdigit() for ch in contact)
+        rows.append({"name": name, "tin": tin, "category": category,
+                     "contact_person": contact.split(" 0")[0] if is_phone and not contact[:1].isdigit() else "",
+                     "phone": contact[contact.find("0"):] if is_phone else "",
+                     "email": "", "address": "", "materials_supplied": items,
+                     "buy_from": "" if is_phone else contact,
+                     "lead_time_days": None, "notes": "", "created_at": now})
+    for row in db.insert_many("suppliers", rows):
+        suppliers[row["name"]] = row
     return suppliers
 
 
 def _seed_customers():
     data = [
         ("Metro Grocers", "Liza Tan", "0917-200-3001",
-         "purchasing@metrogrocers.ph", "SM North EDSA, Quezon City", "VIP"),
+         "purchasing@metrogrocers.ph", "Butuan City", "VIP"),
         ("Health Hub Store", "Marco Dela Cruz", "0917-200-3002",
-         "orders@healthhub.ph", "BGC, Taguig", "VIP"),
+         "orders@healthhub.ph", "Cagayan de Oro City", "VIP"),
         ("Sunrise Cafe", "Nina Santos", "0917-200-3003",
-         "nina@sunrisecafe.ph", "Session Rd, Baguio", "Walk-in"),
+         "nina@sunrisecafe.ph", "Nasipit, Agusan del Norte", "Walk-in"),
         ("Wellness Mart", "Oliver Yu", "0917-200-3004",
-         "buyer@wellnessmart.ph", "Ayala Center, Cebu", "VIP"),
+         "buyer@wellnessmart.ph", "Davao City", "VIP"),
     ]
     for name, contact, phone, email, addr, channel in data:
         db.insert("customers", {
@@ -136,72 +182,77 @@ def _seed_customers():
 
 
 def _seed_materials(suppliers):
-    honey = suppliers["Mindanao Forest Apiary"]["id"]
     produce = suppliers["Highland Produce Traders"]["id"]
-    pack = suppliers["PackRight Supplies"]["id"]
-    clean = suppliers["CleanCo Trading"]["id"]
-    # (name, category, unit, track_mode, stock, reorder, supplier, unit cost)
-    data = [
-        ("Raw Honey", "raw", "kg", "weight", 68.0, 25, honey, 420.0),
-        ("Ginger", "raw", "kg", "weight", 42.0, 20, produce, 95.0),
-        ("Turmeric", "raw", "kg", "weight", 18.0, 10, produce, 120.0),
-        ("Lemon", "raw", "pc", "piece", 640.0, 250, produce, 12.0),
-        ("Calamansi", "raw", "kg", "weight", 12.0, 8, produce, 80.0),
-        ("Bottle 300 mL", "raw", "pc", "piece", 420.0, 150, pack, 9.0),
-        ("Bottle 250 mL", "raw", "pc", "piece", 380.0, 150, pack, 8.0),
-        ("Jar 200 mL", "raw", "pc", "piece", 300.0, 120, pack, 11.0),
-        ("Bottle 1 L", "raw", "pc", "piece", 90.0, 40, pack, 24.0),
-        ("Label sticker", "raw", "pc", "piece", 1800.0, 500, pack, 1.2),
-        ("Safety seal", "raw", "pc", "piece", 1500.0, 500, pack, 0.8),
-        ("Shipping carton", "raw", "pc", "piece", 260.0, 100, pack, 18.0),
-        ("Food-grade sanitizer", "cleaning", "L", "unit", 14.0, 6, clean, 180.0),
-        ("Dishwashing liquid", "cleaning", "L", "unit", 9.0, 4, clean, 120.0),
-        ("Bottle filling machine", "asset", "unit", "unit", 1.0, 0, pack,
-         145000.0),
-        ("Digital moisture meter", "asset", "unit", "unit", 2.0, 0, pack,
-         28000.0),
-        ("Weighing scale (50 kg)", "asset", "unit", "unit", 3.0, 0, pack,
-         9500.0),
-        ("Stainless steaming vat", "asset", "unit", "unit", 2.0, 0, pack,
-         62000.0),
-    ]
-    materials = {}
-    for name, cat, unit, mode, stock, reorder, supplier_id, cost in data:
-        m = db.insert("raw_materials", {
-            "name": name, "category": cat, "unit": unit, "track_mode": mode,
-            "stock_qty": stock, "reorder_level": reorder,
-            "supplier_id": supplier_id, "unit_cost": cost, "expiry_date": "",
-            "storage_location": "Dry store" if cat == "raw" else "Utility room",
-            "created_at": services.now_iso(),
+    honey = suppliers["Mindanao Forest Apiary"]["id"]
+    cacao = suppliers["Agusan Cacao Growers"]["id"]
+    by_cat = {"packaging": suppliers["Davao CVI"]["id"],
+              "cleaning": suppliers["Sanitary Care Products Asia"]["id"],
+              "office": suppliers["Yopsun"]["id"]}
+    raw_source = {"Raw Honey": honey, "Honey Comb": honey,
+                  "Cacao Beans": cacao}
+    now = services.now_iso()
+    rows = []
+    for category, sub, name, unit, mode, stock, reorder, cost in cat.MATERIALS:
+        supplier_id = (raw_source.get(name, produce) if category == "raw"
+                       else by_cat.get(category))
+        rows.append({
+            "name": name, "category": category, "subcategory": sub,
+            "unit": unit, "track_mode": mode, "stock_qty": stock,
+            "reorder_level": reorder, "supplier_id": supplier_id,
+            "unit_cost": cost, "expiry_date": "",
+            "storage_location": {"raw": "Storage Area",
+                                 "packaging": "Packing Area",
+                                 "cleaning": "Utility Room",
+                                 "office": "Office"}[category],
+            "created_at": now,
         })
-        materials[name] = m
-    return materials
+    return {m["name"]: m for m in db.insert_many("raw_materials", rows)}
 
 
 def _seed_products():
-    # (name, sku, variant, unit, stock, reorder, price, location)
-    data = [
-        ("Honey Lemon Ginger Concentrate 300 mL", "HLGC-300", "300 mL",
-         "bottle", 96.0, 40, 487.0, "Shelf A1"),
-        ("Raw Forest Honey 250 mL", "RFH-250", "250 mL", "jar", 72.0, 30,
-         499.0, "Shelf A2"),
-        ("Raw Forest Honey 1 L", "RFH-1L", "1 Litre", "bottle", 24.0, 12,
-         1104.0, "Shelf A3"),
-        ("Honey Infused Turmeric Ginger 200 mL", "HIT-200", "200 mL", "jar",
-         58.0, 25, 350.0, "Shelf B1"),
-        ("Honey Infused Ginger 200 mL", "HIG-200", "200 mL", "jar", 64.0, 25,
-         325.0, "Shelf B2"),
-    ]
-    products = {}
-    for name, sku, variant, unit, stock, reorder, price, loc in data:
-        p = db.insert("products", {
-            "name": name, "sku": sku, "variant": variant, "unit": unit,
-            "stock_qty": stock, "reorder_level": reorder, "price": price,
-            "location": loc, "category": "finished",
-            "created_at": services.now_iso(),
-        })
-        products[name] = p
+    now = services.now_iso()
+    rows, order = [], 0
+    for group, family, sizes in cat.PRODUCTS:
+        for variant, unit, sku, price in sizes:
+            order += 1
+            rows.append({
+                "name": ("%s %s" % (family, variant)).strip(),
+                "sku": sku, "product_group": group, "family": family,
+                "variant": variant, "unit": unit, "stock_qty": 0.0,
+                "reorder_level": 0, "price": price,
+                "location": "Finished Products Area", "category": "finished",
+                "sort_order": order, "created_at": now,
+            })
+    products = {p["name"]: p for p in db.insert_many("products", rows)}
+    # Opening stock for the lines the demo history and packing use.
+    opening = {
+        "Pure Honey 250 mL": (60, 24), "Pure Honey 500 mL": (36, 12),
+        "Pure Honey 1 Liter": (24, 10), "RFH with Comb 250 mL": (30, 12),
+        "Honey Lemon Ginger Concentrate 300 mL": (96, 40),
+        "Honey Calamansi Concentrate 300 mL": (40, 20),
+        "Honey Infused Turmeric Ginger 300 mL": (48, 20),
+        "Honey Infused Ginger 300 mL": (52, 20),
+        "Pure Tableya 200 g": (45, 20), "Cacao Powder 100 g": (38, 15),
+        "Robusta Coffee 125 g": (40, 15), "Moringa Powder 100 g": (25, 10),
+        "Banana Chips 100 g": (30, 12),
+    }
+    for name, (stock, reorder) in opening.items():
+        products[name] = db.update("products", products[name]["id"],
+                                   {"stock_qty": float(stock),
+                                    "reorder_level": reorder})
     return products
+
+
+def _seed_assets():
+    now = services.now_iso()
+    db.insert_many("assets", [{
+        "item_no": item_no, "name": name, "category": category,
+        "cost_per_item": None, "quantity": float(qty), "unit": unit,
+        "qty_out": 0.0, "condition": condition, "years_in_use": None,
+        "remarks": remarks, "serial_number": "", "model": "",
+        "manufacturer": "", "date_of_purchase": "", "location": "Production Area",
+        "contact_details": "", "active": True, "created_at": now,
+    } for item_no, name, category, qty, unit, condition, remarks in cat.ASSETS])
 
 
 def _seed_bom(materials, products):
@@ -210,42 +261,47 @@ def _seed_bom(materials, products):
         db.insert("bill_of_materials", {
             "product_id": products[product]["id"],
             "material_id": materials[material]["id"],
-            "qty_per_unit": qpu,
-            "notes": note,
+            "qty_per_unit": qpu, "notes": note,
         })
+
+    line("Pure Honey 250 mL", "Raw Honey", 0.35)
+    line("Pure Honey 250 mL", "Hexagonal Jar 250 mL", 1)
+    line("Pure Honey 250 mL", "63 mm Seal (250 mL)", 1)
+    line("Pure Honey 500 mL", "Raw Honey", 0.7)
+    line("Pure Honey 500 mL", "Hexagonal Jar 500 mL", 1)
+    line("Pure Honey 500 mL", "70 mm Seal (500 mL)", 1)
+    line("Pure Honey 1 Liter", "Raw Honey", 1.4)
+    line("Pure Honey 1 Liter", "Round Bottle 1 Liter", 1)
+    line("RFH with Comb 250 mL", "Raw Honey", 0.3)
+    line("RFH with Comb 250 mL", "Honey Comb", 0.05)
+    line("RFH with Comb 250 mL", "Hexagonal Jar 250 mL", 1)
 
     hlgc = "Honey Lemon Ginger Concentrate 300 mL"
     line(hlgc, "Raw Honey", 0.18)
     line(hlgc, "Lemon", 3, "By piece — counted, not weighed")
     line(hlgc, "Ginger", 0.08, "By weight")
-    line(hlgc, "Bottle 300 mL", 1)
-    line(hlgc, "Label sticker", 1)
-    line(hlgc, "Safety seal", 1)
+    line(hlgc, "Square Bottle 300 mL", 1)
+    line("Honey Calamansi Concentrate 300 mL", "Raw Honey", 0.18)
+    line("Honey Calamansi Concentrate 300 mL", "Calamansi", 0.1)
+    line("Honey Calamansi Concentrate 300 mL", "Square Bottle 300 mL", 1)
+    line("Honey Infused Turmeric Ginger 300 mL", "Raw Honey", 0.2)
+    line("Honey Infused Turmeric Ginger 300 mL", "Turmeric", 0.05)
+    line("Honey Infused Turmeric Ginger 300 mL", "Ginger", 0.05)
+    line("Honey Infused Turmeric Ginger 300 mL", "Square Bottle 300 mL", 1)
+    line("Honey Infused Ginger 300 mL", "Raw Honey", 0.2)
+    line("Honey Infused Ginger 300 mL", "Ginger", 0.09)
+    line("Honey Infused Ginger 300 mL", "Square Bottle 300 mL", 1)
 
-    rfh250 = "Raw Forest Honey 250 mL"
-    line(rfh250, "Raw Honey", 0.32)
-    line(rfh250, "Jar 200 mL", 1)
-    line(rfh250, "Label sticker", 1)
-    line(rfh250, "Safety seal", 1)
-
-    rfh1l = "Raw Forest Honey 1 L"
-    line(rfh1l, "Raw Honey", 1.4)
-    line(rfh1l, "Bottle 1 L", 1)
-    line(rfh1l, "Label sticker", 1)
-    line(rfh1l, "Safety seal", 1)
-
-    hit = "Honey Infused Turmeric Ginger 200 mL"
-    line(hit, "Raw Honey", 0.15)
-    line(hit, "Turmeric", 0.05)
-    line(hit, "Ginger", 0.05)
-    line(hit, "Jar 200 mL", 1)
-    line(hit, "Label sticker", 1)
-
-    hig = "Honey Infused Ginger 200 mL"
-    line(hig, "Raw Honey", 0.16)
-    line(hig, "Ginger", 0.09)
-    line(hig, "Jar 200 mL", 1)
-    line(hig, "Label sticker", 1)
+    line("Pure Tableya 200 g", "Cacao Beans", 0.25)
+    line("Pure Tableya 200 g", "Cookie Pouch 5.5x8.5 cm", 1)
+    line("Cacao Powder 100 g", "Cacao Beans", 0.15)
+    line("Cacao Powder 100 g", "Cacao Powder Pouch (black) 15x22 cm", 1)
+    line("Robusta Coffee 125 g", "Robusta Coffee", 0.15)
+    line("Robusta Coffee 125 g", "Matte Kraft Pouch (brown) 17x24 cm", 1)
+    line("Moringa Powder 100 g", "Moringa", 0.6, "Fresh leaves — dried and ground")
+    line("Moringa Powder 100 g", "Matte Kraft Pouch (white) 13x21 cm", 1)
+    line("Banana Chips 100 g", "Banana Chips", 0.1)
+    line("Banana Chips 100 g", "Banana Chips Jar 440 mL", 1)
 
 
 def _txn_dict(item_type, item_id, change, txn_type, ts, user_id):
@@ -256,6 +312,15 @@ def _txn_dict(item_type, item_id, change, txn_type, ts, user_id):
     }
 
 
+# Products that get backdated demand / production history.
+HISTORY_PRODUCTS = [
+    "Pure Honey 250 mL", "Pure Honey 1 Liter",
+    "Honey Lemon Ginger Concentrate 300 mL",
+    "Honey Infused Turmeric Ginger 300 mL", "Honey Infused Ginger 300 mL",
+    "Pure Tableya 200 g", "Robusta Coffee 125 g", "Cacao Powder 100 g",
+]
+
+
 def _seed_history(users, materials, products):
     rng = random.Random(42)
     monday0 = _this_monday()
@@ -263,7 +328,8 @@ def _seed_history(users, materials, products):
     prod_uid = users["production_head"]["id"]
 
     boms = db.read("bill_of_materials")
-    prod_list = list(products.values())
+    prod_list = [products[name] for name in HISTORY_PRODUCTS]
+    raw = [m for m in materials.values() if m.get("category") == "raw"]
     statuses = ["Fulfilled", "Fulfilled", "Approved", "Fulfilled",
                 "Pending Approval", "Rejected"]
 
@@ -273,8 +339,8 @@ def _seed_history(users, materials, products):
         week_start = monday0 - timedelta(weeks=(WEEKS - 1 - w))
         for idx, product in enumerate(prod_list):
             pid = product["id"]
-            base = 8 + idx * 4
-            qty = max(1, round(base + w * 1.4 + rng.uniform(-2, 3)))
+            base = 6 + (idx % 5) * 3
+            qty = max(1, round(base + w * 1.2 + rng.uniform(-2, 3)))
             status = statuses[(w + pid) % len(statuses)]
             created = week_start + timedelta(days=rng.randint(0, 4),
                                              hours=rng.randint(0, 8))
@@ -308,7 +374,7 @@ def _seed_history(users, materials, products):
                                           -used, "consumed", run_ts, prod_uid))
 
         if w % 2 == 0:
-            mat = rng.choice(list(materials.values()))
+            mat = rng.choice(raw)
             recv_ts = _iso(week_start + timedelta(days=rng.randint(0, 3)))
             txns.append(_txn_dict("material", mat["id"], rng.randint(20, 80),
                                   "received", recv_ts, prod_uid))
@@ -319,146 +385,155 @@ def _seed_history(users, materials, products):
 
 
 def _seed_receiving(users, suppliers, materials):
-    """Two closed deliveries plus one still being checked on the floor."""
-    uid = users["production_head"]["id"]
+    """Two deliveries already inspected, one still waiting on the floor."""
+    uid = users["receiving_head"]["id"]
+    qa = users["production_head"]["id"]
     produce = suppliers["Highland Produce Traders"]["id"]
-    pack = suppliers["PackRight Supplies"]["id"]
+    pack = suppliers["Davao CVI"]["id"]
+    m = materials
 
-    # Delivery 1 — produce, fully checked, with some damage.
-    batch = services.create_receiving_batch(
-        produce, _days_ago(6), uid, delivery_ref="DR-88412",
+    def lines(*rows):
+        return [{"material_id": m[name]["id"], "qty_per_box": per,
+                 "boxes": count, "lot_no": lot, "expiry_date": exp,
+                 "packaging_condition": cond, "temperature_c": temp}
+                for name, per, count, lot, exp, cond, temp in rows]
+
+    # Delivery 1 — produce, inspected, with some loss.
+    batch, boxes, _ = services.receive_delivery(
+        uid, produce, _days_ago(6), lines(
+            ("Ginger", 12.0, 3, "GIN-1006", "", "Good / intact", 27.0),
+            ("Lemon", 120.0, 2, "LEM-1006", "", "Slightly dented / torn", 27.0),
+            ("Turmeric", 8.0, 1, "TUR-1006", "", "Good / intact", 27.0)),
+        po_no="PO-1043", delivery_ref="DR-88412",
         remarks="Weekly ginger and lemon delivery.")
-    plan = [("Ginger", 12.0, 3, (11.4, 0.6, "Soft and bruised roots")),
-            ("Lemon", 120.0, 2, (116.0, 4.0, "Split skins in transit")),
-            ("Turmeric", 8.0, 1, (8.0, 0.0, ""))]
-    for name, declared, count, (good, damaged, reason) in plan:
-        boxes, _ = services.add_receiving_box(batch["id"], materials[name]["id"],
-                                              declared, uid, count=count)
-        for box in boxes:
-            services.check_receiving_box(box["id"], good, damaged, reason,
-                                         user_id=uid)
-    services.close_receiving_batch(batch["id"], uid)
+    outcome = {"Ginger": (11.0, 0.4, 0.6, "Undersized roots", "Soft and bruised"),
+               "Lemon": (110.0, 6.0, 4.0, "Overripe", "Split skins in transit"),
+               "Turmeric": (8.0, 0.0, 0.0, "", "")}
+    for box in boxes:
+        good, unusable, damaged, ureason, dreason = outcome[box["material_name"]]
+        services.inspect_receiving_box(
+            box["id"], qa, good, unusable, damaged, ureason, dreason,
+            cleaned=True, visual_inspection="Pass", coa_check="Not required",
+            sampling_test="Not required", acceptance="Accepted",
+            verified_by_name="Amamio Admin")
 
-    # Delivery 2 — packaging, clean.
-    batch2 = services.create_receiving_batch(
-        pack, _days_ago(3), uid, delivery_ref="PR-20915",
-        remarks="Bottles and labels for the next run.")
-    for name, declared, count in [("Bottle 300 mL", 200.0, 2),
-                                  ("Label sticker", 500.0, 1)]:
-        boxes, _ = services.add_receiving_box(batch2["id"],
-                                              materials[name]["id"], declared,
-                                              uid, count=count)
-        for box in boxes:
-            services.check_receiving_box(box["id"], declared, 0, "",
-                                         user_id=uid)
-    services.close_receiving_batch(batch2["id"], uid)
+    # Delivery 2 — bottles, one carton held for a missing document.
+    batch2, boxes2, _ = services.receive_delivery(
+        uid, pack, _days_ago(3), lines(
+            ("Square Bottle 300 mL", 200.0, 2, "SB300-2210", "", "Good / intact", None),
+            ("Hexagonal Jar 250 mL", 150.0, 1, "HX250-2210", "", "Good / intact", None)),
+        delivery_ref="DR-55120", remarks="Bottles for the next HLGC run.")
+    for i, box in enumerate(boxes2):
+        if i == 2:
+            services.inspect_receiving_box(
+                box["id"], qa, 146.0, 0, 4.0, "", "Cracked rims",
+                cleaned=False, visual_inspection="Pass", coa_check="Incomplete",
+                sampling_test="Not required", acceptance="Hold",
+                nonconformity="Food-grade certificate not included",
+                action_taken="Asked supplier to e-mail the certificate")
+        else:
+            services.inspect_receiving_box(
+                box["id"], qa, 200.0, 0, 0, cleaned=False,
+                visual_inspection="Pass", coa_check="Complete",
+                sampling_test="Not required", acceptance="Accepted")
 
-    # Delivery 3 — open, boxes still waiting to be counted.
-    batch3 = services.create_receiving_batch(
-        produce, services.today_iso(), uid, delivery_ref="DR-88630",
-        remarks="Arrived this morning — awaiting count.")
-    services.add_receiving_box(batch3["id"], materials["Ginger"]["id"], 15.0,
-                               uid, count=2)
-    services.add_receiving_box(batch3["id"], materials["Lemon"]["id"], 150.0,
-                               uid, count=2)
+    # Delivery 3 — arrived this morning, boxes waiting for inspection.
+    services.receive_delivery(
+        uid, produce, services.today_iso(), lines(
+            ("Ginger", 15.0, 2, "GIN-1016", "", "Good / intact", 26.5),
+            ("Calamansi", 10.0, 1, "CAL-1016", "", "Good / intact", 26.5),
+            ("Lemon", 150.0, 2, "LEM-1016", "", "Good / intact", 26.5)),
+        po_no="PO-1051", delivery_ref="DR-88630",
+        remarks="Arrived this morning.")
 
 
 def _seed_honey(users, suppliers, materials):
-    """Containers across all three QC states, including a failure."""
-    uid = users["production_head"]["id"]
+    """Containers across all three QC states, including failures."""
+    recv = users["receiving_head"]["id"]
+    qa = users["production_head"]["id"]
     apiary = suppliers["Mindanao Forest Apiary"]["id"]
     honey_material = materials["Raw Honey"]["id"]
 
-    # (net kg, result, moisture, appearance, note, allocated to)
+    # (net kg, result, moisture, appearance, note, [(product, kg), ...])
     checked = [
-        (28.5, "Pass", 17.4, "Clear", "Within spec.", "Raw Forest Honey 250 mL"),
-        (31.0, "Pass", 18.9, "Clear", "Within spec.", "Raw Forest Honey 1 L"),
+        (28.5, "Pass", 17.4, "Clear", "Within spec.",
+         [("Pure Honey", 20.0), ("RFH (Raw Forest Honey) with Comb", 8.5)]),
+        (31.0, "Pass", 18.9, "Clear", "Within spec.", [("Pure Honey", 12.0)]),
         (26.2, "Pass", 19.6, "Crystallized",
-         "Crystallized but within moisture spec — warmed before bottling.", ""),
+         "Crystallized but within moisture spec — warmed before bottling.", []),
         (24.8, "Failed", 22.7, "Fermented / off-smell",
          "Above the 20% moisture limit and showing fermentation.",
-         "Honey Infused Ginger 200 mL"),
+         [("Honey Vinegar", 14.8), ("Honey Lemon Ginger Concentrate", 10.0)]),
         (29.4, "Failed", 21.2, "With sediment",
-         "Sediment and high moisture — diverted to infused products.", ""),
+         "Sediment and high moisture — diverted to infused products.",
+         [("Honey Infused Ginger", 9.0)]),
     ]
-    for net, result, moisture, appearance, note, allocated in checked:
-        container, _ = services.create_honey_container(
-            net, uid, supplier_id=apiary, source="Supplier delivery",
+    for net, result, moisture, appearance, note, uses in checked:
+        created, _ = services.log_honey_containers(
+            1, net, recv, supplier_id=apiary, source="Supplier delivery",
             harvest_date=_days_ago(21), received_date=_days_ago(10),
             material_id=honey_material)
+        container = created[0]
         services.record_honey_qc(container["id"], result, moisture, appearance,
-                                 notes=note, user_id=uid)
-        if allocated:
-            services.allocate_honey_container(container["id"], allocated,
-                                              user_id=uid)
+                                 notes=note, user_id=qa)
+        for product, kg in uses:
+            services.allocate_honey_container(container["id"], product, kg,
+                                              user_id=qa)
 
-    # Three containers still queued for the moisture check.
-    for net in (27.6, 30.2, 25.9):
-        services.create_honey_container(
-            net, uid, supplier_id=apiary, source="Own harvest",
-            harvest_date=_days_ago(4), received_date=_days_ago(1),
-            material_id=honey_material)
+    # Three containers still waiting for the moisture check.
+    services.log_honey_containers(
+        3, 27.5, recv, source="Own harvest", harvest_date=_days_ago(4),
+        received_date=_days_ago(1), material_id=honey_material)
 
 
 def _seed_packing(users, products):
-    """One run per channel so the packing monitor is populated from day one."""
-    uid = users["packing_head"]["id"]
-    hlgc = products["Honey Lemon Ginger Concentrate 300 mL"]["id"]
-    rfh = products["Raw Forest Honey 250 mL"]["id"]
-    hit = products["Honey Infused Turmeric Ginger 200 mL"]["id"]
-    hig = products["Honey Infused Ginger 200 mL"]["id"]
+    """Runs on every channel: disbursed, with the courier, and waiting."""
+    head = users["packing_head"]["id"]
+    joy = users["packer1"]["id"]
+    mark = users["packer2"]["id"]
+    p = {name: prod["id"] for name, prod in products.items()}
+    hlgc = p["Honey Lemon Ginger Concentrate 300 mL"]
+    rfh = p["RFH with Comb 250 mL"]
+    ph = p["Pure Honey 250 mL"]
+    hitg = p["Honey Infused Turmeric Ginger 300 mL"]
+    hig = p["Honey Infused Ginger 300 mL"]
+    tab = p["Pure Tableya 200 g"]
 
+    # channel, date, ref, packer, lines, outcome, courier, tracking, received by
     plan = [
-        ("Shopee", _days_ago(2), "SHP-2610107KMYDDCQ",
-         [(hlgc, 12, 0), (rfh, 6, 0)], "handed", "SPX Express", "PH269036210686A"),
-        ("Lazada", _days_ago(2), "LZD-1119715849296256",
-         [(rfh, 8, 0), (hit, 4, 1)], "handed", "J&T Express PH", "820165158961"),
-        ("TikTok", _days_ago(1), "TTS-7694272255744952065",
-         [(hlgc, 9, 0), (hig, 5, 0)], "packed", "Flash Express", ""),
-        ("VIP", _days_ago(1), "VIP-Metro Grocers",
-         [(rfh, 10, 0), (hlgc, 10, 0)], "packed", "Own delivery", ""),
-        ("Walk-in", services.today_iso(), "WI-0032",
-         [(hig, 3, 0)], "open", "", ""),
+        ("Shopee", _days_ago(2), "SHP-2610107KMYDDCQ", joy,
+         [(hlgc, 12, 0), (ph, 6, 0)], "courier", "SPX Express (Shopee)",
+         "PH269036210686A", "SPX rider — Ben"),
+        ("Lazada", _days_ago(2), "LZD-1119715849296256", mark,
+         [(rfh, 8, 0), (hitg, 4, 1)], "courier", "J&T Express",
+         "820165158961", "J&T rider — Al"),
+        ("VIP", _days_ago(1), "VIP-Metro Grocers", joy,
+         [(ph, 10, 0), (hlgc, 10, 0)], "disbursed", "", "",
+         "Liza Tan (Metro Grocers)"),
+        ("TikTok", _days_ago(1), "TTS-7694272255744952065", mark,
+         [(hlgc, 9, 0), (hig, 5, 0)], "packed", "", "", ""),
+        ("Walk-in", services.today_iso(), "WI-0032", joy,
+         [(tab, 3, 0)], "disbursed", "", "", "Walk-in buyer"),
+        ("Shopee", services.today_iso(), "SHP-batch-AM", head,
+         [(ph, 4, 0), (hig, 2, 0)], "packed", "", "", ""),
     ]
-    for channel, when, ref, lines, stage, courier, tracking in plan:
-        run, err = services.create_packing_run(
-            channel, uid,
-            [{"product_id": pid, "qty": qty, "damaged_qty": dmg}
+    for channel, when, ref, packer, lines, outcome, courier, tracking, who in plan:
+        run, err = services.pack_now(
+            channel, packer,
+            [{"product_id": pid, "qty": qty, "damaged_qty": dmg,
+              "notes": "Cracked lid" if dmg else ""}
              for pid, qty, dmg in lines],
-            uid, pack_date=when, order_ref=ref, courier=courier,
-            tracking_no=tracking,
-            remarks="Seeded example run for the %s channel." % channel)
+            head, pack_date=when, order_ref=ref)
         if err or not run:
             continue
-        if stage in ("packed", "handed"):
-            services.mark_packed(run["id"], user_id=uid)
-        if stage == "handed":
-            services.hand_over_packing_run(
-                run["id"], "%s rider" % (courier or "Courier"),
-                courier=courier, tracking_no=tracking, user_id=uid)
-
-
-def _seed_maintenance(users, materials):
-    uid = users["assets_head"]["id"]
-    plan = [
-        ("Bottle filling machine", "Preventive", _days_ago(20),
-         "In-house technician", "Completed", 2500.0, _days_ago(-10), 2.0,
-         "Nozzle cleaning and seal replacement."),
-        ("Digital moisture meter", "Calibration", _days_ago(35),
-         "Precision Lab Services", "Completed", 1800.0, _days_ago(-25), 0.5,
-         "Annual calibration certificate on file."),
-        ("Stainless steaming vat", "Repair", _days_ago(8),
-         "Weld Masters", "Completed", 4200.0, _days_ago(-80), 6.0,
-         "Re-welded the drain valve."),
-        ("Weighing scale (50 kg)", "Inspection", _days_ago(2),
-         "In-house technician", "Scheduled", 0.0, _days_ago(-3), 0.0,
-         "Monthly accuracy check against test weights."),
-    ]
-    for name, mtype, done, by, status, cost, due, downtime, notes in plan:
-        services.record_maintenance(materials[name]["id"], mtype, done, by,
-                                    status, cost=cost, next_due=due,
-                                    downtime_hours=downtime, notes=notes,
-                                    user_id=uid)
+        if outcome == "courier":
+            services.dispatch_packing_run(
+                run["id"], services.DISPATCH_COURIER, who, user_id=packer,
+                courier=courier, tracking_no=tracking, parcel_count=len(lines))
+        elif outcome == "disbursed":
+            services.dispatch_packing_run(
+                run["id"], services.DISPATCH_DISBURSED, who, user_id=packer,
+                parcel_count=1)
 
 
 def _seed_live_docs(users, products, materials):
@@ -481,26 +556,26 @@ def _seed_live_docs(users, products, materials):
 
     services.create_material_request(
         requestor_id=users["assets_head"]["id"], category="cleaning",
-        name="Food-grade sanitizer", qty=10,
-        description="5 L drums for the bottling line.",
+        name="Dishwashing Liquid 3.78 L", qty=4,
+        description="For the washing area.",
         reason="Below reorder level", needed_by=_days_ago(-7))
 
     services.create_sales_request(
         requestor_id=users["packing_head"]["id"],
-        product_id=products["Raw Forest Honey 250 mL"]["id"], qty=12,
+        product_id=products["Pure Honey 250 mL"]["id"], qty=12,
         remarks="Reserve stock for the Sunrise Cafe walk-in pickup.")
 
     customers = db.read("customers")
     if not customers:
         return
     hlgc = products["Honey Lemon Ginger Concentrate 300 mL"]["id"]
-    rfh = products["Raw Forest Honey 250 mL"]["id"]
+    ph = products["Pure Honey 250 mL"]["id"]
     packing_uid = users["packing_head"]["id"]
 
     order1, _ = services.create_sales_order(
         customers[0]["id"],
         [{"product_id": hlgc, "qty": 12, "unit_price": 487},
-         {"product_id": rfh, "qty": 6, "unit_price": 499}],
+         {"product_id": ph, "qty": 6, "unit_price": 399}],
         discount=200, remarks="Standard monthly VIP order",
         user_id=packing_uid)
     if order1:
@@ -519,3 +594,35 @@ def _seed_live_docs(users, products, materials):
         customers[1]["id"],
         [{"product_id": hlgc, "qty": 10, "unit_price": 487}],
         discount=0, remarks="Awaiting confirmation", user_id=packing_uid)
+
+
+def _seed_platform_sales(users):
+    """Import the sample marketplace exports, so Module 5 has data on day one."""
+    import platform_service as ps
+    ps.seed_builtin_templates()
+    uid = users["packing_head"]["id"]
+    templates = {t["platform"]: t for t in ps.all_templates()}
+    for filename in ps.folder_files():
+        name = filename["name"].lower()
+        platform = next((p for p in ("Shopee", "Lazada", "TikTok")
+                         if p.lower() in name), None)
+        if not platform or platform not in templates:
+            continue
+        path = ps.safe_upload_path(filename["name"])
+        if path and os.path.isfile(path):
+            ps.import_file(path, templates[platform]["id"], uid,
+                           filename=filename["name"])
+
+
+def _seed_module_demos(users):
+    """Example records for the modules that keep their logic in their own
+    service file (assets & supplies, production records, facility records)."""
+    for name in ("assets_service", "production_service", "facility_service"):
+        try:
+            module = importlib.import_module(name)
+        except ModuleNotFoundError as exc:
+            if exc.name != name:
+                raise
+            continue
+        if hasattr(module, "seed_demo"):
+            module.seed_demo(users)

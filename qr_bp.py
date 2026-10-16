@@ -19,7 +19,7 @@ from markupsafe import escape
 
 import db
 import services
-from security import current_user, module_required
+from security import can, current_user, module_required
 
 try:
     import qrcode
@@ -29,12 +29,18 @@ except ImportError:  # pragma: no cover - optional dependency
 
 qr_bp = Blueprint("qr", __name__)
 
-# Every token shape the scanner accepts.
+# Every token shape the scanner accepts.  A printed label carries the code
+# first and then its details ("RB-12 | Ginger | 12 kg | …"), so the code is
+# searched for anywhere in what the scanner typed.
 TOKEN_RE = re.compile(r"^(?:PR-\d+-\d+|RB-\d+|HC-\d+|PK-\d+)$", re.IGNORECASE)
+_FIND_RE = re.compile(r"\b(PR-\d+-\d+|RB-\d+|HC-\d+|PK-\d+)\b", re.IGNORECASE)
 
 
 def _normalize(token):
-    return (token or "").strip().upper()
+    """Pull the code out of whatever was scanned or typed."""
+    text = (token or "").strip().upper()
+    found = _FIND_RE.search(text)
+    return found.group(1) if found else text
 
 
 def resolve_token(token):
@@ -52,22 +58,32 @@ def resolve_token(token):
             return {"ok": False, "kind": "box",
                     "message": "No receiving box matches %s." % token}
         batch = db.get("receiving_batches", box.get("batch_id")) or {}
+        status = services.box_status(box)
+        user = current_user()
+        url = url_for("receiving.box", box_id=box["id"])
+        action = "Open this box"
+        if status == services.BOX_AWAITING and can(user, "inspection"):
+            url = url_for("receiving.inspect", box_id=box["id"])
+            action = "Inspect & clean this box"
+        unit = box.get("unit") or ""
         return {
             "ok": True, "kind": "box", "token": token, "record": box,
-            "title": "Receiving box %s" % token,
-            "subtitle": "%s · %s" % (box.get("material_name") or "—",
-                                     batch.get("ref_no") or ""),
-            "status": box.get("status"),
-            "url": url_for("receiving.batch", batch_id=box.get("batch_id")),
+            "title": "%s — %s" % (box.get("material_name") or "Box",
+                                  services.fmt_qty(box.get("declared_qty"), unit)),
+            "subtitle": "Box %s · %s · %s" % (token, batch.get("ref_no") or "",
+                                             batch.get("supplier_name") or ""),
+            "status": status, "url": url, "action": action,
             "details": [
-                ("Material", box.get("material_name")),
-                ("Declared", "%s %s" % (box.get("declared_qty"),
-                                        box.get("unit") or "")),
-                ("Good", box.get("good_qty")),
-                ("Damaged", box.get("damaged_qty")),
-                ("Stage", box.get("stage")),
-                ("Supplier", batch.get("supplier_name")),
                 ("Received", batch.get("received_date")),
+                ("Where it is", services.box_stage(box)),
+                ("Lot / batch", box.get("lot_no")),
+                ("Expiry", box.get("expiry_date")),
+                ("Usable", services.fmt_qty(box.get("good_qty"), unit)
+                 if status != services.BOX_AWAITING else None),
+                ("Can't be used", services.fmt_qty(box.get("unusable_qty"), unit)
+                 if status != services.BOX_AWAITING else None),
+                ("Damaged", services.fmt_qty(box.get("damaged_qty"), unit)
+                 if status != services.BOX_AWAITING else None),
             ],
         }
 
@@ -76,20 +92,30 @@ def resolve_token(token):
         if not container:
             return {"ok": False, "kind": "container",
                     "message": "No honey container matches %s." % token}
+        status = container.get("status")
+        action = "Open this container"
+        if status == "Pending QC":
+            action = "Check moisture & appearance"
+        elif status in services.QC_RESULTS and services._to_float(
+                container.get("remaining_kg",
+                              container.get("net_weight_kg"))) > 0:
+            action = "Send to a product"
         return {
             "ok": True, "kind": "container", "token": token,
             "record": container,
-            "title": "Honey container %s" % token,
-            "subtitle": container.get("batch_ref") or "",
-            "status": container.get("status"),
-            "url": url_for("honey.qc", container_id=container["id"]),
+            "title": "Honey — %s" % services.fmt_qty(
+                container.get("net_weight_kg"), "kg"),
+            "subtitle": "Container %s · %s" % (token,
+                                              container.get("batch_ref") or ""),
+            "status": status, "action": action,
+            "url": url_for("honey.container", container_id=container["id"]),
             "details": [
-                ("Net weight", "%s kg" % container.get("net_weight_kg")),
-                ("Source", container.get("source")),
-                ("Moisture", container.get("moisture_pct")),
-                ("Appearance", container.get("appearance")),
-                ("Disposition", container.get("disposition")),
+                ("Source", container.get("supplier_name") or container.get("source")),
                 ("Received", container.get("received_date")),
+                ("Moisture", ("%s %%" % container.get("moisture_pct"))
+                 if container.get("moisture_pct") is not None else None),
+                ("Appearance", container.get("appearance")),
+                ("Routed to", container.get("disposition")),
             ],
         }
 
@@ -98,20 +124,23 @@ def resolve_token(token):
         if not run:
             return {"ok": False, "kind": "packing",
                     "message": "No packing run matches %s." % token}
+        action = {"In Progress": "Finish packing",
+                  "Packed": "Disburse or hand to courier"}.get(
+                      run.get("status"), "Open this packing run")
         return {
             "ok": True, "kind": "packing", "token": token, "record": run,
-            "title": "Packing run %s" % token,
-            "subtitle": "%s · %s" % (run.get("channel") or "",
-                                     run.get("packer_name") or ""),
-            "status": run.get("status"),
+            "title": "Packing %s — %s item(s)" % (
+                run.get("channel") or "", services.fmt_qty(run.get("total_qty"))),
+            "subtitle": "Run %s · packed by %s" % (token,
+                                                   run.get("packer_name") or "—"),
+            "status": run.get("status"), "action": action,
             "url": url_for("packing.detail", run_id=run["id"]),
             "details": [
-                ("Channel", run.get("channel")),
-                ("Packer", run.get("packer_name")),
-                ("Items", len(run.get("items", []))),
-                ("Quantity", run.get("total_qty")),
                 ("Pack date", run.get("pack_date")),
+                ("Products", len(run.get("items", []))),
                 ("Courier", run.get("courier")),
+                ("Tracking no.", run.get("tracking_no")),
+                ("Handed to", run.get("handed_to")),
             ],
         }
 
@@ -134,6 +163,7 @@ def resolve_token(token):
         "subtitle": material.get("name") or item.get("name") or "",
         "status": item.get("status"),
         "url": url_for("requests.detail", id=request_id),
+        "action": "Open the request",
         "details": [
             ("Item", material.get("name") or item.get("name")),
             ("Requested", item.get("requested_qty")),
@@ -155,6 +185,8 @@ def lookup():
     """JSON resolution of a scanned code, used by the scanner page."""
     result = resolve_token(request.args.get("token"))
     payload = {k: v for k, v in result.items() if k != "record"}
+    payload["details"] = [d for d in payload.get("details", [])
+                          if d[1] not in (None, "", "—")]
     return jsonify(payload), (200 if result.get("ok") else 404)
 
 
@@ -203,7 +235,7 @@ def image(token):
     if not TOKEN_RE.match(token):
         abort(404)
     if _HAVE_QR:
-        img = qrcode.make(token)
+        img = qrcode.make(services.qr_payload(token))
         buf = io.BytesIO()
         img.save(buf, format="PNG")
         return Response(buf.getvalue(), mimetype="image/png")

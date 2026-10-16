@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Pest Control{% endblock %}
+{% block content %}
+<style>
+  .month-strip { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px; }
+  @media (max-width: 720px) { .month-strip { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+  .month-cell { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 4px 9px;
+    border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface);
+    color: var(--muted); font-size: .76rem; font-weight: 700; text-align: center; }
+  a.month-cell:hover { border-color: var(--gold-line); text-decoration: none; }
+  .month-cell .m-dot { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+    border: 2px solid var(--line-3); color: transparent; }
+  .month-cell .m-state { font-size: .64rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+  .month-cell.is-done { color: var(--heading); }
+  .month-cell.is-done .m-dot { background: var(--gold-deep); border-color: var(--gold-deep); color: #111; }
+  .month-cell.is-done .m-state { color: var(--gold-ink); }
+  .month-cell.is-activity .m-dot { background: var(--danger); border-color: var(--danger); color: #111; }
+  .month-cell.is-activity .m-state { color: var(--danger); }
+  .month-cell.is-missing { border-color: rgba(236, 125, 108, .45); color: var(--heading); }
+  .month-cell.is-missing .m-dot { border-color: var(--danger); border-style: dashed; }
+  .month-cell.is-missing .m-state { color: var(--danger); }
+  .month-cell.is-due { border-color: var(--gold-line); color: var(--gold-ink); }
+  .month-cell.is-due .m-dot { border-color: var(--gold); border-style: dashed; }
+  .month-cell.is-untracked { opacity: .45; }
+  .strip-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .74rem; color: var(--muted); margin-top: 10px; }
+</style>
+
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Pest Control</h1>
+    <p class="page-sub">Pest Control Monitoring Record — to be done on a monthly basis.</p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('facility.pest_print') }}">{{ icon('printer', 15) }} Print record</a>
+    {% if current.state == 'due' %}
+    <a class="btn btn-primary" href="{{ url_for('facility.pest_new') }}">{{ icon('plus', 16) }} Record this month's inspection</a>
+    {% endif %}
+  </div>
+</div>
+
+{% if current.state == 'due' %}
+<div class="next-action">
+  <div class="next-action-text">
+    <b>{{ current.long }} has not been inspected yet</b>
+    <span>Walk the five areas, look for signs of pests and note any corrective action.</span>
+  </div>
+  <a class="btn btn-primary btn-sm" href="{{ url_for('facility.pest_new') }}">Start inspection</a>
+</div>
+{% else %}
+<div class="next-action">
+  <div class="next-action-text">
+    <b>{{ current.long }} is done</b>
+    <span>{% if current.activity %}Pest activity was found — check the corrective actions.{% else %}No pest activity this month. The next inspection is due next month.{% endif %}</span>
+  </div>
+  <a class="btn btn-ghost btn-sm" href="{{ url_for('facility.pest_record', record_id=current.record_id) }}">Open this month</a>
+</div>
+{% endif %}
+
+<div class="section-label">The last 12 months</div>
+<div class="month-strip">
+  {% for m in months %}
+    {% set cls = 'is-' ~ m.state ~ (' is-activity' if m.activity else '') %}
+    {% if m.state == 'done' %}
+    <a class="month-cell {{ cls }}" href="{{ url_for('facility.pest_record', record_id=m.record_id) }}" title="{{ m.long }} — {{ 'pest activity found' if m.activity else 'no pest activity' }}">
+    {% elif m.state in ('missing', 'due') %}
+    <a class="month-cell {{ cls }}" href="{{ url_for('facility.pest_new', period=m.period) }}" title="{{ m.long }} — {{ 'skipped, record it now' if m.state == 'missing' else 'due this month' }}">
+    {% else %}
+    <div class="month-cell {{ cls }}" title="{{ m.long }} — before records started">
+    {% endif %}
+      <span>{{ m.label }}<br><span class="m-state" style="color:var(--muted-2)">{% if m.label == 'Jan' or loop.first %}{{ m.year }}{% else %}&nbsp;{% endif %}</span></span>
+      <span class="m-dot">{% if m.state == 'done' %}{{ icon('alert' if m.activity else 'check', 14) }}{% endif %}</span>
+      <span class="m-state">{{ {'done': 'Pests' if m.activity else 'Done', 'missing': 'Missed', 'due': 'Due', 'untracked': '—'}[m.state] }}</span>
+    {% if m.state == 'untracked' %}</div>{% else %}</a>{% endif %}
+  {% endfor %}
+</div>
+<div class="strip-legend">
+  <span>Done = inspected, no pests</span><span>Pests = activity found</span>
+  <span>Missed = a month was skipped — tap it to record it late</span>
+</div>
+{% if missing %}
+<p class="small mt" style="color:var(--danger)">{{ missing|length }} month{{ 's' if missing|length != 1 }} skipped: {{ missing|map(attribute='long')|join(', ') }}.</p>
+{% endif %}
+
+<div class="section-label">Inspections</div>
+{% if records %}
+<div class="queue">
+  {% for r in records %}
+  <a class="queue-item" href="{{ url_for('facility.pest_record', record_id=r.id) }}">
+    <span class="task-icon" style="width:40px;height:40px">{{ icon('shield', 18) }}</span>
+    <span class="queue-main">
+      <span class="queue-title">{{ r.month }}</span>
+      <span class="queue-sub">Monitored {{ r.nice_date }} by {{ r.monitored_by }} · {{ r.summary }}</span>
+    </span>
+    {% if r.activity_count %}<span class="badge badge-danger">Pest activity</span>
+    {% else %}<span class="badge badge-ok">Clear</span>{% endif %}
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card"><div class="empty">
+  <div class="empty-icon">{{ icon('shield', 30) }}</div>
+  <div class="empty-title">No inspections yet</div>
+  <p class="muted">Once a month, check the five areas for signs of pests and record it here.</p>
+  <a class="btn btn-primary mt" href="{{ url_for('facility.pest_new') }}">Record this month's inspection</a>
+</div></div>
+{% endif %}
+{% endblock %}

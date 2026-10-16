@@ -1,0 +1,37 @@
+{# Shared header for the printable copies of Amamio's paper forms. #}
+{% macro paper_head(title, subtitle='', doc_no='', revision='', effective='') %}
+<div class="paper-head">
+  <img src="{{ url_for('static', filename='img/amamio-logo.jpg') }}" alt="Amamio Farm Products">
+  <div>
+    <div class="paper-org">AMAMIO FARM PRODUCTS</div>
+    <div class="paper-addr">District 4, Brgy. Kinabjangan, Nasipit, Agusan del Norte<br>
+      Mobile No.: 0975.801.9089 / 0917.124.8356 · amamiofarm@gmail.com · www.amamiofarm.com</div>
+  </div>
+  {% if doc_no or revision or effective %}
+  <div class="paper-doc">
+    {% if doc_no %}Document No.: <b>{{ doc_no }}</b><br>{% endif %}
+    {% if revision %}Revision: <b>{{ revision }}</b><br>{% endif %}
+    {% if effective %}Effective date: <b>{{ effective }}</b>{% endif %}
+  </div>
+  {% endif %}
+</div>
+<div class="paper-title">{{ title }}</div>
+{% if subtitle %}<div class="paper-sub">{{ subtitle }}</div>{% endif %}
+{% endmacro %}
+
+{% macro paper_signoff(labels) %}
+<div class="paper-foot">
+  {% for label in labels %}<div>{{ label }}</div>{% endfor %}
+</div>
+{% endmacro %}
+
+{# Date-range / month filter shown above a paper form (hidden on print). #}
+{% macro range_filter(action, date_from, date_to, extra='') %}
+<form method="get" action="{{ action }}" class="filter-bar no-print">
+  <div class="form-row field"><label class="form-label">From</label><input type="date" name="from" value="{{ date_from }}"></div>
+  <div class="form-row field"><label class="form-label">To</label><input type="date" name="to" value="{{ date_to }}"></div>
+  {{ extra }}
+  <button class="btn btn-ghost" type="submit">Show</button>
+  <button class="btn btn-primary" type="button" onclick="window.print()">{{ icon('printer', 15) }} Print</button>
+</form>
+{% endmacro %}

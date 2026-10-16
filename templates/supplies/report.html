@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% from "_paper.html" import paper_head, paper_signoff %}
+{% block title %}Month-End Report · {{ r.period_label|title }}{% endblock %}
+{% block content %}
+<a class="back-link no-print" href="{{ url_for('supplies.index', cat=cat) }}">{{ icon('arrow-left', 15) }} Supplies In / Out</a>
+
+<form method="get" action="{{ url_for('supplies.report') }}" class="filter-bar no-print">
+  <div class="form-row field"><label class="form-label" for="category">Report</label>
+    <select id="category" name="category">
+      {% for key, label in categories %}<option value="{{ key }}" {{ 'selected' if key == cat }}>{{ label }}</option>{% endfor %}
+    </select></div>
+  <div class="form-row field"><label class="form-label" for="period">Month</label>
+    <select id="period" name="period">
+      {% for p in periods %}<option value="{{ p }}" {{ 'selected' if p == period }}>{{ period_label(p)|title }}</option>{% endfor %}
+    </select></div>
+  <button class="btn btn-ghost" type="submit">Show</button>
+  <a class="btn btn-ghost" href="{{ url_for('supplies.count', category=cat, period=period) }}">{{ icon('count', 15) }} {{ 'Count again' if r.count else 'Enter the physical count' }}</a>
+  <button class="btn btn-primary" type="button" onclick="window.print()">{{ icon('printer', 15) }} Print</button>
+</form>
+
+<div class="paper">
+  {{ paper_head('Month End Report – ' ~ r.period_label, r.title) }}
+  <table class="paper-table">
+    <thead>
+      <tr>
+        <th class="num" style="width:34px">#</th><th>Particulars / Description</th><th>Unit</th>
+        <th class="num">Opening</th><th class="num">IN</th><th class="num">OUT</th>
+        <th class="num">Closing (system)</th><th class="num">Physical Inventory</th><th class="num">Variance</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sub, lines in r.groups %}
+        {% if r.groups|length > 1 %}<tr class="group"><td colspan="9">{{ sub }}</td></tr>{% endif %}
+        {% for l in lines %}
+        <tr>
+          <td class="num">{{ l.no }}</td>
+          <td>{{ l.name }}</td>
+          <td>{{ l.unit }}</td>
+          <td class="num">{{ l.opening|qty }}</td>
+          <td class="num">{{ l['in']|qty if l['in'] else '' }}</td>
+          <td class="num">{{ l.out|qty if l.out else '' }}</td>
+          <td class="num"><b>{{ l.closing|qty }}</b></td>
+          <td class="num">{{ l.physical|qty if l.physical is not none else '' }}</td>
+          <td class="num" style="{{ 'color:#b42318;font-weight:700' if l.variance and l.variance < 0 else ('font-weight:700' if l.variance else '') }}">
+            {% if l.variance is not none %}{{ '+' if l.variance > 0 }}{{ l.variance|qty }}{% endif %}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+      <tr><td colspan="9" style="text-align:center;color:#666;padding:20px">No items in this category.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="paper-note">
+    Opening, IN, OUT and Closing come from every recorded movement in {{ r.period_label|title }}.
+    {% if r.count %}Physical inventory counted by {{ r.counted_by }} on {{ r.count.counted_at[:10] }}{% if r.count.adjusted %} — stock was adjusted to the count{% endif %}.{% if r.count.notes %} {{ r.count.notes }}{% endif %}
+    {% else %}No physical count has been saved for this month yet.{% endif %}
+  </div>
+  {{ paper_signoff(['Counted by:', 'Checked by:', 'Approved by:']) }}
+</div>
+{% endblock %}

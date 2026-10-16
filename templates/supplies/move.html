@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block title %}Record supplies IN / OUT{% endblock %}
+{% block content %}
+{% set back = url_for('supplies.item', material_id=form.material_id) if form.material_id else url_for('supplies.index', cat=preset_cat or none) %}
+<a class="back-link" href="{{ back }}">{{ icon('arrow-left', 15) }} {{ 'Back to the item' if form.material_id else 'Supplies In / Out' }}</a>
+
+<form method="post" action="{{ url_for('supplies.move') }}" class="wizard" id="supForm" data-wizard
+      data-wizard-start="{{ start }}" data-submit-label="Save" data-cancel="{{ back }}">
+
+  <section class="wz-step" data-title="Taking in or issuing out?">
+    <div class="choice-grid cols-2" data-review-label="Direction">
+      <label class="choice"><input type="radio" name="direction" value="IN" required data-autonext {{ 'checked' if form.direction == 'IN' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('in', 20) }}</span>
+        <span><span class="choice-title">IN</span><span class="choice-sub">A delivery, a purchase or unused items returned</span></span></span></label>
+      <label class="choice"><input type="radio" name="direction" value="OUT" data-autonext {{ 'checked' if form.direction == 'OUT' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('out', 20) }}</span>
+        <span><span class="choice-title">OUT</span><span class="choice-sub">Used, issued to a team, damaged or expired</span></span></span></label>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Which kind of supply?" data-hint="The same groups as the month-end reports.">
+    <div class="choice-grid cols-2" data-review-label="Kind">
+      {% set cat_icons = {'raw': 'box', 'packaging': 'packing', 'cleaning': 'sparkle', 'office': 'clipboard'} %}
+      {% for key, label in categories %}
+      <label class="choice"><input type="radio" name="category" value="{{ key }}" required data-autonext {{ 'checked' if (form.category or preset_cat) == key }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon(cat_icons.get(key, 'box'), 20) }}</span>
+        <span><span class="choice-title">{{ label }}</span></span></span></label>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Which item?" id="stepItem">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="material_id">Item <span class="req">*</span></label>
+        <select id="material_id" name="material_id" required data-review-label="Item">
+          <option value="">Choose the item…</option>
+          {% for key, label in categories %}
+            {% set ns = namespace(sub=none) %}
+            {% for m in materials if category_of(m) == key %}
+              {% if m.subcategory != ns.sub %}
+                {% if ns.sub is not none %}</optgroup>{% endif %}
+                {% set ns.sub = m.subcategory %}
+                <optgroup label="{{ m.subcategory or label }}" data-cat="{{ key }}">
+              {% endif %}
+              <option value="{{ m.id }}" data-cat="{{ key }}" data-unit="{{ m.unit }}" data-stock="{{ m.stock_qty or 0 }}"
+                      data-reorder="{{ m.reorder_level or 0 }}"
+                      {{ 'selected' if form.material_id|string == m.id|string }}>{{ m.name }}</option>
+              {% if loop.last %}</optgroup>{% endif %}
+            {% endfor %}
+          {% endfor %}
+        </select>
+        <div class="form-hint" id="stockInfo">&nbsp;</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="How much, and why?" id="stepQty">
+    <div class="wz-body">
+      <div class="form-row" style="max-width:340px">
+        <label class="form-label" for="qty">Quantity <span class="req">*</span></label>
+        <div class="big-field">
+          <input type="number" id="qty" name="qty" min="0.001" step="0.001" required inputmode="decimal" value="{{ form.qty or '' }}" placeholder="0">
+          <span class="unit" id="qtyUnit">unit</span>
+        </div>
+        <div class="form-hint" id="qtyHint"></div>
+      </div>
+      <div class="form-row" id="reasonsIN">
+        <div class="form-label">Reason <span class="req">*</span></div>
+        <div class="chip-choices" data-review-label="Reason">
+          {% for r in in_reasons %}
+          <label class="chip-choice"><input type="radio" name="reason" value="{{ r }}" required {{ 'checked' if form.reason == r and form.direction == 'IN' }}><span>{{ r }}</span></label>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="form-row" id="reasonsOUT">
+        <div class="form-label">Reason <span class="req">*</span></div>
+        <div class="chip-choices" data-review-label="Reason">
+          {% for r in out_reasons %}
+          <label class="chip-choice"><input type="radio" name="reason" value="{{ r }}" required {{ 'checked' if form.reason == r and form.direction == 'OUT' }}><span>{{ r }}</span></label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Who, and any reference?" id="stepWho" data-hint="Optional, but it helps at month end.">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="person" id="personLabel">Person</label>
+        <input type="text" id="person" name="person" maxlength="120" value="{{ form.person or '' }}">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="reference" id="refLabel">Reference no.</label>
+        <input type="text" id="reference" name="reference" maxlength="60" value="{{ form.reference or '' }}">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="notes">Notes</label>
+        <textarea id="notes" name="notes" rows="2" maxlength="400">{{ form.notes or '' }}</textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Check and save" data-review
+           data-hint="Stock changes as soon as you save.">
+    <div class="wz-body"></div>
+  </section>
+</form>
+
+<script>
+(function () {
+  var form = document.getElementById("supForm");
+  var select = document.getElementById("material_id");
+  function val(name) { var r = form.querySelector("[name=" + name + "]:checked"); return r ? r.value : ""; }
+  function n(v) { return Math.round(v * 1000) / 1000; }
+  function item() {
+    var o = select.options[select.selectedIndex];
+    if (!o || !o.value) return null;
+    return { name: o.textContent.trim(), unit: o.getAttribute("data-unit") || "",
+             stock: parseFloat(o.getAttribute("data-stock")) || 0,
+             reorder: parseFloat(o.getAttribute("data-reorder")) || 0 };
+  }
+  function filterItems() {
+    var cat = val("category");
+    select.querySelectorAll("optgroup").forEach(function (g) {
+      var on = !cat || g.getAttribute("data-cat") === cat;
+      g.hidden = !on;
+      g.querySelectorAll("option").forEach(function (o) { o.disabled = !on; o.hidden = !on; });
+    });
+    var cur = select.options[select.selectedIndex];
+    if (cur && cur.disabled) select.value = "";
+  }
+  function sync() {
+    var d = val("direction"), it = item();
+    ["IN", "OUT"].forEach(function (k) {
+      var on = d === k;
+      document.getElementById("reasons" + k).style.display = on ? "" : "none";
+      document.querySelectorAll("#reasons" + k + " input").forEach(function (i) {
+        i.disabled = !on; if (!on) i.checked = false;
+      });
+    });
+    var unit = it ? it.unit : "unit";
+    document.getElementById("qtyUnit").textContent = unit || "unit";
+    document.getElementById("stockInfo").textContent = it
+      ? "In stock: " + n(it.stock) + " " + unit + (it.reorder ? " · reorder at " + n(it.reorder) + " " + unit : "")
+      : " ";
+    var q = parseFloat(document.getElementById("qty").value) || 0;
+    var hint = "";
+    if (it) {
+      var after = d === "OUT" ? it.stock - q : it.stock + q;
+      hint = "In stock now: " + n(it.stock) + " " + unit + (q > 0 ? " → after this: " + n(after) + " " + unit : "");
+      if (d === "OUT" && it.reorder && after <= it.reorder && after >= 0) hint += " (low — the admin will be told)";
+    }
+    document.getElementById("qtyHint").textContent = hint;
+    document.getElementById("stepQty").setAttribute("data-hint", it ? it.name : "");
+    document.getElementById("personLabel").textContent = d === "OUT" ? "Issued to" : "Received from";
+    document.getElementById("person").placeholder = d === "OUT" ? "Person or team" : "Supplier or person";
+    document.getElementById("refLabel").textContent = d === "OUT" ? "Request / batch no." : "DR / OR no.";
+    document.getElementById("reference").placeholder = d === "OUT" ? "e.g. REQ-0420" : "e.g. DR-10233";
+  }
+  form.addEventListener("change", function (e) {
+    if (e.target.name === "category") filterItems();
+    sync();
+  });
+  form.addEventListener("input", sync);
+  filterItems();
+  sync();
+  document.getElementById("stepItem").addEventListener("wz:enter", function () { filterItems(); sync(); });
+  document.getElementById("stepQty").addEventListener("wz:validate", function (e) {
+    var it = item(), q = parseFloat(document.getElementById("qty").value) || 0;
+    if (it && val("direction") === "OUT" && q > it.stock + 1e-9) {
+      e.preventDefault();
+      e.detail.message = "Only " + n(it.stock) + " " + it.unit + " in stock — you can't issue " + q + ".";
+    }
+  });
+})();
+</script>
+{% endblock %}

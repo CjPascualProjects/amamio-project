@@ -1,76 +1,96 @@
 {% extends "base.html" %}
-{% block title %}{{ asset.name }}{% endblock %}
+{% block title %}{{ a.item_no }} {{ a.name }}{% endblock %}
 {% block content %}
-<div class="page-head">
+<div class="focus">
+<a class="back-link" href="{{ url_for('assets.index') }}">{{ icon('arrow-left', 15) }} Equipment &amp; Assets</a>
+
+<div class="record-head">
   <div>
-    <h1 class="page-title">{{ asset.name }}</h1>
-    <p class="page-sub">{{ asset.category|capitalize }} · {{ logs|length }} log entry(ies)</p>
+    <div class="record-code">{{ a.item_no }}</div>
+    <h1 class="record-title">{{ a.name }}</h1>
+    <div class="muted small">{{ a.category }}{% if a.location %} · {{ a.location }}{% endif %}</div>
   </div>
-  <div class="page-head-actions">
-    <a class="btn btn-primary btn-sm"
-       href="{{ url_for('assets.maintenance', asset_id=asset.id) }}">Record maintenance</a>
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('assets.index') }}">Back</a>
+  <span class="badge {{ a.badge }}">{{ a.condition }}</span>
+</div>
+
+<div class="figures mb">
+  <div class="figure"><div class="figure-label">Total</div><div class="figure-value">{{ a.quantity|qty }}<small>{{ a.unit }}</small></div></div>
+  <div class="figure is-good"><div class="figure-label">On site</div><div class="figure-value">{{ a.available|qty }}<small>{{ a.unit }}</small></div></div>
+  <div class="figure {{ 'is-bad' if a.qty_out }}"><div class="figure-label">Out</div><div class="figure-value">{{ a.qty_out|qty }}<small>{{ a.unit }}</small></div></div>
+  <div class="figure {{ 'is-bad' if a.overdue }}"><div class="figure-label">Next maintenance</div><div class="figure-value" style="font-size:1rem">{{ a.next_due or '—' }}</div></div>
+</div>
+
+<div class="next-action">
+  <div class="next-action-text">
+    {% if out_rows %}
+      <b>{{ a.qty_out|qty }} {{ a.unit }} out right now</b>
+      <span>{% for o in out_rows %}{{ o.qty|qty }} {{ o.reason|lower }}{% if o.person %} — {{ o.person }}{% endif %}{% if o.expected_return %}, back by {{ o.expected_return }}{% endif %}{% if not loop.last %}; {% endif %}{% endfor %}</span>
+    {% elif a.overdue %}
+      <b>Maintenance is overdue</b><span>It was due on {{ a.next_due }}. Log the service once it is done.</span>
+    {% else %}
+      <b>Moving this equipment?</b><span>Record it every time it leaves or comes back.</span>
+    {% endif %}
+  </div>
+  <div class="flex gap-sm" style="flex-wrap:wrap">
+    {% if a.available > 0 %}<a class="btn btn-ghost" href="{{ url_for('assets.move', asset_id=a.id, direction='OUT') }}">{{ icon('out', 15) }} Record OUT</a>{% endif %}
+    <a class="btn {{ 'btn-primary' if a.qty_out else 'btn-ghost' }}" href="{{ url_for('assets.move', asset_id=a.id, direction='IN') }}">{{ icon('in', 15) }} Record IN</a>
+    <a class="btn {{ 'btn-primary' if (a.overdue and not a.qty_out) else 'btn-ghost' }}" href="{{ url_for('assets.maintenance', asset_id=a.id) }}">{{ icon('tools', 15) }} Log maintenance</a>
   </div>
 </div>
 
-<div class="card mb">
-  <div class="meta-grid">
-    <div class="meta-item">
-      <div class="meta-label">On hand</div>
-      <div class="meta-value big">{{ '%g'|format(asset.stock_qty|float) }} {{ asset.unit }}</div>
-    </div>
-    <div class="meta-item">
-      <div class="meta-label">Unit cost</div>
-      <div class="meta-value big">₱{{ '{:,.2f}'.format(asset.unit_cost|float) }}</div>
-    </div>
-    <div class="meta-item">
-      <div class="meta-label">Maintenance spend</div>
-      <div class="meta-value big">₱{{ '{:,.2f}'.format(spend) }}</div>
-    </div>
-    <div class="meta-item">
-      <div class="meta-label">Location</div>
-      <div class="meta-value">{{ asset.storage_location or '—' }}</div>
-    </div>
-    <div class="meta-item">
-      <div class="meta-label">Reorder level</div>
-      <div class="meta-value">{{ '%g'|format(asset.reorder_level|float) }} {{ asset.unit }}</div>
-    </div>
+<div class="section-label">Last movements</div>
+{% if moves %}
+<div class="queue mb">
+  {% for m in moves %}
+  <div class="queue-item">
+    <span class="badge {{ 'badge-gold' if m.direction == 'IN' else 'badge-muted' }}" style="min-width:44px;text-align:center">{{ m.direction }}</span>
+    <span class="queue-main">
+      <span class="queue-title">{{ m.qty|qty }} {{ a.unit }} · {{ m.reason }}</span>
+      <span class="queue-sub">{{ m.when }}{% if m.person %} · {{ m.person }}{% endif %}{% if m.destination and m.destination != m.person %} · {{ m.destination }}{% endif %}{% if m.expected_return %} · back by {{ m.expected_return }}{% endif %}{% if m.notes %} · {{ m.notes }}{% endif %}</span>
+    </span>
+    <span class="muted small nowrap">{{ m.recorded_by_name }}</span>
   </div>
+  {% endfor %}
 </div>
+{% else %}
+<p class="muted small mb">No movements recorded yet.</p>
+{% endif %}
+
+<div class="group-head flex-between" style="display:flex;align-items:baseline">
+  <div class="section-label">Maintenance history</div>
+  <a class="small" href="{{ url_for('assets.maintenance_print', asset_id=a.id) }}">{{ icon('printer', 14) }} Print maintenance log</a>
+</div>
+{% if logs %}
+<div class="queue mb">
+  {% for l in logs %}
+  <div class="queue-item">
+    <span class="task-icon" style="width:40px;height:40px">{{ icon('tools', 18) }}</span>
+    <span class="queue-main">
+      <span class="queue-title">{{ l.type }}{% if l.description %} — {{ l.description }}{% endif %}</span>
+      <span class="queue-sub">{{ l.performed_on }}{% if l.performed_time %} {{ l.performed_time }}{% endif %}{% if l.performed_by %} · {{ l.performed_by }}{% endif %}{% if l.cost %} · {{ l.cost|peso }}{% endif %}{% if l.next_due %} · next {{ l.next_due }}{% endif %}</span>
+    </span>
+    <span class="badge {{ l.badge }}">{{ l.status }}</span>
+  </div>
+  {% endfor %}
+  {% if log_count > logs|length %}<p class="muted small">{{ log_count - logs|length }} older record(s) are on the printed log.</p>{% endif %}
+</div>
+{% else %}
+<p class="muted small mb">No maintenance logged yet.</p>
+{% endif %}
 
 <div class="card">
-  <div class="card-title">Service history</div>
-  {% if logs %}
-  <div class="table-wrap">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Date</th><th>Type</th><th>By</th><th class="num">Cost</th>
-          <th class="num">Downtime</th><th>Next due</th><th>Status</th>
-          <th class="wrap">Notes</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for log in logs %}
-        <tr>
-          <td>{{ log.performed_on }}</td>
-          <td><span class="badge badge-muted">{{ log.type }}</span></td>
-          <td class="muted small">{{ log.performed_by or '—' }}</td>
-          <td class="num">₱{{ '{:,.2f}'.format(log.cost|float) }}</td>
-          <td class="num">{{ '%g'|format(log.downtime_hours|float) }} h</td>
-          <td>{{ log.next_due or '—' }}</td>
-          <td><span class="badge {{ badges.get(log.status, 'badge-muted') }}">{{ log.status }}</span></td>
-          <td class="wrap muted small">{{ log.notes or '—' }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% else %}
-  <div class="empty">
-    <div class="empty-title">No service history</div>
-    <p class="muted">Nothing has been logged against this item yet.</p>
-  </div>
-  {% endif %}
+  <div class="card-title flex-between" style="display:flex">Details <a class="small" href="{{ url_for('assets.edit', asset_id=a.id) }}">Edit</a></div>
+  <dl class="review-list">
+    <dt>Serial number</dt><dd>{{ a.serial_number or '—' }}</dd>
+    <dt>Model</dt><dd>{{ a.model or '—' }}</dd>
+    <dt>Manufacturer</dt><dd>{{ a.manufacturer or '—' }}</dd>
+    <dt>Date of purchase</dt><dd>{{ a.date_of_purchase or '—' }}</dd>
+    <dt>Location</dt><dd>{{ a.location or '—' }}</dd>
+    <dt>Contact details</dt><dd>{{ a.contact_details or '—' }}</dd>
+    <dt>No. of years</dt><dd>{{ a.years_in_use|qty if a.years_in_use not in (none, '') else '—' }}</dd>
+    <dt>Cost per item</dt><dd>{{ a.cost_per_item|peso if a.cost_per_item not in (none, '') else '—' }}</dd>
+    {% if a.remarks %}<dt>Remarks</dt><dd>{{ a.remarks }}</dd>{% endif %}
+  </dl>
+</div>
 </div>
 {% endblock %}

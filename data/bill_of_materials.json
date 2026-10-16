@@ -1,163 +1,247 @@
 [
   {
-    "product_id": 1,
+    "product_id": 2,
     "material_id": 1,
-    "qty_per_unit": 0.18,
+    "qty_per_unit": 0.35,
     "notes": "",
     "id": 1
   },
   {
-    "product_id": 1,
-    "material_id": 4,
-    "qty_per_unit": 3,
-    "notes": "By piece — counted, not weighed",
+    "product_id": 2,
+    "material_id": 16,
+    "qty_per_unit": 1,
+    "notes": "",
     "id": 2
   },
   {
-    "product_id": 1,
-    "material_id": 2,
-    "qty_per_unit": 0.08,
-    "notes": "By weight",
+    "product_id": 2,
+    "material_id": 31,
+    "qty_per_unit": 1,
+    "notes": "",
     "id": 3
   },
   {
-    "product_id": 1,
-    "material_id": 6,
-    "qty_per_unit": 1,
+    "product_id": 3,
+    "material_id": 1,
+    "qty_per_unit": 0.7,
     "notes": "",
     "id": 4
   },
   {
-    "product_id": 1,
-    "material_id": 10,
+    "product_id": 3,
+    "material_id": 18,
     "qty_per_unit": 1,
     "notes": "",
     "id": 5
   },
   {
-    "product_id": 1,
-    "material_id": 11,
+    "product_id": 3,
+    "material_id": 32,
     "qty_per_unit": 1,
     "notes": "",
     "id": 6
   },
   {
-    "product_id": 2,
+    "product_id": 4,
     "material_id": 1,
-    "qty_per_unit": 0.32,
+    "qty_per_unit": 1.4,
     "notes": "",
     "id": 7
   },
   {
-    "product_id": 2,
-    "material_id": 8,
+    "product_id": 4,
+    "material_id": 19,
     "qty_per_unit": 1,
     "notes": "",
     "id": 8
   },
   {
-    "product_id": 2,
-    "material_id": 10,
-    "qty_per_unit": 1,
+    "product_id": 7,
+    "material_id": 1,
+    "qty_per_unit": 0.3,
     "notes": "",
     "id": 9
   },
   {
-    "product_id": 2,
-    "material_id": 11,
-    "qty_per_unit": 1,
+    "product_id": 7,
+    "material_id": 8,
+    "qty_per_unit": 0.05,
     "notes": "",
     "id": 10
   },
   {
-    "product_id": 3,
-    "material_id": 1,
-    "qty_per_unit": 1.4,
+    "product_id": 7,
+    "material_id": 16,
+    "qty_per_unit": 1,
     "notes": "",
     "id": 11
   },
   {
-    "product_id": 3,
-    "material_id": 9,
-    "qty_per_unit": 1,
+    "product_id": 9,
+    "material_id": 1,
+    "qty_per_unit": 0.18,
     "notes": "",
     "id": 12
   },
   {
-    "product_id": 3,
-    "material_id": 10,
-    "qty_per_unit": 1,
-    "notes": "",
+    "product_id": 9,
+    "material_id": 2,
+    "qty_per_unit": 3,
+    "notes": "By piece — counted, not weighed",
     "id": 13
   },
   {
-    "product_id": 3,
-    "material_id": 11,
-    "qty_per_unit": 1,
-    "notes": "",
+    "product_id": 9,
+    "material_id": 3,
+    "qty_per_unit": 0.08,
+    "notes": "By weight",
     "id": 14
   },
   {
-    "product_id": 4,
-    "material_id": 1,
-    "qty_per_unit": 0.15,
+    "product_id": 9,
+    "material_id": 17,
+    "qty_per_unit": 1,
     "notes": "",
     "id": 15
   },
   {
-    "product_id": 4,
-    "material_id": 3,
-    "qty_per_unit": 0.05,
+    "product_id": 11,
+    "material_id": 1,
+    "qty_per_unit": 0.18,
     "notes": "",
     "id": 16
   },
   {
-    "product_id": 4,
-    "material_id": 2,
-    "qty_per_unit": 0.05,
+    "product_id": 11,
+    "material_id": 5,
+    "qty_per_unit": 0.1,
     "notes": "",
     "id": 17
   },
   {
-    "product_id": 4,
-    "material_id": 8,
+    "product_id": 11,
+    "material_id": 17,
     "qty_per_unit": 1,
     "notes": "",
     "id": 18
   },
   {
-    "product_id": 4,
-    "material_id": 10,
-    "qty_per_unit": 1,
+    "product_id": 13,
+    "material_id": 1,
+    "qty_per_unit": 0.2,
     "notes": "",
     "id": 19
   },
   {
-    "product_id": 5,
-    "material_id": 1,
-    "qty_per_unit": 0.16,
+    "product_id": 13,
+    "material_id": 4,
+    "qty_per_unit": 0.05,
     "notes": "",
     "id": 20
   },
   {
-    "product_id": 5,
-    "material_id": 2,
-    "qty_per_unit": 0.09,
+    "product_id": 13,
+    "material_id": 3,
+    "qty_per_unit": 0.05,
     "notes": "",
     "id": 21
   },
   {
-    "product_id": 5,
-    "material_id": 8,
+    "product_id": 13,
+    "material_id": 17,
     "qty_per_unit": 1,
     "notes": "",
     "id": 22
   },
   {
-    "product_id": 5,
-    "material_id": 10,
-    "qty_per_unit": 1,
+    "product_id": 15,
+    "material_id": 1,
+    "qty_per_unit": 0.2,
     "notes": "",
     "id": 23
+  },
+  {
+    "product_id": 15,
+    "material_id": 3,
+    "qty_per_unit": 0.09,
+    "notes": "",
+    "id": 24
+  },
+  {
+    "product_id": 15,
+    "material_id": 17,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 25
+  },
+  {
+    "product_id": 18,
+    "material_id": 6,
+    "qty_per_unit": 0.25,
+    "notes": "",
+    "id": 26
+  },
+  {
+    "product_id": 18,
+    "material_id": 28,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 27
+  },
+  {
+    "product_id": 22,
+    "material_id": 6,
+    "qty_per_unit": 0.15,
+    "notes": "",
+    "id": 28
+  },
+  {
+    "product_id": 22,
+    "material_id": 26,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 29
+  },
+  {
+    "product_id": 26,
+    "material_id": 11,
+    "qty_per_unit": 0.15,
+    "notes": "",
+    "id": 30
+  },
+  {
+    "product_id": 26,
+    "material_id": 25,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 31
+  },
+  {
+    "product_id": 28,
+    "material_id": 7,
+    "qty_per_unit": 0.6,
+    "notes": "Fresh leaves — dried and ground",
+    "id": 32
+  },
+  {
+    "product_id": 28,
+    "material_id": 24,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 33
+  },
+  {
+    "product_id": 32,
+    "material_id": 12,
+    "qty_per_unit": 0.1,
+    "notes": "",
+    "id": 34
+  },
+  {
+    "product_id": 32,
+    "material_id": 23,
+    "qty_per_unit": 1,
+    "notes": "",
+    "id": 35
   }
 ]

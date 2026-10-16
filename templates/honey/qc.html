@@ -1,172 +1,85 @@
 {% extends "base.html" %}
-{% block title %}{{ container.container_code }}{% endblock %}
+{% block title %}Check {{ c.container_code }}{% endblock %}
 {% block content %}
-<div class="page-head">
-  <div>
-    <h1 class="page-title">{{ container.container_code }}</h1>
-    <p class="page-sub">
-      {{ container.batch_ref }} · {{ container.supplier_name or container.source }} ·
-      {{ '%g'|format(container.net_weight_kg|float) }} kg net ·
-      received {{ container.received_date }}
-    </p>
-  </div>
-  <div class="page-head-actions">
-    <span class="badge {{ badge }}">{{ container.status }}</span>
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('honey.index') }}">Back</a>
-  </div>
-</div>
+<a class="back-link" href="{{ url_for('honey.index') }}">{{ icon('arrow-left', 15) }} Honey Containers</a>
 
-<div class="grid grid-2">
-  <div class="card">
-    {% if container.status == 'Pending QC' %}
-      <div class="card-title">Record the quality check</div>
-      <form method="post" class="form" id="qcForm">
-        <div class="form-row">
-          <label class="form-label" for="moisture_pct">Moisture content (%) <span class="req">*</span></label>
-          <input type="number" step="0.1" min="0" max="100" id="moisture_pct"
-                 name="moisture_pct" required placeholder="18.5">
-          <div class="form-hint">
-            Honey at or below {{ moisture_max }}% is normally a Pass.
-          </div>
-        </div>
-        <div class="form-row">
-          <label class="form-label" for="appearance">Appearance <span class="req">*</span></label>
-          <select id="appearance" name="appearance" required>
-            <option value="">Choose what you observed…</option>
-            {% for a in appearances %}<option value="{{ a }}">{{ a }}</option>{% endfor %}
-          </select>
-        </div>
+<form method="post" class="wizard" data-wizard data-wizard-start="{{ start }}" id="qcForm"
+      data-submit-label="Save result" data-cancel="{{ url_for('honey.container', container_id=c.id) }}">
 
-        <div class="form-row">
-          <label class="form-label">Result <span class="req">*</span></label>
-          <div class="pill-row" id="resultChoice">
-            {% for r in results %}
-            <label class="pill" style="cursor:pointer">
-              <input type="radio" name="result" value="{{ r }}" required>
-              {{ r }}
-            </label>
-            {% endfor %}
-          </div>
-          <div class="form-hint" id="qcHint">
-            Pass goes to selling stock; Failed is routed to other products.
-          </div>
-        </div>
-
-        <div class="form-row">
-          <label class="form-label" for="qc_notes">Notes</label>
-          <textarea id="qc_notes" name="qc_notes"
-                    placeholder="Anything the next person should know about this container."></textarea>
-        </div>
-        <button class="btn btn-primary" type="submit">Save result</button>
-      </form>
-    {% else %}
-      <div class="card-title">Quality check result</div>
-      <div class="meta-grid">
-        <div class="meta-item">
-          <div class="meta-label">Result</div>
-          <div class="meta-value big" style="color: {{ 'var(--ok)' if container.status == 'Pass' else 'var(--danger)' }}">
-            {{ container.status }}
-          </div>
-        </div>
-        <div class="meta-item">
-          <div class="meta-label">Moisture</div>
-          <div class="meta-value big">{{ '%g'|format(container.moisture_pct|float) }}%</div>
-        </div>
-        <div class="meta-item">
-          <div class="meta-label">Appearance</div>
-          <div class="meta-value">{{ container.appearance }}</div>
-        </div>
-        <div class="meta-item">
-          <div class="meta-label">Disposition</div>
-          <div class="meta-value">{{ container.disposition }}</div>
-        </div>
-        <div class="meta-item">
-          <div class="meta-label">Checked by</div>
-          <div class="meta-value">{{ qc_by }}<br><span class="muted small">{{ qc_at }}</span></div>
-        </div>
-      </div>
-      {% if container.qc_notes %}
-        <hr class="divider">
-        <div class="meta-label">Notes</div>
-        <p class="muted">{{ container.qc_notes }}</p>
-      {% endif %}
-
-      <hr class="divider">
-      <div class="card-title">Where was it used?</div>
-      <form method="post" action="{{ url_for('honey.allocate', container_id=container.id) }}"
-            class="flex gap-sm wrap">
-        <input type="hidden" name="next" value="{{ url_for('honey.qc', container_id=container.id) }}">
-        <input type="text" name="allocated_to" style="flex:1 1 220px"
-               value="{{ container.allocated_to or '' }}"
-               placeholder="e.g. Honey Infused Ginger 200 mL" required>
-        <button class="btn btn-ghost" type="submit">Save allocation</button>
-      </form>
-      <div class="form-hint">
-        {% if container.status == 'Pass' %}
-          Passed honey is already in sellable stock; record which product drew from it.
-        {% else %}
-          Failed honey is kept for other products — note which one used it.
-        {% endif %}
-      </div>
-    {% endif %}
-  </div>
-
-  <div class="card">
-    <div class="card-title">Container label</div>
-    <div class="qr-label" style="max-width:220px;margin:0 auto">
-      <img src="{{ url_for('qr.image', token=container.container_code) }}"
-           alt="{{ container.container_code }}">
-      <div class="qr-code">{{ container.container_code }}</div>
-      <div class="qr-name">{{ '%g'|format(container.net_weight_kg|float) }} kg net</div>
-      <div class="qr-meta">
-        {{ container.batch_ref }}<br>{{ container.received_date }}
-      </div>
-    </div>
-    <hr class="divider">
-    <div class="meta-grid">
-      <div class="meta-item">
-        <div class="meta-label">Source</div>
-        <div class="meta-value">{{ container.source }}</div>
-      </div>
-      <div class="meta-item">
-        <div class="meta-label">Harvested</div>
-        <div class="meta-value">{{ container.harvest_date or '—' }}</div>
-      </div>
-      <div class="meta-item">
-        <div class="meta-label">Gross / tare</div>
-        <div class="meta-value">
-          {{ container.gross_weight_kg or '—' }} / {{ container.tare_weight_kg or '—' }} kg
+  <section class="wz-step" data-title="Is this the right container?" data-no-review>
+    <div class="wz-body">
+      <div class="qr-inline">
+        <img src="{{ url_for('qr.image', token=c.container_code) }}" alt="QR code {{ c.container_code }}">
+        <div>
+          <div class="record-code">{{ c.container_code }}</div>
+          <div class="record-title" style="font-size:1.3rem">Honey — {{ c.net_weight_kg|qty('kg') }}</div>
+          <div class="muted small">{{ c.supplier_name or c.source }} · {{ c.batch_ref }} · received {{ c.received_date }}</div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+  </section>
 
-{% if container.status == 'Pending QC' %}
+  <section class="wz-step" data-title="Moisture content"
+           data-hint="Read it with the moisture meter (refractometer). Honey above {{ moisture_max|qty }}% moisture usually fails.">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="moisture_pct">Moisture <span class="req">*</span></label>
+        <div class="big-field" style="max-width:280px">
+          <input type="number" id="moisture_pct" name="moisture_pct" step="0.1" min="0" max="100" required inputmode="decimal" value="{{ form.moisture_pct or '' }}">
+          <span class="unit">%</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Appearance" data-hint="What does the honey look like?">
+    <div class="chip-choices" data-review-label="Appearance">
+      {% for a in appearances %}
+      <label class="chip-choice"><input type="radio" name="appearance" value="{{ a }}" required data-autonext {{ 'checked' if form.appearance == a }}><span>{{ a }}</span></label>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="PASS or FAILED?" id="resultStep">
+    <p class="muted small" id="suggestLine" style="margin-top:-8px"></p>
+    <div class="choice-grid cols-2 mb" data-review-label="Result">
+      <label class="choice is-pass"><input type="radio" name="result" value="Pass" required {{ 'checked' if form.result == 'Pass' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('check', 22) }}</span>
+        <span><span class="choice-title">PASS</span>
+        <span class="choice-sub">For selling — goes to {{ pass_products|join(', ') }}</span></span></span></label>
+      <label class="choice is-fail"><input type="radio" name="result" value="Failed" {{ 'checked' if form.result == 'Failed' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('x-circle', 22) }}</span>
+        <span><span class="choice-title">FAILED</span>
+        <span class="choice-sub">Not discarded — goes to {{ fail_products|join(', ') }}</span></span></span></label>
+    </div>
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="qc_notes">Notes</label>
+        <input type="text" id="qc_notes" name="qc_notes" maxlength="200" value="{{ form.qc_notes or '' }}" placeholder="Optional">
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Check and save" data-review>
+    <div class="wz-body"></div>
+  </section>
+</form>
+
 <script>
-/* Suggest Pass/Failed from the readings — the checker still decides. */
 (function () {
-  var moisture = document.getElementById("moisture_pct");
-  var appearance = document.getElementById("appearance");
-  var hint = document.getElementById("qcHint");
-  if (!moisture || !appearance || !hint) return;
-
-  function refresh() {
-    if (!moisture.value) return;
-    var url = "{{ url_for('honey.suggest') }}?moisture_pct=" +
-      encodeURIComponent(moisture.value) + "&appearance=" +
-      encodeURIComponent(appearance.value);
-    window.IMS.fetchJSON(url).then(function (data) {
-      if (!data.suggested) return;
-      hint.textContent = "Based on these readings the system suggests: " +
-        data.suggested + ". Confirm or override it above.";
-      hint.style.color = data.suggested === "Pass"
-        ? "var(--ok)" : "var(--danger)";
-    }).catch(function () { /* hint is optional */ });
-  }
-  moisture.addEventListener("change", refresh);
-  appearance.addEventListener("change", refresh);
+  var form = document.getElementById("qcForm");
+  var line = document.getElementById("suggestLine");
+  var URL = "{{ url_for('honey.suggest') }}";
+  document.getElementById("resultStep").addEventListener("wz:enter", function () {
+    var m = form.moisture_pct.value;
+    var a = (form.querySelector("[name=appearance]:checked") || {}).value || "";
+    window.IMS.fetchJSON(URL + "?moisture_pct=" + encodeURIComponent(m) + "&appearance=" + encodeURIComponent(a))
+      .then(function (d) {
+        if (!d.suggested) { line.textContent = ""; return; }
+        line.innerHTML = "Based on " + window.IMS.esc(m) + "% moisture and “" + window.IMS.esc(a.toLowerCase()) +
+          "”, the guide suggests <b>" + (d.suggested === "Pass" ? "PASS" : "FAILED") + "</b>. You decide.";
+      }).catch(function () {});
+  });
 })();
 </script>
-{% endif %}
 {% endblock %}

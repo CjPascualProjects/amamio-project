@@ -2,6 +2,7 @@
 from flask import Blueprint, render_template
 
 import ai
+import assets_service
 import db
 import platform_service as ps
 import services
@@ -133,9 +134,13 @@ def index():
     receiving = {
         "batches": len(batches),
         "boxes": len(boxes),
-        "pending": len([b for b in boxes if b.get("status") == "Pending Check"]),
-        "good": round(sum(_f(b.get("good_qty")) for b in boxes), 2),
-        "damaged": round(sum(_f(b.get("damaged_qty")) for b in boxes), 2),
+        "pending": len([b for b in boxes if services.box_status(b)
+                        in (services.BOX_AWAITING, services.BOX_HOLD)]),
+        "good": round(sum(_f(b.get("good_qty")) for b in boxes
+                          if services.box_status(b) == services.BOX_ACCEPTED), 2),
+        # Everything that did not join stock: can't be used + damaged.
+        "damaged": round(sum(_f(b.get("damaged_qty")) + _f(b.get("unusable_qty"))
+                             for b in boxes), 2),
     }
     received_pct = (receiving["damaged"] /
                     (receiving["good"] + receiving["damaged"]) * 100
@@ -144,7 +149,8 @@ def index():
     receiving_rows = sorted(
         [{"ref_no": b.get("ref_no"), "supplier": b.get("supplier_name"),
           "date": b.get("received_date"), "boxes": b.get("box_count") or 0,
-          "good": b.get("total_good") or 0, "damaged": b.get("total_damaged") or 0,
+          "good": b.get("total_good") or 0,
+          "damaged": _f(b.get("total_damaged")) + _f(b.get("total_unusable")),
           "status": b.get("status"),
           "badge": services.RECEIVING_BADGE.get(b.get("status"), "badge-muted")}
          for b in batches],
@@ -179,7 +185,7 @@ def index():
         "spend": round(sum(_f(l.get("cost")) for l in maint_logs), 2),
         "downtime": round(sum(_f(l.get("downtime_hours"))
                               for l in maint_logs), 1),
-        "due": services.maintenance_due(),
+        "due": assets_service.maintenance_due(),
     }
 
     # AI recommendations grouped (persist the latest snapshot -> AI_Recommendations)

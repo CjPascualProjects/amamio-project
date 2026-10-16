@@ -4,10 +4,10 @@
     "contact_person": "Liza Tan",
     "phone": "0917-200-3001",
     "email": "purchasing@metrogrocers.ph",
-    "address": "SM North EDSA, Quezon City",
+    "address": "Butuan City",
     "channel": "VIP",
     "notes": "",
-    "created_at": "2026-10-14T13:50:22.795316+00:00",
+    "created_at": "2026-10-16T05:39:29.941342+00:00",
     "id": 1
   },
   {
@@ -15,10 +15,10 @@
     "contact_person": "Marco Dela Cruz",
     "phone": "0917-200-3002",
     "email": "orders@healthhub.ph",
-    "address": "BGC, Taguig",
+    "address": "Cagayan de Oro City",
     "channel": "VIP",
     "notes": "",
-    "created_at": "2026-10-14T13:50:22.800634+00:00",
+    "created_at": "2026-10-16T05:39:29.946461+00:00",
     "id": 2
   },
   {
@@ -26,10 +26,10 @@
     "contact_person": "Nina Santos",
     "phone": "0917-200-3003",
     "email": "nina@sunrisecafe.ph",
-    "address": "Session Rd, Baguio",
+    "address": "Nasipit, Agusan del Norte",
     "channel": "Walk-in",
     "notes": "",
-    "created_at": "2026-10-14T13:50:22.824588+00:00",
+    "created_at": "2026-10-16T05:39:29.974455+00:00",
     "id": 3
   },
   {
@@ -37,10 +37,10 @@
     "contact_person": "Oliver Yu",
     "phone": "0917-200-3004",
     "email": "buyer@wellnessmart.ph",
-    "address": "Ayala Center, Cebu",
+    "address": "Davao City",
     "channel": "VIP",
     "notes": "",
-    "created_at": "2026-10-14T13:50:22.847116+00:00",
+    "created_at": "2026-10-16T05:39:30.001389+00:00",
     "id": 4
   }
 ]

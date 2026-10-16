@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% from "receiving/_item_fields.html" import item_fields, item_script %}
+{% block title %}Add a box — {{ batch.ref_no }}{% endblock %}
+{% block content %}
+<div class="focus">
+<a class="back-link" href="{{ url_for('receiving.batch', batch_id=batch.id) }}">{{ icon('arrow-left', 15) }} {{ batch.ref_no }}</a>
+<div class="wz-count">{{ batch.supplier_name }}</div>
+<h1 class="wz-title">Add a box that was missed</h1>
+<p class="wz-hint">It joins delivery {{ batch.ref_no }} and gets its own QR label.</p>
+<form method="post" class="wz-body" data-item>
+  {{ item_fields(none, materials, categories, category_of, track_labels, conditions) }}
+  <div class="flex gap-sm">
+    <button class="btn btn-primary" type="submit">Add &amp; print label</button>
+    <a class="btn btn-ghost" href="{{ url_for('receiving.batch', batch_id=batch.id) }}">Cancel</a>
+  </div>
+</form>
+</div>
+{{ item_script() }}
+{% endblock %}

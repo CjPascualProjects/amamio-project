@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Retention Samples{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Retention Samples</h1>
+    <p class="page-sub">Units kept back from each batch until they expire, then disposed of.</p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('production.retention_print') }}">{{ icon('printer', 15) }} Retention Record</a>
+    <a class="btn btn-primary" href="{{ url_for('production.retention_new') }}">{{ icon('plus', 16) }} Keep a retention sample</a>
+  </div>
+</div>
+
+<div class="figures mb">
+  <div class="figure"><div class="figure-label">Retained</div><div class="figure-value">{{ stats.retained }}</div></div>
+  <div class="figure {{ 'is-bad' if stats.due }}"><div class="figure-label">Due for disposal</div><div class="figure-value">{{ stats.due }}</div></div>
+  <div class="figure"><div class="figure-label">Disposed</div><div class="figure-value">{{ stats.disposed }}</div></div>
+</div>
+
+<div class="toolbar">
+  <div class="seg">
+    <a href="{{ url_for('production.retention') }}" class="{{ 'is-active' if show == 'retained' }}">Retained</a>
+    <a href="{{ url_for('production.retention', show='due') }}" class="{{ 'is-active' if show == 'due' }}">Due for disposal{% if stats.due %} ({{ stats.due }}){% endif %}</a>
+    <a href="{{ url_for('production.retention', show='disposed') }}" class="{{ 'is-active' if show == 'disposed' }}">Disposed</a>
+  </div>
+</div>
+
+{% if samples %}
+<div class="queue">
+  {% for s in samples %}
+  {% set kept = s.status != 'Disposed' %}
+  <{{ 'a' if kept else 'div' }} class="queue-item" {% if kept %}href="{{ url_for('production.retention_dispose', sample_id=s.id) }}"{% endif %}>
+    <span class="task-icon" style="width:40px;height:40px">{{ icon('retention', 18) }}</span>
+    <span class="queue-main">
+      <span class="queue-title">{{ s.product_name }} · {{ s.qty|qty(s.unit) }}</span>
+      <span class="queue-sub"><span class="code">{{ s.batch_no }}</span> · produced {{ s.prod_date }} · expires {{ s.exp_date }}
+        {% if not kept %} · disposed {{ s.disposal_date }}{% endif %}</span>
+    </span>
+    {% if not kept %}
+      <span class="badge badge-muted">Disposed</span>
+    {% elif s.due %}
+      <span class="badge badge-danger">Expired — dispose</span>
+    {% else %}
+      <span class="queue-go">Dispose {{ icon('arrow-right', 14) }}</span>
+    {% endif %}
+  </{{ 'a' if kept else 'div' }}>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card"><div class="empty">
+  <div class="empty-icon">{{ icon('retention', 30) }}</div>
+  <div class="empty-title">{{ {'due': 'Nothing is due for disposal', 'disposed': 'No samples disposed yet'}.get(show, 'No retention samples kept') }}</div>
+  <p class="muted">Keep a few units from every finished batch so it can be re-tested if a customer reports a problem.</p>
+  {% if show == 'retained' %}<a class="btn btn-primary mt" href="{{ url_for('production.retention_new') }}">Keep a retention sample</a>{% endif %}
+</div></div>
+{% endif %}
+{% endblock %}

@@ -7,3 +7,11 @@ export/
 
 # Half-written files left only if the app is killed mid-save
 *.tmp
+
+# Marketplace exports and the sales imported from them hold real customer
+# names, addresses and phone numbers — they stay on this computer, never in
+# the (public) repository.
+sales-platform/*
+!sales-platform/README.txt
+data/platform_sales.json
+data/platform_imports.json

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Upload sales file{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('platforms.index') }}">{{ icon('arrow-left', 15) }} Sales Reports</a>
+
+<form method="post" enctype="multipart/form-data" class="wizard" data-wizard
+      data-submit-label="Upload &amp; preview" data-cancel="{{ url_for('platforms.index') }}" id="uploadForm">
+
+  <section class="wz-step" data-title="Which platform is the file from?"
+           data-hint="The system also recognises the file by its columns, so a wrong pick is caught on the next screen.">
+    <div class="choice-grid cols-3" data-review-label="Platform">
+      {% set subs = {'Shopee': 'Seller Centre › Orders › Export', 'TikTok': 'Finance › Settlements › Order details', 'Lazada': 'Seller Center › Orders › Export', 'Shopify': 'Orders › Export › CSV', 'VIP': 'Your own VIP order sheet', 'Walk-in': 'Store sales sheet', 'Other': 'Any other marketplace'} %}
+      {% for p in platforms %}
+      <label class="choice"><input type="radio" name="platform" value="{{ p }}" required data-autonext {{ 'checked' if chosen == p }}>
+        <span class="choice-card"><span class="choice-icon" style="color:{{ colors[p] }}">{{ icon('platforms', 20) }}</span>
+        <span><span class="choice-title">{{ p }}</span><span class="choice-sub">{{ subs.get(p, '') }}</span></span></span></label>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Choose the exported file" id="fileStep"
+           data-hint="Excel (.xlsx) or CSV, exactly as the platform exported it — no need to edit it.">
+    <input type="hidden" name="source" id="source" value="upload">
+    <label class="drop-zone" id="drop">
+      <input type="file" name="workbook" id="workbook" accept=".xlsx,.xlsm,.csv">
+      {{ icon('upload', 28) }}
+      <b id="dropName">Click to choose a file, or drop it here</b>
+      <span class="small">.xlsx or .csv</span>
+    </label>
+    {% if files %}
+    <details class="mt">
+      <summary class="small gold" style="cursor:pointer">Or use a file already in the sales-platform folder</summary>
+      <div class="chip-choices mt-sm">
+        {% for f in files %}
+        <label class="chip-choice"><input type="radio" name="filename" value="{{ f.name }}"><span>{{ f.name }} · {{ f.modified }}</span></label>
+        {% endfor %}
+      </div>
+    </details>
+    {% endif %}
+  </section>
+</form>
+
+<script>
+(function () {
+  var input = document.getElementById("workbook");
+  var drop = document.getElementById("drop");
+  var name = document.getElementById("dropName");
+  var source = document.getElementById("source");
+  var step = document.getElementById("fileStep");
+  function picked() {
+    if (input.files.length) {
+      name.textContent = input.files[0].name;
+      source.value = "upload";
+      document.querySelectorAll("[name=filename]").forEach(function (r) { r.checked = false; });
+    }
+  }
+  input.addEventListener("change", picked);
+  ["dragenter", "dragover"].forEach(function (t) {
+    drop.addEventListener(t, function (e) { e.preventDefault(); drop.classList.add("is-over"); });
+  });
+  ["dragleave", "drop"].forEach(function (t) {
+    drop.addEventListener(t, function (e) { e.preventDefault(); drop.classList.remove("is-over"); });
+  });
+  drop.addEventListener("drop", function (e) {
+    if (e.dataTransfer.files.length) { input.files = e.dataTransfer.files; picked(); }
+  });
+  document.querySelectorAll("[name=filename]").forEach(function (r) {
+    r.addEventListener("change", function () {
+      source.value = "folder"; input.value = ""; name.textContent = r.value;
+    });
+  });
+  step.addEventListener("wz:validate", function (e) {
+    var fromFolder = document.querySelector("[name=filename]:checked");
+    if (!input.files.length && !fromFolder) {
+      e.preventDefault();
+      e.detail.message = "Choose the file to upload.";
+    }
+  });
+})();
+</script>
+{% endblock %}

@@ -1,35 +1,38 @@
 {% extends "base.html" %}
-{% block title %}Honey container labels{% endblock %}
+{% block title %}Honey QR labels{% endblock %}
 {% block content %}
-<div class="page-head no-print">
-  <div>
-    <h1 class="page-title">Container labels</h1>
-    <p class="page-sub">Stick one on every container before it leaves the intake bay.</p>
+<div class="no-print">
+  <a class="back-link" href="{{ url_for('honey.index') }}">{{ icon('arrow-left', 15) }} Honey Containers</a>
+  {% if fresh %}
+  <div class="next-action">
+    <div class="next-action-text">
+      <b>Saved. Now print the labels.</b>
+      <span>Stick one on each container. The production team was notified to check {{ containers|length }} container(s).</span>
+    </div>
+    <div class="flex gap-sm wrap">
+      <button class="btn btn-primary" type="button" onclick="window.print()">{{ icon('printer', 16) }} Print {{ containers|length }} label(s)</button>
+      <a class="btn btn-ghost" href="{{ url_for('honey.index') }}">Done</a>
+    </div>
   </div>
-  <div class="page-head-actions">
-    <button class="btn btn-primary btn-sm" type="button" onclick="window.print()">Print</button>
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('honey.index') }}">Back</a>
+  {% else %}
+  <div class="page-head">
+    <div><h1 class="page-title">Honey QR labels</h1><p class="page-sub">Containers awaiting QC</p></div>
+    <div class="page-head-actions"><button class="btn btn-primary btn-sm" type="button" onclick="window.print()">{{ icon('printer', 15) }} Print</button></div>
   </div>
+  {% endif %}
 </div>
 
-{% if containers %}
 <div class="label-sheet">
   {% for c in containers %}
   <div class="qr-label">
     <img src="{{ url_for('qr.image', token=c.container_code) }}" alt="{{ c.container_code }}">
     <div class="qr-code">{{ c.container_code }}</div>
-    <div class="qr-name">{{ '%g'|format(c.net_weight_kg|float) }} kg net</div>
-    <div class="qr-meta">
-      {{ c.batch_ref }} · {{ c.received_date }}<br>
-      {{ c.status }}{% if c.disposition %} · {{ c.disposition }}{% endif %}
-    </div>
+    <div class="qr-name">Honey</div>
+    <div class="qr-qty">{{ c.net_weight_kg|qty('kg') }}</div>
+    <div class="qr-meta">{{ c.batch_ref }} · {{ c.received_date }}<br>{{ c.supplier_name or c.source }}</div>
   </div>
+  {% else %}
+  <div class="card"><div class="empty"><div class="empty-title">No containers to label</div></div></div>
   {% endfor %}
 </div>
-{% else %}
-<div class="card"><div class="empty">
-  <div class="empty-title">No containers to label</div>
-  <p class="muted">Log some containers first.</p>
-</div></div>
-{% endif %}
 {% endblock %}

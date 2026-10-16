@@ -1,0 +1,354 @@
+{% extends "base.html" %}
+{% block title %}Start a batch{% endblock %}
+{% block content %}
+{% include "production/_inputs.html" %}
+<style>
+  .line-stock { font-size: .78rem; color: var(--muted); margin: -4px 0 12px; }
+  .line-stock.is-short { color: var(--danger-ink); font-weight: 600; }
+  .step-rows { display: grid; gap: 8px; }
+  .step-row { display: flex; align-items: center; gap: 8px; }
+  .step-row .step-no { flex: none; width: 28px; text-align: right; font-size: .78rem; font-weight: 700; color: var(--gold-ink); }
+  .step-row input { flex: 1; text-transform: uppercase; }
+  .step-row .line-remove { flex: none; }
+  .short-note { margin-top: 12px; padding: 11px 14px; border-radius: var(--radius-xs); font-size: .84rem;
+    background: var(--danger-bg); color: var(--danger-ink); border: 1px solid rgba(236, 125, 108, .3); border-left: 3px solid var(--danger); }
+</style>
+<a class="back-link" href="{{ url_for('production.index') }}">{{ icon('arrow-left', 15) }} Batch Records</a>
+
+<form method="post" class="wizard" id="startForm" data-wizard data-wizard-start="{{ start }}"
+      data-submit-label="Start the batch" data-cancel="{{ url_for('production.index') }}">
+
+  <section class="wz-step" data-title="Which product are you making?"
+           data-hint="Pick the finished product and size, as listed on the Daily Production Report.">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="product_id">Product <span class="req">*</span></label>
+        <select id="product_id" name="product_id" required>
+          <option value="">Choose a product…</option>
+          {% for group, products in groups %}
+          <optgroup label="{{ group }}">
+            {% for p in products %}
+            <option value="{{ p.id }}" {{ 'selected' if form.product_id == p.id|string }}>{{ p.name }}</option>
+            {% endfor %}
+          </optgroup>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Batch size and dates"
+           data-hint="How many units this batch should make, and when. The expiry date follows the production date (12 months) — change it if this product keeps shorter.">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="batch_size">Batch size <span class="req">*</span></label>
+        <div class="big-field">
+          <input type="number" id="batch_size" name="batch_size" min="1" step="1" required inputmode="numeric"
+                 value="{{ form.batch_size or '' }}" placeholder="e.g. 24">
+          <span class="unit" id="sizeUnit">units</span>
+        </div>
+        <div class="form-hint">This is also the theoretical yield.</div>
+      </div>
+      <div class="form-grid cols-2">
+        <div class="form-row">
+          <label class="form-label" for="production_date">Production date <span class="req">*</span></label>
+          <input type="date" id="production_date" name="production_date" required value="{{ form.production_date or today }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="expiry_date">Expiry date <span class="req">*</span></label>
+          <input type="date" id="expiry_date" name="expiry_date" required value="{{ form.expiry_date or default_expiry }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="start_at">Start date &amp; time <span class="req">*</span></label>
+          <input type="datetime-local" id="start_at" name="start_at" required value="{{ form.start_at or now_local }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="batch_no">Batch number</label>
+          <input type="text" id="batch_no" name="batch_no" maxlength="40" value="{{ form.batch_no or '' }}" placeholder="Automatic: {{ next_no }}">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" id="dispStep" data-title="Dispensing and weighing"
+           data-hint="Filled in from the recipe for this batch size. Change the weights if needed, and copy each ingredient's batch / lot no. and expiry from its label.">
+    <div class="line-cards" id="dispLines"></div>
+    <button type="button" class="add-line mt-sm" id="addDisp">{{ icon('plus', 15) }} Add an ingredient</button>
+    <div class="short-note" id="shortNote" style="display:none"></div>
+  </section>
+
+  <section class="wz-step" id="procStep" data-title="Procedure"
+           data-hint="The steps for this product, in order. Each one is signed off as the batch goes. Edit, remove or add steps if this batch is different.">
+    <div class="wz-body">
+      <div class="step-rows" id="stepRows"></div>
+      <button type="button" class="add-line mt" id="addStep">{{ icon('plus', 15) }} Add a step</button>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Check and start" data-review
+           data-hint="Starting the batch does not move any stock yet. Stock moves once the QA approves or disapproves the finished batch.">
+    <div class="wz-body"></div>
+  </section>
+</form>
+
+<template id="dispTpl">
+  <div class="line-card" data-line>
+    <div class="line-card-head">
+      <span class="line-card-num">Ingredient</span>
+      <button type="button" class="line-remove" data-remove-line aria-label="Remove this ingredient">&times;</button>
+    </div>
+    <div class="form-grid cols-2">
+      <div class="form-row">
+        <label class="form-label">From stock</label>
+        <select name="d_material_id" data-review-skip>
+          <option value="" data-unit="">Not in the stock list (type it)</option>
+          {% for m in materials %}
+          <option value="{{ m.id }}" data-unit="{{ m.unit or '' }}">{{ m.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Ingredient <span class="req">*</span></label>
+        <input type="text" name="d_ingredient" maxlength="120" required placeholder="e.g. Moringa leaves">
+      </div>
+    </div>
+    <div class="form-grid cols-3">
+      <div class="form-row">
+        <label class="form-label">Theoretical weight / volume <span class="req">*</span></label>
+        <input type="number" name="d_qty" step="0.001" min="0.001" required inputmode="decimal">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Unit</label>
+        <input type="text" name="d_unit" maxlength="20" placeholder="kg">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Batch / lot no.</label>
+        <input type="text" name="d_lot_no" maxlength="60" placeholder="From the label">
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Expiration date</label>
+      <input type="date" name="d_expiry">
+    </div>
+    <div class="line-stock" data-stock></div>
+  </div>
+</template>
+
+<script>
+(function () {
+  var DATA = {{ data|tojson }};
+  var initialLines = {{ lines|tojson if lines is not none else 'null' }};
+  var initialSteps = {{ steps|tojson if steps is not none else 'null' }};
+  function esc(v) { var d = document.createElement("div"); d.textContent = v == null ? "" : String(v); return d.innerHTML; }
+  var form = document.getElementById("startForm");
+  var product = document.getElementById("product_id");
+  var size = document.getElementById("batch_size");
+  var prodDate = document.getElementById("production_date");
+  var expiry = document.getElementById("expiry_date");
+  var lines = document.getElementById("dispLines");
+  var tpl = document.getElementById("dispTpl");
+  var stepRows = document.getElementById("stepRows");
+  var dispStep = document.getElementById("dispStep");
+  var procStep = document.getElementById("procStep");
+  var shortNote = document.getElementById("shortNote");
+  var linesKey = null, stepsKey = null;
+  var expiryTouched = {{ 'true' if form.expiry_date else 'false' }};
+
+  function fmt(n) { return String(Math.round(n * 1000) / 1000); }
+  function prod() { return DATA.products[product.value] || null; }
+
+  // Product unit next to the batch size.
+  function syncUnit() {
+    var p = prod();
+    document.getElementById("sizeUnit").textContent = p ? p.unit : "units";
+  }
+  product.addEventListener("change", syncUnit);
+  syncUnit();
+
+  // Expiry follows the production date (+12 months) until edited by hand.
+  expiry.addEventListener("input", function () { expiryTouched = true; });
+  prodDate.addEventListener("change", function () {
+    if (expiryTouched || !prodDate.value) return;
+    var d = new Date(prodDate.value + "T00:00:00");
+    var day = d.getDate();
+    d.setDate(1); d.setMonth(d.getMonth() + 12);
+    var last = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+    d.setDate(Math.min(day, last));
+    var m = String(d.getMonth() + 1).padStart(2, "0"), dd = String(d.getDate()).padStart(2, "0");
+    expiry.value = d.getFullYear() + "-" + m + "-" + dd;
+  });
+
+  // ---- Dispensing lines ----
+  function addLine(v) {
+    var node = tpl.content.firstElementChild.cloneNode(true);
+    v = v || {};
+    node.querySelector("[name=d_material_id]").value = v.material_id ? String(v.material_id) : "";
+    node.querySelector("[name=d_ingredient]").value = v.ingredient || "";
+    node.querySelector("[name=d_qty]").value = v.theoretical_qty ? fmt(v.theoretical_qty) : "";
+    node.querySelector("[name=d_unit]").value = v.unit || "";
+    node.querySelector("[name=d_lot_no]").value = v.lot_no || "";
+    node.querySelector("[name=d_expiry]").value = v.expiry_date || "";
+    lines.appendChild(node);
+    return node;
+  }
+  function renumber() {
+    var all = lines.querySelectorAll("[data-line]");
+    all.forEach(function (c, i) {
+      c.querySelector(".line-card-num").textContent = "Ingredient " + (i + 1);
+      c.querySelector("[data-remove-line]").style.visibility = all.length > 1 ? "" : "hidden";
+    });
+    checkStock();
+  }
+  function buildLines() {
+    lines.innerHTML = "";
+    var bom = DATA.boms[product.value] || [];
+    var n = parseFloat(size.value) || 0;
+    bom.forEach(function (b) {
+      var m = DATA.materials[String(b.material_id)];
+      if (!m) return;
+      addLine({ material_id: b.material_id, ingredient: m.name, unit: m.unit,
+                theoretical_qty: b.qty_per_unit * n });
+    });
+    if (!bom.length) addLine({});
+    renumber();
+  }
+  // How much of each stocked material all lines need, against what is on hand.
+  function checkStock() {
+    var need = {};
+    lines.querySelectorAll("[data-line]").forEach(function (c) {
+      var id = c.querySelector("[name=d_material_id]").value;
+      if (id) need[id] = (need[id] || 0) + (parseFloat(c.querySelector("[name=d_qty]").value) || 0);
+    });
+    var short = [];
+    lines.querySelectorAll("[data-line]").forEach(function (c) {
+      var id = c.querySelector("[name=d_material_id]").value;
+      var box = c.querySelector("[data-stock]");
+      var m = id && DATA.materials[id];
+      if (!m) { box.textContent = "Not taken from stock."; box.classList.remove("is-short"); return; }
+      var isShort = need[id] > m.stock + 1e-9;
+      box.classList.toggle("is-short", isShort);
+      box.textContent = isShort
+        ? "Short: this batch needs " + fmt(need[id]) + " " + m.unit + ", only " + fmt(m.stock) + " " + m.unit + " on hand."
+        : "On hand: " + fmt(m.stock) + " " + m.unit;
+      if (isShort && short.indexOf(m.name) === -1) short.push(m.name);
+    });
+    shortNote.style.display = short.length ? "" : "none";
+    shortNote.textContent = short.length
+      ? "Not enough " + short.join(", ") + " in stock. You can start the batch, but it cannot be finished until more is received."
+      : "";
+  }
+  lines.addEventListener("change", function (e) {
+    if (e.target.name === "d_material_id") {
+      var card = e.target.closest("[data-line]");
+      var m = DATA.materials[e.target.value];
+      if (m) {
+        card.querySelector("[name=d_ingredient]").value = m.name;
+        card.querySelector("[name=d_unit]").value = m.unit;
+      }
+    }
+    checkStock();
+  });
+  lines.addEventListener("input", checkStock);
+  lines.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-remove-line]");
+    if (!btn) return;
+    btn.closest("[data-line]").remove();
+    renumber();
+  });
+  document.getElementById("addDisp").addEventListener("click", function () {
+    var node = addLine({});
+    renumber();
+    node.querySelector("select").focus();
+  });
+
+  // ---- Procedure steps ----
+  function addStep(text) {
+    var row = document.createElement("div");
+    row.className = "step-row";
+    row.innerHTML = '<span class="step-no"></span>' +
+      '<input type="text" name="step_process" maxlength="120" aria-label="Procedure step">' +
+      '<button type="button" class="line-remove" data-up aria-label="Move up" title="Move up">&uarr;</button>' +
+      '<button type="button" class="line-remove" data-remove-step aria-label="Remove this step">&times;</button>';
+    row.querySelector("input").value = text || "";
+    stepRows.appendChild(row);
+    return row;
+  }
+  function renumberSteps() {
+    stepRows.querySelectorAll(".step-row").forEach(function (r, i) {
+      r.querySelector(".step-no").textContent = (i + 1) + ".";
+      r.querySelector("[data-up]").style.visibility = i ? "" : "hidden";
+    });
+  }
+  function buildSteps(list) {
+    stepRows.innerHTML = "";
+    (list || []).forEach(addStep);
+    if (!stepRows.children.length) addStep("");
+    renumberSteps();
+  }
+  stepRows.addEventListener("click", function (e) {
+    var row = e.target.closest(".step-row");
+    if (!row) return;
+    if (e.target.closest("[data-remove-step]")) { row.remove(); renumberSteps(); }
+    if (e.target.closest("[data-up]") && row.previousElementSibling) {
+      stepRows.insertBefore(row, row.previousElementSibling); renumberSteps();
+    }
+  });
+  document.getElementById("addStep").addEventListener("click", function () {
+    addStep("").querySelector("input").focus();
+    renumberSteps();
+  });
+
+  // Rebuild the pre-filled lines / steps only when product or size changed.
+  dispStep.addEventListener("wz:enter", function () {
+    var key = product.value + "|" + size.value;
+    if (key !== linesKey) { buildLines(); linesKey = key; }
+  });
+  procStep.addEventListener("wz:enter", function () {
+    if (product.value !== stepsKey) {
+      var p = prod();
+      buildSteps(p ? p.steps : []);
+      stepsKey = product.value;
+    }
+  });
+  if (initialLines) {
+    initialLines.forEach(addLine);
+    if (!initialLines.length) addLine({});
+    renumber();
+    linesKey = product.value + "|" + size.value;
+  }
+  if (initialSteps) {
+    buildSteps(initialSteps.filter(function (s) { return s.trim(); }));
+    stepsKey = product.value;
+  }
+
+  dispStep.addEventListener("wz:validate", function (e) {
+    if (!lines.querySelector("[data-line]")) {
+      e.preventDefault(); e.detail.message = "Add at least one ingredient.";
+    }
+  });
+  procStep.addEventListener("wz:validate", function (e) {
+    var any = Array.prototype.some.call(stepRows.querySelectorAll("input"), function (i) { return i.value.trim(); });
+    if (!any) { e.preventDefault(); e.detail.message = "Add at least one procedure step."; }
+  });
+
+  dispStep.reviewHtml = function () {
+    var out = [];
+    lines.querySelectorAll("[data-line]").forEach(function (c) {
+      var name = c.querySelector("[name=d_ingredient]").value;
+      if (!name) return;
+      var lot = c.querySelector("[name=d_lot_no]").value, exp = c.querySelector("[name=d_expiry]").value;
+      var short = c.querySelector("[data-stock]").classList.contains("is-short");
+      out.push("<dt>" + esc(name) + "</dt><dd>" + esc(c.querySelector("[name=d_qty]").value) + " " +
+        esc(c.querySelector("[name=d_unit]").value) + (lot ? " · Lot " + esc(lot) : "") +
+        (exp ? " · Exp " + esc(exp) : "") + (short ? ' · <span style="color:var(--danger-ink)">short in stock</span>' : "") + "</dd>");
+    });
+    return out.join("");
+  };
+  procStep.reviewHtml = function () {
+    var list = [];
+    stepRows.querySelectorAll("input").forEach(function (i) { if (i.value.trim()) list.push(esc(i.value.trim().toUpperCase())); });
+    return "<dt>" + list.length + " steps</dt><dd>" + list.join(" → ") + "</dd>";
+  };
+})();
+</script>
+{% endblock %}

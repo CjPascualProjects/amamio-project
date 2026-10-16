@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Cleaning & Sanitation{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Cleaning &amp; Sanitation</h1>
+    <p class="page-sub">The five areas, checked before and after every production day.</p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('facility.sanitation_print') }}">{{ icon('printer', 15) }} Print record</a>
+    <a class="btn btn-primary" href="{{ url_for('facility.sanitation_new') }}">{{ icon('plus', 16) }} Record cleaning</a>
+  </div>
+</div>
+
+<div class="figures mb">
+  <div class="figure"><div class="figure-label">Records this month</div><div class="figure-value">{{ stats.month_count }}</div></div>
+  <div class="figure {{ 'is-bad' if stats.open_actions }}"><div class="figure-label">Areas needing action</div><div class="figure-value">{{ stats.open_actions }}</div></div>
+  <div class="figure {{ 'is-good' if PRE in done_today }}"><div class="figure-label">Last pre-production check</div><div class="figure-value">{{ stats.last_pre }}</div></div>
+  <div class="figure {{ 'is-good' if POST in done_today }}"><div class="figure-label">Last post-production check</div><div class="figure-value">{{ stats.last_post }}</div></div>
+</div>
+
+{% if stats.open_actions and show != 'action' %}
+<div class="next-action">
+  <div class="next-action-text">
+    <b>{{ stats.open_actions }} area{{ 's' if stats.open_actions != 1 }} still need{{ 's' if stats.open_actions == 1 }} action</b>
+    <span>Mark each one done once the cleaning or repair has been undertaken.</span>
+  </div>
+  <a class="btn btn-primary btn-sm" href="{{ url_for('facility.sanitation', show='action') }}">See what's open</a>
+</div>
+{% endif %}
+
+<div class="toolbar">
+  <div class="seg">
+    <a href="{{ url_for('facility.sanitation', show='week') }}" class="{{ 'is-active' if show == 'week' }}">This week</a>
+    <a href="{{ url_for('facility.sanitation', show='month') }}" class="{{ 'is-active' if show == 'month' }}">This month</a>
+    <a href="{{ url_for('facility.sanitation', show='action') }}" class="{{ 'is-active' if show == 'action' }}">Needs action{% if stats.open_actions %} ({{ stats.open_actions }}){% endif %}</a>
+  </div>
+</div>
+
+{% if show == 'action' %}
+  {% if actions %}
+  <div class="queue">
+    {% for a in actions %}
+    <a class="queue-item" href="{{ url_for('facility.sanitation_record', record_id=a.record_id) }}#area-{{ a.index }}">
+      <span class="task-icon" style="width:40px;height:40px">{{ icon('tools' if a.current_status == 'Needs repair' else 'sparkle', 18) }}</span>
+      <span class="queue-main">
+        <span class="queue-title">{{ a.location }} — {{ a.action }}</span>
+        <span class="queue-sub">{{ a.nice_date }} · {{ a.phase|lower }}{% if a.remarks %} · {{ a.remarks }}{% endif %}</span>
+      </span>
+      <span class="badge {{ a.badge }}">{{ a.current_status }}</span>
+      <span class="queue-go">Mark done {{ icon('arrow-right', 14) }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card"><div class="empty">
+    <div class="empty-icon">{{ icon('check', 30) }}</div>
+    <div class="empty-title">Nothing needs action</div>
+    <p class="muted">Every area marked for cleaning or repair has been taken care of.</p>
+  </div></div>
+  {% endif %}
+{% elif records %}
+  <div class="queue">
+    {% for r in records %}
+    <a class="queue-item" href="{{ url_for('facility.sanitation_record', record_id=r.id) }}">
+      <span class="task-icon" style="width:40px;height:40px">{{ icon('sparkle', 18) }}</span>
+      <span class="queue-main">
+        <span class="queue-title">{{ r.short_date }} · {{ r.phase }}</span>
+        <span class="queue-sub">{{ r.summary }} · conducted by {{ r.conducted_by }}</span>
+      </span>
+      {% if r.open_count %}<span class="badge badge-danger">{{ r.open_count }} open</span>
+      {% elif r.flagged %}<span class="badge badge-muted">Fixed</span>
+      {% elif r.not_checked %}<span class="badge badge-muted">{{ r.not_checked }} not checked</span>
+      {% else %}<span class="badge badge-ok">Clean</span>{% endif %}
+    </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card"><div class="empty">
+    <div class="empty-icon">{{ icon('sparkle', 30) }}</div>
+    <div class="empty-title">No cleaning recorded {{ 'this week' if show == 'week' else 'this month' }}</div>
+    <p class="muted">Check the five areas before production starts and again after it ends.</p>
+    <a class="btn btn-primary mt" href="{{ url_for('facility.sanitation_new') }}">Record cleaning</a>
+  </div></div>
+{% endif %}
+{% endblock %}

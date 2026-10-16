@@ -1,107 +1,75 @@
 {% extends "base.html" %}
-{% block title %}Honey quality check{% endblock %}
+{% block title %}Honey Containers{% endblock %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Honey quality check</h1>
-    <p class="page-sub">
-      Monitored by container. Each one is checked on moisture content and
-      appearance — a <strong>Pass</strong> goes to selling stock, a
-      <strong>Failed</strong> is routed to other products.
-    </p>
+    <h1 class="page-title">Honey Containers</h1>
+    <p class="page-sub">Each container is checked for moisture and appearance — PASS or FAILED — then sent to the products it goes into.</p>
   </div>
   <div class="page-head-actions">
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('honey.labels') }}">Print QR labels</a>
-    <a class="btn btn-primary btn-sm" href="{{ url_for('honey.new') }}">Log containers</a>
+    <a class="btn btn-primary" href="{{ url_for('honey.new') }}">{{ icon('plus', 16) }} Log honey containers</a>
   </div>
 </div>
 
-<div class="stat-grid mb">
-  <div class="stat-card is-primary">
-    <div class="stat-top"><span class="stat-label">Awaiting QC</span></div>
-    <div class="stat-value">{{ summary.pending }}</div>
-    <div class="stat-caption">{{ summary.pending_kg }} kg held</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-top"><span class="stat-label">Passed</span></div>
-    <div class="stat-value" style="color:var(--ok)">{{ summary.passed }}</div>
-    <div class="stat-caption">{{ summary.passed_kg }} kg for selling</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-top"><span class="stat-label">Failed</span></div>
-    <div class="stat-value" style="color:var(--danger)">{{ summary.failed }}</div>
-    <div class="stat-caption">{{ summary.failed_kg }} kg for other products</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-top"><span class="stat-label">Pass rate</span></div>
-    <div class="stat-value">{{ summary.pass_rate }}%</div>
-    <div class="stat-caption">Average moisture {{ summary.avg_moisture }}%</div>
+<div class="figures mb">
+  <div class="figure {{ 'is-good' if summary.pending }}"><div class="figure-label">Awaiting QC</div><div class="figure-value">{{ summary.pending }}<small>{{ summary.pending_kg|qty }} kg</small></div></div>
+  <div class="figure"><div class="figure-label">Passed</div><div class="figure-value">{{ summary.passed }}<small>{{ summary.passed_kg|qty }} kg</small></div></div>
+  <div class="figure {{ 'is-bad' if summary.failed }}"><div class="figure-label">Failed</div><div class="figure-value">{{ summary.failed }}<small>{{ summary.failed_kg|qty }} kg</small></div></div>
+  <div class="figure"><div class="figure-label">Pass rate</div><div class="figure-value">{{ summary.pass_rate }}%</div></div>
+</div>
+
+<div class="toolbar">
+  <div class="seg">
+    <a href="{{ url_for('honey.index', show='todo') }}" class="{{ 'is-active' if show == 'todo' }}">To do</a>
+    <a href="{{ url_for('honey.index', show='Pass') }}" class="{{ 'is-active' if show == 'Pass' }}">Passed</a>
+    <a href="{{ url_for('honey.index', show='Failed') }}" class="{{ 'is-active' if show == 'Failed' }}">Failed</a>
+    <a href="{{ url_for('honey.index', show='all') }}" class="{{ 'is-active' if show == 'all' }}">All</a>
   </div>
 </div>
 
-<div class="pill-row mb">
-  <a class="pill {{ 'active' if not status }}" href="{{ url_for('honey.index') }}">All containers</a>
-  <a class="pill {{ 'active' if status == 'Pending QC' }}" href="{{ url_for('honey.index', status='Pending QC') }}">Awaiting QC</a>
-  <a class="pill {{ 'active' if status == 'Pass' }}" href="{{ url_for('honey.index', status='Pass') }}">Pass</a>
-  <a class="pill {{ 'active' if status == 'Failed' }}" href="{{ url_for('honey.index', status='Failed') }}">Failed</a>
+{% if containers %}
+<div class="queue">
+  {% for c in containers %}
+  <a class="queue-item" href="{{ url_for('honey.qc', container_id=c.id) if c.status == 'Pending QC' else url_for('honey.container', container_id=c.id) }}">
+    <span class="code" style="min-width:56px">{{ c.container_code }}</span>
+    <span class="queue-main">
+      <span class="queue-title">Honey — {{ c.net_weight_kg|qty('kg') }}</span>
+      <span class="queue-sub">
+        {{ c.supplier_name or c.source }} · {{ c.batch_ref }} · received {{ c.received_date }}
+        {% if c.moisture_pct is not none %} · {{ c.moisture_pct }}% moisture{% endif %}
+        {% if c.status in ('Pass', 'Failed') and c.remaining_kg > 0 %} · {{ c.remaining_kg|qty('kg') }} not yet used{% endif %}
+      </span>
+    </span>
+    {% if c.status == 'Pending QC' %}
+      <span class="queue-go">Check {{ icon('arrow-right', 14) }}</span>
+    {% else %}
+      <span class="badge {{ c.badge }}">{{ 'PASS' if c.status == 'Pass' else 'FAILED' }}</span>
+    {% endif %}
+  </a>
+  {% endfor %}
 </div>
+{% else %}
+<div class="card"><div class="empty">
+  <div class="empty-icon">{{ icon('honey', 30) }}</div>
+  <div class="empty-title">{{ 'Nothing to do' if show == 'todo' else 'No containers here' }}</div>
+  <p class="muted">Every container is checked and fully used.</p>
+</div></div>
+{% endif %}
 
+{% if routing %}
+<div class="section-label">Where the honey went</div>
 <div class="card">
-  <div class="card-title">
-    Containers
-    <span class="muted">— pass limit is {{ moisture_max }}% moisture</span>
+  <div class="bars">
+    {% set top = routing|map(attribute='kg')|max %}
+    {% for r in routing %}
+    <div class="bar-row">
+      <span class="bar-label" title="{{ r.product }}">{{ r.product }}</span>
+      <span class="bar-track"><span class="bar-fill" style="width: {{ (100 * r.kg / top)|round(1) if top else 0 }}%{% if r.result == 'Failed' %};background:var(--danger){% endif %}"></span></span>
+      <span class="bar-value">{{ r.kg|qty('kg') }}</span>
+    </div>
+    {% endfor %}
   </div>
-  {% if containers %}
-  <div class="table-wrap">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Container</th><th class="wrap-sm">Source</th><th class="num">Net kg</th>
-          <th>Received</th><th class="num">Moisture</th><th class="wrap-sm">Appearance</th>
-          <th>Result</th><th class="wrap-sm">Used for</th><th class="actions"></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for c in containers %}
-        <tr>
-          <td>
-            <span class="code">{{ c.container_code }}</span>
-            <span class="cell-sub">{{ c.batch_ref }}</span>
-          </td>
-          <td class="wrap-sm muted">{{ c.supplier_name or c.source }}</td>
-          <td class="num">{{ '%g'|format(c.net_weight_kg|float) }}</td>
-          <td>{{ c.received_date }}</td>
-          <td class="num">
-            {% if c.moisture_pct %}
-              <span {% if c.moisture_pct|float > moisture_max %}style="color:var(--danger)"{% endif %}>
-                {{ '%g'|format(c.moisture_pct|float) }}%
-              </span>
-            {% else %}&mdash;{% endif %}
-          </td>
-          <td class="wrap-sm muted">{{ c.appearance or '—' }}</td>
-          <td>
-            <span class="badge {{ c.badge }}">{{ c.status }}</span>
-            {% if c.disposition %}<span class="cell-sub">{{ c.disposition }}</span>{% endif %}
-          </td>
-          <td class="wrap-sm muted small">{{ c.allocated_to or '—' }}</td>
-          <td>
-            <a class="btn btn-sm {{ 'btn-primary' if c.status == 'Pending QC' else 'btn-ghost' }}"
-               href="{{ url_for('honey.qc', container_id=c.id) }}">
-              {{ 'Check' if c.status == 'Pending QC' else 'View' }}
-            </a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% else %}
-  <div class="empty">
-    <div class="empty-icon">{{ icon('honey', 30) }}</div>
-    <div class="empty-title">No containers here</div>
-    <p class="muted">Log the containers as they come in from the apiary.</p>
-    <a class="btn btn-primary btn-sm mt" href="{{ url_for('honey.new') }}">Log containers</a>
-  </div>
-  {% endif %}
+  <p class="muted small mt-sm">Gold = from PASSED honey · red = from FAILED honey.</p>
 </div>
+{% endif %}
 {% endblock %}

@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block title %}Finish {{ rec.batch_no }}{% endblock %}
+{% block content %}
+{% include "production/_inputs.html" %}
+<a class="back-link" href="{{ url_for('production.batch', batch_id=rec.id) }}">{{ icon('arrow-left', 15) }} {{ rec.batch_no }} · {{ rec.product_name }}</a>
+
+{% if shortages %}
+<div class="wizard"><div class="wz-error is-shown" style="margin:0 0 16px">
+  Not enough stock to finish this batch:
+  {% for s in shortages %}{{ s.name }} needs {{ s.required|qty(s.unit) }}, only {{ s.available|qty(s.unit) }} on hand{{ '; ' if not loop.last }}{% endfor %}.
+  Receive more before saving.
+</div></div>
+{% endif %}
+
+<form method="post" class="wizard" id="finishForm" data-wizard data-wizard-start="{{ start }}"
+      data-submit-label="Save and post to stock" data-cancel="{{ url_for('production.batch', batch_id=rec.id) }}">
+
+  <section class="wz-step" data-title="When did the batch end?"
+           data-hint="Started {{ rec.start_at[:16]|replace('T', ' ') }}.">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="end_at">End date &amp; time <span class="req">*</span></label>
+        <input type="datetime-local" id="end_at" name="end_at" required min="{{ rec.start_at[:16] }}"
+               value="{{ form.end_at or now_local }}">
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" id="yieldStep" data-title="How much came out?"
+           data-hint="Count the finished units. The theoretical yield is the batch size.">
+    <div class="wz-body">
+      <div class="figures mb">
+        <div class="figure"><div class="figure-label">Theoretical yield</div><div class="figure-value">{{ rec.theoretical_yield|qty }}<small>{{ rec.unit }}</small></div></div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="actual_yield">Actual yield <span class="req">*</span></label>
+        <div class="big-field">
+          <input type="number" id="actual_yield" name="actual_yield" min="0" step="any" required inputmode="decimal"
+                 value="{{ form.actual_yield if form.actual_yield is defined else ('%g'|format(rec.theoretical_yield|float)) }}">
+          <span class="unit">{{ rec.unit }}</span>
+        </div>
+        <div class="form-hint" id="yieldPct"></div>
+      </div>
+      <div class="form-grid cols-2">
+        <div class="form-row">
+          <label class="form-label" for="yield_conducted_by">Conducted by</label>
+          <input type="text" id="yield_conducted_by" name="yield_conducted_by" maxlength="80" value="{{ form.yield_conducted_by or conducted }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="yield_checked_by">Checked by</label>
+          <input type="text" id="yield_checked_by" name="yield_checked_by" maxlength="80" value="{{ form.yield_checked_by or checked }}">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Testing"
+           data-hint="When the sample was tested and when the result came back. Leave blank if this product is not lab-tested.">
+    <div class="wz-body">
+      <div class="form-grid cols-2">
+        <div class="form-row">
+          <label class="form-label" for="test_date">Test date</label>
+          <input type="date" id="test_date" name="test_date" value="{{ form.test_date or '' }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="test_result_date">Test result date</label>
+          <input type="date" id="test_result_date" name="test_result_date" value="{{ form.test_result_date or '' }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="test_conducted_by">Conducted by</label>
+          <input type="text" id="test_conducted_by" name="test_conducted_by" maxlength="80" value="{{ form.test_conducted_by or '' }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="test_checked_by">Checked by</label>
+          <input type="text" id="test_checked_by" name="test_checked_by" maxlength="80" value="{{ form.test_checked_by or '' }}">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Final disposition"
+           data-hint="For the release of the finished product.">
+    <div class="choice-grid cols-2" data-review-label="Final disposition">
+      <label class="choice is-pass"><input type="radio" name="disposition" value="APPROVED" required data-autonext {{ 'checked' if form.disposition == 'APPROVED' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('check', 20) }}</span>
+        <span><span class="choice-title">APPROVED</span><span class="choice-sub">The yield joins finished-goods stock</span></span></span></label>
+      <label class="choice is-fail"><input type="radio" name="disposition" value="DISAPPROVED" data-autonext {{ 'checked' if form.disposition == 'DISAPPROVED' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('x-circle', 20) }}</span>
+        <span><span class="choice-title">DISAPPROVED</span><span class="choice-sub">Nothing joins stock; the yield is logged as damage</span></span></span></label>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="QA sign-off" data-hint="Name of the QA who decided, and when.">
+    <div class="wz-body">
+      <div class="form-grid cols-2">
+        <div class="form-row">
+          <label class="form-label" for="qa_name">Name of QA <span class="req">*</span></label>
+          <input type="text" id="qa_name" name="qa_name" maxlength="80" required value="{{ form.qa_name or '' }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="qa_date">Date <span class="req">*</span></label>
+          <input type="date" id="qa_date" name="qa_date" required value="{{ form.qa_date or today }}">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="remarks">Remarks <span class="req" id="remarksReq" style="display:none">*</span></label>
+        <textarea id="remarks" name="remarks" rows="2" maxlength="500" placeholder="Required when disapproved — what was wrong?">{{ form.remarks or '' }}</textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Check and save" data-review
+           data-hint="Saving posts the batch to stock. This can only happen once.">
+    <div class="wz-body">
+      <div class="review-group-title mt">What happens to stock</div>
+      <dl class="review-list" id="stockEffect"></dl>
+    </div>
+  </section>
+</form>
+
+<script>
+(function () {
+  var form = document.getElementById("finishForm");
+  var theo = {{ rec.theoretical_yield|float }};
+  var unit = {{ rec.unit|tojson }};
+  var product = {{ rec.product_name|tojson }};
+  var used = {{ used|tojson }};
+  function esc(v) { var d = document.createElement("div"); d.textContent = v == null ? "" : String(v); return d.innerHTML; }
+  var yieldEl = document.getElementById("actual_yield");
+  function disposition() { return (form.querySelector("[name=disposition]:checked") || {}).value || ""; }
+  function sync() {
+    var y = parseFloat(yieldEl.value);
+    document.getElementById("yieldPct").textContent = isNaN(y) || !theo ? "" :
+      Math.round(y / theo * 1000) / 10 + "% of the theoretical yield";
+    var bad = disposition() === "DISAPPROVED";
+    document.getElementById("remarks").required = bad;
+    document.getElementById("remarksReq").style.display = bad ? "" : "none";
+    var out = [];
+    var amount = (isNaN(y) ? 0 : y) + " " + esc(unit);
+    if (disposition() === "APPROVED") out.push("<dt>" + esc(product) + "</dt><dd>+ " + amount + " to finished goods</dd>");
+    else if (bad) out.push("<dt>" + esc(product) + "</dt><dd>Nothing added — " + amount + " logged as damage</dd>");
+    used.forEach(function (l) {
+      out.push("<dt>" + esc(l.ingredient) + "</dt><dd>&minus; " + (Math.round(l.theoretical_qty * 1000) / 1000) + " " + esc(l.unit || "") + " used</dd>");
+    });
+    document.getElementById("stockEffect").innerHTML = out.join("");
+  }
+  form.addEventListener("input", sync);
+  form.addEventListener("change", sync);
+  sync();
+  var steps = form.querySelectorAll(".wz-step");
+  steps[3].reviewHtml = function () {
+    return disposition() ? "<dt>Final disposition</dt><dd>" + esc(disposition()) + "</dd>" : "";
+  };
+  steps[2].addEventListener("wz:validate", function (e) {
+    var t = document.getElementById("test_date").value, r = document.getElementById("test_result_date").value;
+    if (t && r && r < t) { e.preventDefault(); e.detail.message = "The test result date cannot be before the test date."; }
+  });
+})();
+</script>
+{% endblock %}

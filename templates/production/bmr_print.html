@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% from "_paper.html" import paper_head %}
+{% block title %}BMR {{ rec.batch_no }}{% endblock %}
+{% block content %}
+<style>
+  .bmr-page + .bmr-page { margin-top: 26px; }
+  .bmr-disp { display: flex; gap: 28px; align-items: center; font-size: .86rem; font-weight: 700; margin: 6px 0 14px; }
+  .bmr-box { display: inline-grid; place-items: center; width: 16px; height: 16px; border: 1.5px solid #111; margin-right: 6px; font-size: .8rem; vertical-align: -3px; }
+  .bmr-sign { display: grid; grid-template-columns: 2fr 1fr; gap: 28px; margin-top: 22px; font-size: .82rem; }
+  .bmr-sign div { border-bottom: 1px solid #111; padding: 18px 0 3px; }
+  .bmr-sign small { display: block; font-size: .7rem; color: #444; }
+  .bmr-remarks { margin-top: 16px; font-size: .82rem; }
+  .bmr-remarks div { border-bottom: 1px solid #999; min-height: 22px; padding: 3px 0; white-space: pre-line; }
+  .paper-table td.blank { height: 22px; }
+  @media print { .bmr-page { break-after: page; page-break-after: always; } .bmr-page:last-child { break-after: auto; page-break-after: auto; } .bmr-page + .bmr-page { margin-top: 0; } }
+</style>
+<div class="toolbar no-print">
+  <a class="back-link" style="margin:0" href="{{ url_for('production.batch', batch_id=rec.id) }}">{{ icon('arrow-left', 15) }} {{ rec.batch_no }}</a>
+  <button class="btn btn-primary" type="button" onclick="window.print()">{{ icon('printer', 15) }} Print</button>
+</div>
+
+<div class="paper bmr-page">
+  {{ paper_head('Batch Manufacturing Record') }}
+  <div class="paper-fields">
+    <div><b>Product Name:</b> {{ rec.product_name }}</div>
+    <div><b>Batch Number:</b> {{ rec.batch_no }}</div>
+    <div><b>Production Date:</b> {{ rec.production_date }}</div>
+    <div><b>Batch Size:</b> {{ rec.batch_size|qty(rec.unit) }}</div>
+    <div><b>Expiry Date:</b> {{ rec.expiry_date }}</div>
+    <div><b>Start Date &amp; Time:</b> {{ fmt_local(rec.start_at) }}</div>
+    <div></div>
+    <div><b>End Date &amp; Time:</b> {{ fmt_local(rec.end_at) }}</div>
+  </div>
+
+  <div class="paper-section">Dispensing and Weighing</div>
+  <table class="paper-table">
+    <thead><tr><th>Ingredient</th><th>Batch No.</th><th>Expiration Date</th><th>Theoretical Weight / Volume</th><th>Conducted by</th><th>Checked by</th></tr></thead>
+    <tbody>
+      {% for l in rec.dispensing or [] %}
+      <tr><td>{{ l.ingredient }}</td><td>{{ l.lot_no or '' }}</td><td>{{ l.expiry_date or '' }}</td>
+        <td class="num">{{ l.theoretical_qty|qty(l.unit) }}</td><td>{{ l.conducted_by or '' }}</td><td>{{ l.checked_by or '' }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="paper-section">Procedure</div>
+  <table class="paper-table">
+    <thead><tr><th style="width:50%">Process</th><th>Conducted by</th><th>Checked by</th></tr></thead>
+    <tbody>
+      {% for s in rec.steps or [] %}
+      <tr><td>{{ s.process }}</td><td>{{ s.conducted_by if s.done else '' }}</td><td>{{ s.checked_by if s.done else '' }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="paper bmr-page">
+  {{ paper_head('Batch Manufacturing Record', rec.product_name ~ ' · Batch No. ' ~ rec.batch_no) }}
+  <table class="paper-table">
+    <thead><tr><th style="width:28%"></th><th>Result</th><th>Conducted by</th><th>Checked by</th></tr></thead>
+    <tbody>
+      <tr><td><b>Theoretical Yield</b></td><td>{{ rec.theoretical_yield|qty(rec.unit) }}</td><td>{{ rec.yield_conducted_by or '' }}</td><td>{{ rec.yield_checked_by or '' }}</td></tr>
+      <tr><td><b>Actual Yield</b></td><td>{{ rec.actual_yield|qty(rec.unit) if rec.actual_yield is not none else '' }}</td><td>{{ rec.yield_conducted_by or '' }}</td><td>{{ rec.yield_checked_by or '' }}</td></tr>
+      <tr><td><b>Expiration Date</b></td><td>{{ rec.expiry_date }}</td><td>{{ rec.yield_conducted_by or '' }}</td><td>{{ rec.yield_checked_by or '' }}</td></tr>
+      <tr><td><b>Test Date</b></td><td>{{ rec.test_date or '' }}</td><td>{{ rec.test_conducted_by or '' }}</td><td>{{ rec.test_checked_by or '' }}</td></tr>
+      <tr><td><b>Test Result Date</b></td><td>{{ rec.test_result_date or '' }}</td><td>{{ rec.test_conducted_by or '' }}</td><td>{{ rec.test_checked_by or '' }}</td></tr>
+    </tbody>
+  </table>
+
+  <div class="paper-section">Final Disposition for the Release of the Finished Product</div>
+  <div class="bmr-disp">
+    <span><span class="bmr-box">{{ '✓' if rec.disposition == 'APPROVED' }}</span>APPROVED</span>
+    <span><span class="bmr-box">{{ '✓' if rec.disposition == 'DISAPPROVED' }}</span>DISAPPROVED</span>
+  </div>
+  <div class="bmr-sign">
+    <div>{{ rec.qa_name or '' }}<small>Name and Signature of QA</small></div>
+    <div>{{ rec.qa_date or '' }}<small>Date</small></div>
+  </div>
+  <div class="bmr-remarks">
+    <b>Remarks:</b>
+    <div>{{ rec.remarks or '' }}</div>
+    <div></div>
+  </div>
+</div>
+{% endblock %}

@@ -1,19 +1,19 @@
 [
   {
     "type": "production",
-    "requestor_id": 3,
-    "product_id": 1,
+    "requestor_id": 4,
+    "product_id": 9,
     "product_name": "Honey Lemon Ginger Concentrate 300 mL",
     "qty": 120.0,
     "reason": "Out of stock",
-    "needed_by": "2026-10-18",
+    "needed_by": "2026-10-20",
     "urgency": "Urgent",
     "status": "Pending Approval",
     "remarks": "Lemon and ginger ran out mid-batch; next HLGC run is Monday.",
     "items": [
       {
         "item_id": 1,
-        "material_id": 4,
+        "material_id": 2,
         "requested_qty": 360.0,
         "approved_qty": null,
         "received_qty": null,
@@ -23,7 +23,7 @@
       },
       {
         "item_id": 2,
-        "material_id": 2,
+        "material_id": 3,
         "requested_qty": 10.0,
         "approved_qty": null,
         "received_qty": null,
@@ -42,25 +42,25 @@
         "qr_token": null
       }
     ],
-    "created_at": "2026-10-14T13:50:28.092518+00:00",
+    "created_at": "2026-10-16T05:39:36.995524+00:00",
     "id": 1
   },
   {
     "type": "material",
-    "requestor_id": 5,
+    "requestor_id": 8,
     "reason": "Below reorder level",
-    "needed_by": "2026-10-21",
+    "needed_by": "2026-10-23",
     "urgency": "Normal",
     "status": "Pending Approval",
     "remarks": "",
     "items": [
       {
         "item_id": 1,
-        "name": "Food-grade sanitizer",
+        "name": "Dishwashing Liquid 3.78 L",
         "category": "cleaning",
-        "description": "5 L drums for the bottling line.",
+        "description": "For the washing area.",
         "material_id": null,
-        "requested_qty": 10.0,
+        "requested_qty": 4.0,
         "approved_qty": null,
         "received_qty": null,
         "status": "Pending",
@@ -68,7 +68,7 @@
         "qr_token": null
       }
     ],
-    "created_at": "2026-10-14T13:50:28.149057+00:00",
+    "created_at": "2026-10-16T05:39:37.058839+00:00",
     "id": 2
   }
 ]

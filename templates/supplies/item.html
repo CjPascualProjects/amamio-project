@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ m.name }}{% endblock %}
+{% block content %}
+<div class="focus">
+<a class="back-link" href="{{ url_for('supplies.index', cat=cat) }}">{{ icon('arrow-left', 15) }} {{ cat_label }}</a>
+
+<div class="record-head">
+  <div>
+    <div class="wz-count">{{ cat_label }}{% if m.subcategory and m.subcategory != cat_label %} · {{ m.subcategory }}{% endif %}</div>
+    <h1 class="record-title">{{ m.name }}</h1>
+    <div class="muted small">{{ m.storage_location or '' }}</div>
+  </div>
+  {% if low %}<span class="badge badge-danger">Low stock</span>{% else %}<span class="badge badge-ok">In stock</span>{% endif %}
+</div>
+
+<div class="figures mb">
+  <div class="figure {{ 'is-bad' if low else 'is-good' }}"><div class="figure-label">In stock</div><div class="figure-value">{{ m.stock_qty|qty }}<small>{{ m.unit }}</small></div></div>
+  <div class="figure"><div class="figure-label">Reorder level</div><div class="figure-value">{{ m.reorder_level|qty if m.reorder_level else '—' }}<small>{{ m.unit if m.reorder_level }}</small></div></div>
+</div>
+
+<div class="next-action">
+  <div class="next-action-text">
+    {% if low %}<b>Running low</b><span>Stock is at or below the reorder level — take in a delivery or raise a purchase request.</span>
+    {% else %}<b>Taking some in or issuing some out?</b><span>Record it so the month-end count matches.</span>{% endif %}
+  </div>
+  <div class="flex gap-sm" style="flex-wrap:wrap">
+    <a class="btn {{ 'btn-primary' if low else 'btn-ghost' }}" href="{{ url_for('supplies.move', material_id=m.id, direction='IN') }}">{{ icon('in', 15) }} Record IN</a>
+    {% if m.stock_qty and m.stock_qty > 0 %}
+    <a class="btn {{ 'btn-ghost' if low else 'btn-primary' }}" href="{{ url_for('supplies.move', material_id=m.id, direction='OUT') }}">{{ icon('out', 15) }} Record OUT</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="section-label">Last movements</div>
+{% if moves %}
+<div class="queue">
+  {% for mv in moves %}
+  <div class="queue-item">
+    <span class="badge {{ 'badge-gold' if mv.direction == 'IN' else 'badge-muted' }}" style="min-width:44px;text-align:center">{{ mv.direction }}</span>
+    <span class="queue-main">
+      <span class="queue-title">{{ '+' if mv.direction == 'IN' else '−' }}{{ mv.qty|qty(mv.unit) }} · {{ mv.reason }}</span>
+      <span class="queue-sub">{{ mv.when }}{% if mv.person %} · {{ mv.person }}{% endif %}{% if mv.reference %} · {{ mv.reference }}{% endif %}{% if mv.notes %} · {{ mv.notes }}{% endif %} · by {{ mv.recorded_by_name }}</span>
+    </span>
+    <span class="muted small nowrap">left {{ mv.balance_after|qty(mv.unit) }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="muted small">No IN / OUT recorded for this item yet.</p>
+{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Check the upload{% endblock %}
+{% block content %}
+<div class="wizard">
+<a class="back-link" href="{{ url_for('platforms.upload', platform=platform) }}">{{ icon('arrow-left', 15) }} Choose another file</a>
+<div class="wz-progress"><button class="is-done" type="button"></button><button class="is-done" type="button"></button><button class="is-current" type="button"></button></div>
+<div class="wz-count">Step 3 of 3</div>
+<h1 class="wz-title">Check before saving</h1>
+<p class="wz-hint">{{ filename }}</p>
+
+{% if not template or error %}
+  <div class="flash flash-error">{{ error or 'No upload template fits this file.' }}</div>
+  <div class="wz-body">
+    <p>The system could not recognise this file's columns. An admin can teach it a new layout under <b>Column templates</b>.</p>
+    <p class="muted small">Columns found: {{ headers|join(', ') }}</p>
+  </div>
+{% else %}
+  {% if platform and platform != template.platform %}
+  <div class="flash flash-error">You picked {{ platform }}, but this looks like a <b>{{ template.platform }}</b> export. It will be saved as {{ template.platform }}.</div>
+  {% endif %}
+  {% if result.missing %}
+  <div class="flash flash-error">This file is missing columns the {{ template.platform }} template expects: {{ result.missing|join(', ') }}.</div>
+  {% endif %}
+
+  <div class="next-action">
+    <div class="next-action-text">
+      <b><span class="swatch" style="background:{{ colors.get(template.platform, colors['Other']) }}"></span>{{ template.platform }} · {{ result.new }} new line(s){% if result.already %}, {{ result.already }} already uploaded{% endif %}</b>
+      <span>{% if result.period_from %}Orders from {{ result.period_from }} to {{ result.period_to }} · {% endif %}{{ result.orders }} order(s), {{ result.units|qty }} item(s), {{ result.net|peso }} net</span>
+    </div>
+  </div>
+
+  <div class="figures mb">
+    {% for g, n in result.groups.items() %}
+    <div class="figure {{ 'is-bad' if g in ('Cancelled', 'Returned') }}"><div class="figure-label">{{ g }}</div><div class="figure-value">{{ n }}<small>line(s)</small></div></div>
+    {% endfor %}
+    <div class="figure"><div class="figure-label">Matched to a product</div><div class="figure-value">{{ result.matched }}<small>of {{ result.rows }}</small></div></div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-title">First lines, as they will be saved</div>
+    <div class="table-wrap">
+      <table class="table" data-no-paginate>
+        <thead><tr><th>Date</th><th>Order</th><th class="wrap">Product</th><th class="num">Qty</th><th class="num">Net</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for r in result.sample %}
+          <tr>
+            <td class="nowrap">{{ r.order_date }}</td><td class="small">{{ r.order_ref }}</td>
+            <td class="wrap">{{ product_names.get(r.product_id) or r.product_name or '—' }}{% if r.product_name and product_names.get(r.product_id) %}<span class="cell-sub">{{ r.product_name }}</span>{% endif %}</td>
+            <td class="num">{{ r.qty|qty }}</td><td class="num">{{ r.net_amount|peso }}</td>
+            <td>{{ r.status_group }}<span class="cell-sub">{{ r.order_status }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if result.already %}<p class="muted small">Lines uploaded before are not added twice — if their status or amount changed in this newer export, they are updated.</p>{% endif %}
+
+  <form method="post" class="wz-nav">
+    <input type="hidden" name="file" value="{{ filename }}">
+    <input type="hidden" name="platform" value="{{ platform }}">
+    <input type="hidden" name="template_id" value="{{ template.id }}">
+    <a class="btn btn-ghost" href="{{ url_for('platforms.upload', platform=platform) }}">Back</a>
+    <span class="wz-spacer"></span>
+    {% if not result.missing %}<button class="btn btn-primary" type="submit">Save {{ result.new }} line(s)</button>{% endif %}
+  </form>
+
+  <details class="mt">
+    <summary class="small muted" style="cursor:pointer">Wrong layout? Read it with another template</summary>
+    <form method="get" class="flex gap-sm wrap mt-sm">
+      <input type="hidden" name="file" value="{{ filename }}"><input type="hidden" name="platform" value="{{ platform }}">
+      <select name="template_id" style="width:auto">
+        {% for t in templates %}<option value="{{ t.id }}" {{ 'selected' if t.id == template.id }}>{{ t.name }}</option>{% endfor %}
+      </select>
+      <button class="btn btn-ghost btn-sm" type="submit">Preview again</button>
+    </form>
+  </details>
+{% endif %}
+</div>
+{% endblock %}

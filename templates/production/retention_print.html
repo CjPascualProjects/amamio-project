@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% from "_paper.html" import paper_head, paper_signoff, range_filter %}
+{% block title %}Retention Record{% endblock %}
+{% block content %}
+<a class="back-link no-print" href="{{ url_for('production.retention') }}">{{ icon('arrow-left', 15) }} Retention Samples</a>
+{{ range_filter(url_for('production.retention_print'), date_from, date_to) }}
+
+<div class="paper">
+  {{ paper_head('Retention Record', ('Production dates ' ~ (date_from or 'start') ~ ' to ' ~ (date_to or 'today')) if (date_from or date_to) else '') }}
+  <table class="paper-table">
+    <thead>
+      <tr>
+        <th>Batch No.</th><th>Product Name &amp; Description</th><th>Prod. Date</th><th>Exp. Date</th>
+        <th class="num">Qty.</th><th>Disposal Date</th><th>Remarks</th><th>Inspected By</th><th>Approved By</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td>{{ r.batch_no }}</td>
+        <td><b>{{ r.product_name }}</b>{% if r.description %}<br><span style="color:#444">{{ r.description }}</span>{% endif %}</td>
+        <td>{{ r.prod_date }}</td>
+        <td>{{ r.exp_date }}</td>
+        <td class="num">{{ r.qty|qty }}{% if r.unit %} {{ r.unit }}{% endif %}</td>
+        <td>{{ r.disposal_date or '' }}</td>
+        <td style="white-space:pre-line">{{ r.remarks or '' }}</td>
+        <td>{{ r.inspected_by or '' }}</td>
+        <td>{{ r.approved_by or '' }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="9" style="text-align:center;color:#666;padding:20px">No retention samples in this period.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {{ paper_signoff(['Prepared by:', 'Checked by:', 'Approved by:']) }}
+</div>
+{% endblock %}

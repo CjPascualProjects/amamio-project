@@ -1,15 +1,30 @@
 {% extends "base.html" %}
 {% block title %}QR labels — {{ batch.ref_no }}{% endblock %}
 {% block content %}
-<div class="page-head no-print">
-  <div>
-    <h1 class="page-title">QR labels</h1>
-    <p class="page-sub">{{ batch.ref_no }} · {{ batch.supplier_name }} · {{ batch.received_date }}</p>
+<div class="no-print">
+  <a class="back-link" href="{{ url_for('receiving.batch', batch_id=batch.id) }}">{{ icon('arrow-left', 15) }} {{ batch.ref_no }}</a>
+  {% if fresh %}
+  <div class="next-action">
+    <div class="next-action-text">
+      <b>Saved. Now print the labels.</b>
+      <span>Stick one label on each box. The production team was notified that {{ boxes|length }} box(es) are waiting at the Receiving Area.</span>
+    </div>
+    <div class="flex gap-sm wrap">
+      <button class="btn btn-primary" type="button" onclick="window.print()">{{ icon('printer', 16) }} Print {{ boxes|length }} label(s)</button>
+      <a class="btn btn-ghost" href="{{ url_for('receiving.batch', batch_id=batch.id) }}">Done</a>
+    </div>
   </div>
-  <div class="page-head-actions">
-    <button class="btn btn-primary btn-sm" type="button" onclick="window.print()">Print</button>
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('receiving.batch', batch_id=batch.id) }}">Back</a>
+  {% else %}
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">QR labels</h1>
+      <p class="page-sub">{{ batch.ref_no }} · {{ batch.supplier_name }} · {{ batch.received_date }}</p>
+    </div>
+    <div class="page-head-actions">
+      <button class="btn btn-primary btn-sm" type="button" onclick="window.print()">{{ icon('printer', 15) }} Print</button>
+    </div>
   </div>
+  {% endif %}
 </div>
 
 {% if boxes %}
@@ -19,9 +34,12 @@
     <img src="{{ url_for('qr.image', token=box.box_code) }}" alt="{{ box.box_code }}">
     <div class="qr-code">{{ box.box_code }}</div>
     <div class="qr-name">{{ box.material_name }}</div>
+    <div class="qr-qty">{{ box.declared_qty|qty(box.unit) }}</div>
     <div class="qr-meta">
-      {{ '%g'|format(box.declared_qty|float) }} {{ box.unit }} declared<br>
-      {{ batch.ref_no }} · {{ batch.received_date }}
+      {% if box.lot_no %}Lot {{ box.lot_no }}{% endif %}{% if box.lot_no and box.expiry_date %} · {% endif %}{% if box.expiry_date %}Exp {{ box.expiry_date }}{% endif %}
+      {% if box.lot_no or box.expiry_date %}<br>{% endif %}
+      {{ batch.ref_no }} · {{ batch.received_date }}<br>
+      {{ batch.supplier_name }}
     </div>
   </div>
   {% endfor %}
@@ -29,7 +47,6 @@
 {% else %}
 <div class="card"><div class="empty">
   <div class="empty-title">No boxes to label</div>
-  <p class="muted">Add boxes to this batch first.</p>
 </div></div>
 {% endif %}
 {% endblock %}

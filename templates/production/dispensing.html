@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Dispensing · {{ rec.batch_no }}{% endblock %}
+{% block content %}
+<div class="focus">
+<a class="back-link" href="{{ url_for('production.batch', batch_id=rec.id) }}">{{ icon('arrow-left', 15) }} {{ rec.batch_no }}</a>
+
+<div class="wz-count">Dispensing and weighing</div>
+<h1 class="wz-title">Who weighed and who checked?</h1>
+<p class="wz-hint">{{ rec.product_name }} · batch of {{ rec.batch_size|qty(rec.unit) }}. Weigh each ingredient, then sign it off. Usually the same two people do every line.</p>
+
+{% if shortages %}
+<div class="wz-error is-shown" style="margin:0 0 16px">
+  Heads-up: {% for s in shortages %}{{ s.name }} needs {{ s.required|qty(s.unit) }}, only {{ s.available|qty(s.unit) }} on hand{{ '; ' if not loop.last }}{% endfor %}.
+  You can sign off now, but the batch cannot be finished until stock is received.
+</div>
+{% endif %}
+
+<form method="post" id="dispForm" novalidate>
+  <div class="wz-body mb">
+    <div class="form-grid cols-2">
+      <div class="form-row">
+        <label class="form-label" for="all_conducted">Conducted by (all lines)</label>
+        <input type="text" id="all_conducted" maxlength="80" value="{{ me }}">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="all_checked">Checked by (all lines)</label>
+        <input type="text" id="all_checked" maxlength="80" placeholder="Name of the checker">
+      </div>
+    </div>
+    <label class="check-row"><input type="checkbox" id="perLine"> Different people on some lines</label>
+  </div>
+
+  <div class="line-cards" id="perLineCards">
+    {% for l in rec.dispensing or [] %}
+    <div class="line-card">
+      <div class="line-card-head">
+        <span class="line-card-num">{{ l.ingredient }}</span>
+        <b>{{ l.theoretical_qty|qty(l.unit) }}</b>
+      </div>
+      <div class="muted small mb-sm">{% if l.lot_no %}Lot {{ l.lot_no }}{% else %}No lot no.{% endif %}{% if l.expiry_date %} · Exp {{ l.expiry_date }}{% endif %}</div>
+      <div class="form-grid cols-2" data-per-line>
+        <div class="form-row">
+          <label class="form-label">Conducted by</label>
+          <input type="text" name="conducted_by" maxlength="80" required value="{{ l.conducted_by or me }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Checked by</label>
+          <input type="text" name="checked_by" maxlength="80" required value="{{ l.checked_by or '' }}">
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="wz-nav">
+    <a class="btn btn-ghost" href="{{ url_for('production.batch', batch_id=rec.id) }}">Cancel</a>
+    <span class="wz-spacer"></span>
+    <button class="btn btn-primary" type="submit">{{ icon('check', 16) }} Sign off dispensing</button>
+  </div>
+</form>
+</div>
+
+<script>
+(function () {
+  var allC = document.getElementById("all_conducted");
+  var allK = document.getElementById("all_checked");
+  var perLine = document.getElementById("perLine");
+  var groups = document.querySelectorAll("[data-per-line]");
+  function copy() {
+    if (perLine.checked) return;
+    document.querySelectorAll("[name=conducted_by]").forEach(function (i) { i.value = allC.value; });
+    document.querySelectorAll("[name=checked_by]").forEach(function (i) { i.value = allK.value; });
+  }
+  function sync() {
+    groups.forEach(function (g) { g.style.display = perLine.checked ? "" : "none"; });
+    allC.disabled = allK.disabled = perLine.checked;
+    allC.required = allK.required = !perLine.checked;
+    copy();
+  }
+  allC.addEventListener("input", copy);
+  allK.addEventListener("input", copy);
+  perLine.addEventListener("change", sync);
+  // If the lines were already filled differently, open them.
+  var checkers = Array.prototype.map.call(document.querySelectorAll("[name=checked_by]"), function (i) { return i.value; });
+  if (checkers.length && checkers[0]) {
+    allK.value = checkers[0];
+    if (checkers.some(function (v) { return v !== checkers[0]; })) perLine.checked = true;
+  }
+  sync();
+  document.getElementById("dispForm").addEventListener("submit", function (e) {
+    copy();
+    var blank = Array.prototype.some.call(document.querySelectorAll("[name=conducted_by],[name=checked_by]"),
+      function (i) { return !i.value.trim(); });
+    if (blank) {
+      e.preventDefault();
+      (perLine.checked ? document.querySelector("[name=checked_by]") : allK).focus();
+      alert("Enter who conducted and who checked the weighing.");
+    }
+  });
+})();
+</script>
+{% endblock %}

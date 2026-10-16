@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% from "_paper.html" import range_filter %}
+{% block title %}Pest Control Monitoring Record{% endblock %}
+{% block content %}
+<style>
+  .pcmr-head { display: grid; grid-template-columns: 96px 1fr 230px; border: 1.5px solid #111; margin-bottom: 0; }
+  .pcmr-head > div { border-right: 1px solid #555; }
+  .pcmr-head > div:last-child { border-right: none; }
+  .pcmr-logo { display: grid; place-items: center; background: #111; padding: 6px; }
+  .pcmr-logo img { width: 80px; height: 80px; object-fit: cover; }
+  .pcmr-title { display: grid; place-items: center; background: #f4f1cf; font-weight: 800; font-size: 1.35rem;
+    letter-spacing: .02em; text-align: center; padding: 8px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .pcmr-doc { display: grid; grid-template-columns: 82px 1fr; font-size: .74rem; }
+  .pcmr-doc span { border-bottom: 1px solid #555; padding: 5px 6px; }
+  .pcmr-doc span:nth-child(odd) { border-right: 1px solid #555; }
+  .pcmr-doc span:nth-child(even) { font-weight: 700; background: #f4f1cf; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .pcmr-doc span:nth-last-child(-n+2) { border-bottom: none; }
+  .pcmr-basis { text-align: center; font-weight: 700; font-size: .78rem; border: 1.5px solid #111; border-top: none; padding: 4px; }
+  .pcmr-foot { margin-top: 18px; font-size: .82rem; line-height: 2; }
+  .pcmr-foot b { display: inline-block; min-width: 220px; border-bottom: 1px solid #111; font-weight: 700; padding: 0 4px; }
+  .paper-table td.area { font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+  @media (max-width: 640px) { .pcmr-head { grid-template-columns: 70px 1fr; } .pcmr-doc { grid-column: 1 / -1; } }
+</style>
+<a class="back-link no-print" href="{{ url_for('facility.pest') }}">{{ icon('arrow-left', 15) }} Pest Control</a>
+{{ range_filter(url_for('facility.pest_print'), date_from, date_to) }}
+
+<div class="paper">
+  <div class="pcmr-head">
+    <div class="pcmr-logo"><img src="{{ url_for('static', filename='img/amamio-logo.jpg') }}" alt="Amamio Farm Products"></div>
+    <div class="pcmr-title">PEST CONTROL MONITORING RECORD</div>
+    <div class="pcmr-doc">
+      <span>Doc. No.</span><span>{{ doc_no }}</span>
+      <span>Rev. No.</span><span>{{ revision }}</span>
+      <span>Issue Date:</span><span>{{ issue_date }}</span>
+    </div>
+  </div>
+  <div class="pcmr-basis">TO BE DONE ON A MONTHLY BASIS</div>
+
+  <table class="paper-table" style="margin-top:10px">
+    <thead>
+      <tr>
+        <th style="width:11%">DATE</th><th style="width:18%">AREA INSPECTED</th><th>OBSERVATION</th>
+        <th>CORRECTIVE ACTION UNDERTAKEN (if required)</th><th style="width:16%">SIGNATURE – Monitoring in-charge</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+        {% if not loop.first %}<tr><td colspan="5" style="height:14px;border-left:none;border-right:none"></td></tr>{% endif %}
+        {% for a in r.areas %}
+        <tr>
+          <td>{{ r.record_date if loop.first else '' }}</td>
+          <td class="area">{{ a.area }}</td>
+          <td>{% if a.pest_activity %}<b>{{ a.observation }}</b>{% else %}{{ a.observation }}{% endif %}</td>
+          <td>{{ a.corrective_action or '' }}</td>
+          <td>{{ a.signed_by or r.monitored_by }}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        {% for area in areas %}
+        <tr><td></td><td class="area">{{ area }}</td><td></td><td></td><td></td></tr>
+        {% endfor %}
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if not rows %}<div class="paper-note">No inspection recorded between {{ date_from }} and {{ date_to }} — blank form.</div>{% endif %}
+
+  <div class="pcmr-foot">
+    Frequency: <b style="border:none;min-width:0">Monthly</b><br>
+    Monitored by: <b>{{ rows|map(attribute='monitored_by')|unique|join(', ') if rows else '' }}</b><br>
+    Date of Monitoring: <b>{{ rows|map(attribute='record_date')|join(', ') if rows else '' }}</b>
+  </div>
+</div>
+{% endblock %}

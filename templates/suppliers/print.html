@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% from "_paper.html" import paper_head %}
+{% block title %}Supplier Directory{% endblock %}
+{% block content %}
+<style>
+  .paper-table th.sup { background: #f2d33a; color: #111; }
+  .paper-table th.tin { background: #5aa9e6; color: #111; }
+  .paper-table th.plainh { background: #fff; color: #111; }
+  .paper-table td.tin { white-space: nowrap; }
+</style>
+<a class="back-link no-print" href="{{ url_for('suppliers.index') }}">{{ icon('arrow-left', 15) }} Supplier Directory</a>
+<div class="filter-bar no-print">
+  <span class="muted small">{{ total }} suppliers · grouped by category</span>
+  <button class="btn btn-primary" type="button" onclick="window.print()">{{ icon('printer', 15) }} Print</button>
+</div>
+
+<div class="paper">
+  {{ paper_head('Supplier Directory', 'Office / Prod / Packing · as of ' ~ today) }}
+  <table class="paper-table">
+    <thead>
+      <tr><th class="sup">SUPPLIER</th><th class="tin">TIN</th><th class="plainh">ITEMS</th><th class="plainh">Contact#</th></tr>
+    </thead>
+    <tbody>
+      {% for cat, rows in groups %}
+      <tr class="group"><td colspan="4">{{ cat }}</td></tr>
+        {% for s in rows %}
+        <tr>
+          <td>{{ s.name|upper }}</td>
+          <td class="tin">{{ s.tin or '' }}</td>
+          <td>{{ s.materials_supplied or '' }}</td>
+          <td>{{ s.contact_line }}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+      <tr><td colspan="4" style="text-align:center;color:#666;padding:20px">No suppliers yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

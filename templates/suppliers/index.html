@@ -1,124 +1,90 @@
 {% extends "base.html" %}
-{% block title %}Suppliers{% endblock %}
+{% block title %}Supplier Directory{% endblock %}
 {% block content %}
-<div class="flex gap mb" style="justify-content: space-between; flex-wrap: wrap;">
-  <h1 class="page-title" style="margin: 0;">Suppliers</h1>
-  <button class="btn btn-primary" type="button"
-          data-modal-open="supplierModal" data-mode="create">+ Add supplier</button>
-</div>
-
-<div class="card">
-  <div class="card-title">Supplier directory</div>
-  {% if suppliers %}
-  <div class="table-wrap">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>ID</th><th>Name</th><th>Contact</th><th>Phone</th>
-          <th>Materials supplied</th><th class="text-right">Lead time</th>
-          <th class="text-right">Deliveries</th><th class="text-right">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for s in suppliers %}
-        <tr>
-          <td>{{ s.id }}</td>
-          <td>{{ s.name }}</td>
-          <td>{{ s.contact_person or '—' }}</td>
-          <td class="muted">{{ s.phone or '—' }}</td>
-          <td>{{ s.materials_supplied or '—' }}</td>
-          <td class="text-right">{{ s.lead_time_days or 0 }} d</td>
-          <td class="text-right">{{ received_counts.get(s.id, 0) }}</td>
-          <td class="text-right">
-            <button class="btn btn-ghost btn-sm" type="button"
-                    data-modal-open="supplierModal" data-mode="edit"
-                    data-id="{{ s.id }}" data-name="{{ s.name }}"
-                    data-contact="{{ s.contact_person or '' }}"
-                    data-phone="{{ s.phone or '' }}" data-email="{{ s.email or '' }}"
-                    data-address="{{ s.address or '' }}"
-                    data-materials="{{ s.materials_supplied or '' }}"
-                    data-lead="{{ s.lead_time_days or 0 }}"
-                    data-notes="{{ s.notes or '' }}">Edit</button>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+<style>
+  .sup-search { position: relative; flex: 1 1 260px; max-width: 420px; }
+  .sup-search input[type="search"] { padding-left: 38px; width: 100%; }
+  .sup-search .sup-ico { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; display: flex; }
+  .sup-tag { display: inline-block; padding: 1px 7px; border-radius: 6px; font-size: .68rem; font-weight: 700;
+    letter-spacing: .04em; text-transform: uppercase; background: var(--raise-3); color: var(--muted); margin-right: 6px; }
+  .queue-item .sup-contact { font-size: .78rem; color: var(--muted); white-space: nowrap; max-width: 34%; overflow: hidden; text-overflow: ellipsis; }
+  @media (max-width: 640px) { .queue-item .sup-contact { display: none; } }
+</style>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Supplier Directory</h1>
+    <p class="page-sub">Who we buy from — office, production, packing and raw materials.</p>
   </div>
-  {% else %}
-  <p class="muted">No suppliers yet. Add the businesses you buy raw materials from.</p>
-  {% endif %}
-</div>
-
-<div class="modal-backdrop" id="supplierModal">
-  <div class="modal">
-    <button class="modal-close" type="button" data-modal-close aria-label="Close">&times;</button>
-    <div class="card-title" id="supplierModalTitle">Add supplier</div>
-    <form class="form" method="post" action="{{ url_for('suppliers.index') }}">
-      <input type="hidden" name="id" id="s_id" value="">
-      <div class="form-row">
-        <label class="form-label" for="s_name">Name</label>
-        <input id="s_name" name="name" type="text" required>
-      </div>
-      <div class="grid grid-2">
-        <div class="form-row">
-          <label class="form-label" for="s_contact">Contact person</label>
-          <input id="s_contact" name="contact_person" type="text">
-        </div>
-        <div class="form-row">
-          <label class="form-label" for="s_phone">Phone</label>
-          <input id="s_phone" name="phone" type="text">
-        </div>
-      </div>
-      <div class="grid grid-2">
-        <div class="form-row">
-          <label class="form-label" for="s_email">Email</label>
-          <input id="s_email" name="email" type="email">
-        </div>
-        <div class="form-row">
-          <label class="form-label" for="s_lead">Lead time (days)</label>
-          <input id="s_lead" name="lead_time_days" type="number" min="0" value="0">
-        </div>
-      </div>
-      <div class="form-row">
-        <label class="form-label" for="s_address">Address</label>
-        <input id="s_address" name="address" type="text">
-      </div>
-      <div class="form-row">
-        <label class="form-label" for="s_materials">Materials supplied</label>
-        <input id="s_materials" name="materials_supplied" type="text"
-               placeholder="e.g. Bottles, labels">
-      </div>
-      <div class="form-row">
-        <label class="form-label" for="s_notes">Notes</label>
-        <textarea id="s_notes" name="notes"></textarea>
-      </div>
-      <div class="flex gap" style="justify-content: flex-end;">
-        <button class="btn btn-ghost" type="button" data-modal-close>Cancel</button>
-        <button class="btn btn-primary" type="submit">Save supplier</button>
-      </div>
-    </form>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('suppliers.print_directory') }}">{{ icon('printer', 15) }} Print directory</a>
+    <a class="btn btn-primary" href="{{ url_for('suppliers.new', cat=cat if cat != 'All' else none) }}">{{ icon('plus', 16) }} Add supplier</a>
   </div>
 </div>
+
+<div class="tabs">
+  <a href="{{ url_for('suppliers.index') }}" class="{{ 'is-active' if cat == 'All' }}">All <span class="muted">{{ counts.All }}</span></a>
+  {% for c in categories %}
+  <a href="{{ url_for('suppliers.index', cat=c) }}" class="{{ 'is-active' if cat == c }}">{{ c }} <span class="muted">{{ counts[c] }}</span></a>
+  {% endfor %}
+</div>
+
+<div class="toolbar">
+  <label class="sup-search">
+    <span class="sup-ico">{{ icon("search", 16) }}</span>
+    <input type="search" id="supSearch" value="{{ q }}" placeholder="Search name, item, TIN or contact…" aria-label="Search suppliers" autocomplete="off">
+  </label>
+  <span class="muted small" id="supCount">{{ suppliers|length }} supplier{{ 's' if suppliers|length != 1 }}</span>
+</div>
+
+{% if suppliers %}
+<div class="queue" id="supList">
+  {% for s in suppliers %}
+  <a class="queue-item" href="{{ url_for('suppliers.detail', supplier_id=s.id) }}" data-search="{{ s.search }}">
+    <span class="task-icon" style="width:40px;height:40px">{{ icon('suppliers', 18) }}</span>
+    <span class="queue-main">
+      <span class="queue-title">{{ s.name }}</span>
+      <span class="queue-sub">{% if cat == 'All' %}<span class="sup-tag">{{ s.category }}</span>{% endif %}{{ s.materials_supplied or 'No items listed yet' }}{% if s.tin %} · TIN {{ s.tin }}{% endif %}</span>
+    </span>
+    {% if s.contact_line %}<span class="sup-contact">{{ s.contact_line }}</span>{% endif %}
+  </a>
+  {% endfor %}
+</div>
+<div class="card" id="supNone" style="display:none"><div class="empty">
+  <div class="empty-icon">{{ icon('search', 30) }}</div>
+  <div class="empty-title">No supplier matches</div>
+  <p class="muted">Try another word, or add the supplier.</p>
+</div></div>
+{% else %}
+<div class="card"><div class="empty">
+  <div class="empty-icon">{{ icon('suppliers', 30) }}</div>
+  <div class="empty-title">No {{ cat|lower if cat != 'All' else '' }} suppliers yet</div>
+  <p class="muted">Add the stores and companies you buy from, with what you buy and how to reach them.</p>
+  <a class="btn btn-primary mt" href="{{ url_for('suppliers.new', cat=cat if cat != 'All' else none) }}">Add supplier</a>
+</div></div>
+{% endif %}
 
 <script>
 (function () {
-  document.addEventListener("click", function (e) {
-    var btn = e.target.closest('[data-modal-open="supplierModal"]');
-    if (!btn) return;
-    var edit = btn.getAttribute("data-mode") === "edit";
-    document.getElementById("supplierModalTitle").textContent = edit ? "Edit supplier" : "Add supplier";
-    var g = function (k) { return btn.getAttribute("data-" + k) || ""; };
-    document.getElementById("s_id").value = g("id");
-    document.getElementById("s_name").value = g("name");
-    document.getElementById("s_contact").value = g("contact");
-    document.getElementById("s_phone").value = g("phone");
-    document.getElementById("s_email").value = g("email");
-    document.getElementById("s_address").value = g("address");
-    document.getElementById("s_materials").value = g("materials");
-    document.getElementById("s_lead").value = g("lead") || "0";
-    document.getElementById("s_notes").value = g("notes");
-  });
+  var box = document.getElementById("supSearch");
+  var list = document.getElementById("supList");
+  if (!box || !list) return;
+  var items = Array.prototype.slice.call(list.querySelectorAll("[data-search]"));
+  var count = document.getElementById("supCount"), none = document.getElementById("supNone");
+  function run() {
+    var words = box.value.toLowerCase().split(/\s+/).filter(Boolean);
+    var shown = 0;
+    items.forEach(function (el) {
+      var text = el.getAttribute("data-search");
+      var hit = words.every(function (w) { return text.indexOf(w) !== -1; });
+      el.style.display = hit ? "" : "none";
+      if (hit) shown++;
+    });
+    count.textContent = shown + " supplier" + (shown === 1 ? "" : "s");
+    none.style.display = shown ? "none" : "";
+    list.style.display = shown ? "" : "none";
+  }
+  box.addEventListener("input", run);
+  if (box.value) run();
 })();
 </script>
 {% endblock %}

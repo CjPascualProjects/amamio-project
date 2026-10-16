@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% from "_paper.html" import paper_head %}
+{% block title %}Daily Production Report{% endblock %}
+{% block content %}
+{% include "production/_inputs.html" %}
+<style>
+  .dpr-wrap { overflow-x: auto; }
+  .dpr { font-size: .72rem; width: 100%; }
+  .dpr th, .dpr td { padding: 4px 5px; white-space: nowrap; }
+  .dpr thead th { font-size: .68rem; }
+  .dpr td.num { min-width: 34px; }
+  .dpr td.bal { font-weight: 700; background: #f7f7f7; }
+  .dpr td.fwd { background: #fbf6e3; font-weight: 700; }
+  .dpr tr.fam td { font-weight: 800; background: #fff; }
+  .dpr tr.sub td:first-child { padding-left: 20px; }
+  .dpr td.future { background: repeating-linear-gradient(135deg, #fff, #fff 4px, #f3f3f3 4px, #f3f3f3 8px); }
+  .dpr .first { position: sticky; left: 0; z-index: 1; min-width: 170px; background: #fff; box-shadow: 1px 0 0 #555; }
+  .dpr thead .first { background: #1f4fbf; }
+  .dpr tr.group td.first { background: #f3f3f3; }
+  .dpr td.sep, .dpr th.sep { border-left: 2px solid #111; }
+  .print-only { display: none; }
+  .dpr-chunk + .dpr-chunk { margin-top: 18px; }
+  @media print {
+    @page { size: A4 landscape; margin: 8mm; }
+    .print-only { display: block; }
+    .dpr { font-size: 7pt; }
+    .dpr thead th { font-size: 6.5pt; }
+    .dpr th, .dpr td { padding: 2px 3px; }
+    .dpr .first { position: static; box-shadow: none; min-width: 0; }
+    .dpr td.future { background: #fff; }
+    .dpr-chunk { break-inside: avoid; }
+    .dpr-chunk + .dpr-chunk { break-before: page; page-break-before: always; margin-top: 0; }
+  }
+</style>
+
+{% macro dpr_table(r, start, stop, with_total) %}
+<table class="paper-table dpr" data-no-paginate>
+  <thead>
+    <tr>
+      <th rowspan="2" class="first">PRODUCTS</th>
+      <th rowspan="2">BAL.<br>For.</th>
+      {% for label, s, e in r.periods[start:stop] %}<th colspan="3" class="sep">{{ label }}</th>{% endfor %}
+      {% if with_total %}<th colspan="3" class="sep">TOTAL</th>{% endif %}
+    </tr>
+    <tr>
+      {% for p in r.periods[start:stop] %}<th class="sep">IN</th><th>OUT</th><th>BAL</th>{% endfor %}
+      {% if with_total %}<th class="sep">IN</th><th>OUT</th><th>BAL</th>{% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% set ncols = 2 + (stop - start) * 3 + (3 if with_total else 0) %}
+    {% for g in r.groups %}
+      <tr class="group"><td class="first">{{ g.group|upper }}</td><td colspan="{{ ncols - 1 }}"></td></tr>
+      {% for f in g.families %}
+        {% if not f.single %}
+          <tr class="fam"><td class="first">{{ f.family|upper }}</td><td colspan="{{ ncols - 1 }}"></td></tr>
+        {% endif %}
+        {% for row in f.rows %}
+          <tr class="{{ 'fam' if f.single else 'sub' }}">
+            <td class="first">{{ (f.family|upper) if f.single else row.label|upper }}</td>
+            {% set fwd = row.fwd if start == 0 else row.cells[start - 1].bal %}
+            <td class="num fwd">{{ fwd|qty }}</td>
+            {% for c in row.cells[start:stop] %}
+              {% if c.future %}
+                <td class="num future sep"></td><td class="num future"></td><td class="num future"></td>
+              {% else %}
+                <td class="num sep">{{ c['in']|qty if c['in'] else '' }}</td>
+                <td class="num">{{ c.out|qty if c.out else '' }}</td>
+                <td class="num bal">{{ c.bal|qty }}</td>
+              {% endif %}
+            {% endfor %}
+            {% if with_total %}
+              <td class="num sep"><b>{{ row.total_in|qty if row.total_in else '' }}</b></td>
+              <td class="num"><b>{{ row.total_out|qty if row.total_out else '' }}</b></td>
+              <td class="num bal">{{ row.bal|qty }}</td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      {% endfor %}
+    {% else %}
+      <tr><td colspan="{{ ncols }}" style="text-align:center;color:#666;padding:20px">No product had stock or movement this month.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endmacro %}
+
+<div class="page-head no-print">
+  <div>
+    <h1 class="page-title">Daily Production Report</h1>
+    <p class="page-sub">What came in and went out of finished-goods stock, product by product, for {{ r.month_label }}.</p>
+  </div>
+</div>
+
+<form method="get" action="{{ url_for('production.daily_report') }}" class="filter-bar no-print">
+  <div class="form-row field"><label class="form-label" for="month">Month</label>
+    <input type="month" id="month" name="month" value="{{ r.month }}"></div>
+  <input type="hidden" name="view" value="{{ r.view }}">
+  <label class="check-row" style="flex:1 1 200px;padding-bottom:10px"><input type="checkbox" name="all" value="1" {{ 'checked' if r.show_all }}> Show every product, even with no stock</label>
+  <button class="btn btn-ghost" type="submit">Show</button>
+  <button class="btn btn-primary" type="button" onclick="window.print()">{{ icon('printer', 15) }} Print</button>
+</form>
+
+<div class="toolbar no-print">
+  <div class="seg">
+    <a href="{{ url_for('production.daily_report', month=r.month, view='week', all='1' if r.show_all else None) }}" class="{{ 'is-active' if r.view == 'week' }}">By week</a>
+    <a href="{{ url_for('production.daily_report', month=r.month, view='day', all='1' if r.show_all else None) }}" class="{{ 'is-active' if r.view == 'day' }}">By day</a>
+  </div>
+  <span class="muted small">{{ 'Scroll sideways to see every day.' if r.view == 'day' else 'Weeks are days 1–7, 8–14, 15–21, 22–28 and the rest of the month.' }}</span>
+</div>
+
+{% set n = r.periods|length %}
+{% if r.view == 'day' %}
+  <div class="paper no-print">
+    {{ paper_head('Daily Production Report', 'For the month of ' ~ r.month_label) }}
+    <div class="dpr-wrap">{{ dpr_table(r, 0, n, true) }}</div>
+  </div>
+  {# On paper: eight days per page, like the printed form. #}
+  <div class="print-only">
+    {% for start in range(0, n, 8) %}
+    <div class="paper dpr-chunk">
+      {{ paper_head('Daily Production Report', 'For the month of ' ~ r.month_label ~ ' · days ' ~ (start + 1) ~ '–' ~ ([start + 8, n]|min)) }}
+      {{ dpr_table(r, start, [start + 8, n]|min, start + 8 >= n) }}
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="paper">
+    {{ paper_head('Daily Production Report', 'For the month of ' ~ r.month_label) }}
+    <div class="dpr-wrap">{{ dpr_table(r, 0, n, true) }}</div>
+    <div class="paper-note">BAL. For. = balance forwarded from the previous month. IN = produced / returned to stock · OUT = released, sold, packed or adjusted out.</div>
+  </div>
+{% endif %}
+{% endblock %}

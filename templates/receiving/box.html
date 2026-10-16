@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}{{ box.box_code }}{% endblock %}
+{% block content %}
+<div class="focus">
+{% if can('receiving') %}
+<a class="back-link" href="{{ url_for('receiving.batch', batch_id=box.batch_id) }}">{{ icon('arrow-left', 15) }} {{ box.batch_ref }}</a>
+{% else %}
+<a class="back-link" href="{{ url_for('receiving.inspection') }}">{{ icon('arrow-left', 15) }} Inspection &amp; Cleaning</a>
+{% endif %}
+
+<div class="record-head">
+  <div class="qr-inline">
+    <img src="{{ url_for('qr.image', token=box.box_code) }}" alt="QR code {{ box.box_code }}">
+    <div>
+      <div class="record-code">{{ box.box_code }}</div>
+      <h1 class="record-title">{{ box.material_name }}</h1>
+      <div class="muted small">{{ box.declared_qty|qty(box.unit) }} on the label · {{ box.supplier_name }} · received {{ box.received_date }}</div>
+    </div>
+  </div>
+  <span class="badge {{ box.badge }}">{{ box.status }}</span>
+</div>
+
+<div class="track mb">
+  {% for label, state in track %}<span class="track-step is-{{ state }}">{{ label }}</span>{% endfor %}
+</div>
+
+{% if box.status == 'Awaiting Inspection' %}
+  <div class="next-action">
+    <div class="next-action-text">
+      <b>Next: inspection &amp; cleaning</b>
+      <span>Clean the content, then count what is usable, what can't be used and what is damaged.</span>
+    </div>
+    {% if can_inspect %}
+      <a class="btn btn-primary" href="{{ url_for('receiving.inspect', box_id=box.id) }}">Inspect this box</a>
+    {% endif %}
+  </div>
+{% elif box.status == 'On Hold' %}
+  <div class="next-action">
+    <div class="next-action-text">
+      <b>On hold — waiting for a test, document or QA decision</b>
+      <span>{{ box.nonconformity }}</span>
+    </div>
+  </div>
+  {% if can_inspect %}
+  <form method="post" action="{{ url_for('receiving.decide_hold', box_id=box.id) }}" class="card mb">
+    <div class="card-title">Final decision</div>
+    <div class="choice-grid cols-2 mb">
+      <label class="choice is-pass"><input type="radio" name="decision" value="Accepted" required>
+        <span class="choice-card"><span class="choice-icon">{{ icon('check', 20) }}</span>
+        <span><span class="choice-title">Accept</span><span class="choice-sub">{{ box.good_qty|qty(box.unit) }} joins stock</span></span></span></label>
+      <label class="choice is-fail"><input type="radio" name="decision" value="Rejected">
+        <span class="choice-card"><span class="choice-icon">{{ icon('x-circle', 20) }}</span>
+        <span><span class="choice-title">Reject</span><span class="choice-sub">Nothing joins stock</span></span></span></label>
+    </div>
+    <div class="form-row">
+      <label class="form-label" for="note">What was decided, and why?</label>
+      <input type="text" id="note" name="note" placeholder="e.g. COA received — moisture within spec">
+    </div>
+    <button class="btn btn-primary" type="submit">Save decision</button>
+  </form>
+  {% endif %}
+{% endif %}
+
+{% if box.status != 'Awaiting Inspection' %}
+<div class="figures mb">
+  <div class="figure is-good"><div class="figure-label">Usable</div><div class="figure-value">{{ box.good_qty|qty }}<small>{{ box.unit }}</small></div></div>
+  <div class="figure {{ 'is-bad' if box.unusable_qty }}"><div class="figure-label">Can't be used</div><div class="figure-value">{{ box.unusable_qty|qty }}<small>{{ box.unit }}</small></div></div>
+  <div class="figure {{ 'is-bad' if box.damaged_qty }}"><div class="figure-label">Damaged</div><div class="figure-value">{{ box.damaged_qty|qty }}<small>{{ box.unit }}</small></div></div>
+</div>
+{% endif %}
+
+{% if box.status == 'Accepted' and box.stage != 'Consumed' and (can('receiving') or can_inspect) %}
+<form method="post" action="{{ url_for('receiving.move_box', box_id=box.id) }}" class="card mb">
+  <div class="card-title">Move this box <span class="muted">— it is in the {{ box.stage }}</span></div>
+  <div class="chip-choices mb">
+    {% for s in stages if s != box.stage %}
+      <label class="chip-choice"><input type="radio" name="stage" value="{{ s }}" required><span>{{ s }}</span></label>
+    {% endfor %}
+  </div>
+  <button class="btn btn-primary btn-sm" type="submit">Move</button>
+</form>
+{% endif %}
+
+<div class="card">
+  <div class="card-title">Details</div>
+  <dl class="review-list">
+    <dt>Delivery</dt><dd>{{ box.batch_ref }}{% if box.po_no %} · PO {{ box.po_no }}{% endif %}{% if box.delivery_ref %} · DR {{ box.delivery_ref }}{% endif %}</dd>
+    <dt>Lot / batch no.</dt><dd>{{ box.lot_no or '—' }}</dd>
+    <dt>Expiry</dt><dd>{{ box.expiry_date or '—' }}</dd>
+    <dt>Packaging condition</dt><dd>{{ box.packaging_condition or '—' }}</dd>
+    <dt>Temperature</dt><dd>{{ box.temperature_c|qty('°C') if box.temperature_c not in (none, '') else '—' }}</dd>
+    {% if box.status != 'Awaiting Inspection' %}
+    <dt>Cleaned</dt><dd>{{ 'Yes' if box.cleaned else 'No' }}</dd>
+    <dt>Visual / organoleptic</dt><dd>{{ box.visual_inspection or '—' }}</dd>
+    <dt>COA / documents</dt><dd>{{ box.coa_check or '—' }}</dd>
+    <dt>Sampling / test</dt><dd>{{ box.sampling_test or '—' }}</dd>
+    {% if box.unusable_reason %}<dt>Why it can't be used</dt><dd>{{ box.unusable_reason }}</dd>{% endif %}
+    {% if box.damage_reason %}<dt>Damage</dt><dd>{{ box.damage_reason }}</dd>{% endif %}
+    {% if box.nonconformity %}<dt>Nonconformity</dt><dd>{{ box.nonconformity }}</dd>{% endif %}
+    {% if box.action_taken %}<dt>Action taken</dt><dd style="white-space:pre-line">{{ box.action_taken }}</dd>{% endif %}
+    <dt>Inspected by</dt><dd>{{ box.checked_by }} · {{ box.checked_at }}</dd>
+    <dt>Verified by</dt><dd>{{ box.verified_by_name or '—' }}</dd>
+    {% endif %}
+    <dt>QR code carries</dt><dd class="small" style="font-weight:500">{{ qr_text }}</dd>
+  </dl>
+</div>
+</div>
+{% endblock %}

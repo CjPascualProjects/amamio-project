@@ -1,218 +1,1026 @@
 [
   {
     "user_id": 1,
-    "message": "Damage recorded on box RB-1 - 0.6 kg of Ginger.",
-    "link": "/receiving/",
+    "message": "Received at the Receiving Area — RCV-2026-0001 from Highland Produce Traders: Ginger 36 kg in 3 box(es); Lemon 240 pc in 2 box(es); Turmeric 8 kg in 1 box(es). Ready for inspection & cleaning.",
+    "link": "/receiving/1",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:24.035811+00:00",
+    "created_at": "2026-10-16T05:39:31.327181+00:00",
     "id": 1
   },
   {
     "user_id": 2,
-    "message": "Damage recorded on box RB-1 - 0.6 kg of Ginger.",
-    "link": "/receiving/",
+    "message": "Received at the Receiving Area — RCV-2026-0001 from Highland Produce Traders: Ginger 36 kg in 3 box(es); Lemon 240 pc in 2 box(es); Turmeric 8 kg in 1 box(es). Ready for inspection & cleaning.",
+    "link": "/receiving/1",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:24.059832+00:00",
+    "created_at": "2026-10-16T05:39:31.327181+00:00",
     "id": 2
   },
   {
-    "user_id": 1,
-    "message": "Damage recorded on box RB-2 - 0.6 kg of Ginger.",
-    "link": "/receiving/",
+    "user_id": 3,
+    "message": "Received at the Receiving Area — RCV-2026-0001 from Highland Produce Traders: Ginger 36 kg in 3 box(es); Lemon 240 pc in 2 box(es); Turmeric 8 kg in 1 box(es). Ready for inspection & cleaning.",
+    "link": "/receiving/1",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:24.232262+00:00",
+    "created_at": "2026-10-16T05:39:31.327181+00:00",
     "id": 3
   },
   {
-    "user_id": 2,
-    "message": "Damage recorded on box RB-2 - 0.6 kg of Ginger.",
-    "link": "/receiving/",
+    "user_id": 4,
+    "message": "Received at the Receiving Area — RCV-2026-0001 from Highland Produce Traders: Ginger 36 kg in 3 box(es); Lemon 240 pc in 2 box(es); Turmeric 8 kg in 1 box(es). Ready for inspection & cleaning.",
+    "link": "/receiving/1",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:24.252617+00:00",
+    "created_at": "2026-10-16T05:39:31.327181+00:00",
     "id": 4
   },
   {
     "user_id": 1,
-    "message": "Damage recorded on box RB-3 - 0.6 kg of Ginger.",
-    "link": "/receiving/",
+    "message": "Inspected RB-1 (Ginger): 11 kg usable, 0.4 kg can't be used, 0.6 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/1",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:24.405102+00:00",
+    "created_at": "2026-10-16T05:39:31.495436+00:00",
     "id": 5
   },
   {
     "user_id": 2,
-    "message": "Damage recorded on box RB-3 - 0.6 kg of Ginger.",
-    "link": "/receiving/",
+    "message": "Inspected RB-1 (Ginger): 11 kg usable, 0.4 kg can't be used, 0.6 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/1",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:24.426349+00:00",
+    "created_at": "2026-10-16T05:39:31.495436+00:00",
     "id": 6
   },
   {
-    "user_id": 1,
-    "message": "Damage recorded on box RB-4 - 4 pc of Lemon.",
-    "link": "/receiving/",
+    "user_id": 3,
+    "message": "Inspected RB-1 (Ginger): 11 kg usable, 0.4 kg can't be used, 0.6 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/1",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:24.708515+00:00",
+    "created_at": "2026-10-16T05:39:31.495436+00:00",
     "id": 7
   },
   {
-    "user_id": 2,
-    "message": "Damage recorded on box RB-4 - 4 pc of Lemon.",
-    "link": "/receiving/",
+    "user_id": 4,
+    "message": "Inspected RB-1 (Ginger): 11 kg usable, 0.4 kg can't be used, 0.6 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/1",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:24.743612+00:00",
+    "created_at": "2026-10-16T05:39:31.495436+00:00",
     "id": 8
   },
   {
     "user_id": 1,
-    "message": "Damage recorded on box RB-5 - 4 pc of Lemon.",
-    "link": "/receiving/",
+    "message": "Inspected RB-2 (Ginger): 11 kg usable, 0.4 kg can't be used, 0.6 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/2",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:24.941074+00:00",
+    "created_at": "2026-10-16T05:39:31.717393+00:00",
     "id": 9
   },
   {
     "user_id": 2,
-    "message": "Damage recorded on box RB-5 - 4 pc of Lemon.",
-    "link": "/receiving/",
+    "message": "Inspected RB-2 (Ginger): 11 kg usable, 0.4 kg can't be used, 0.6 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/2",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:24.964267+00:00",
+    "created_at": "2026-10-16T05:39:31.717393+00:00",
     "id": 10
   },
   {
-    "user_id": 1,
-    "message": "Honey container HC-4 FAILED QC (22.7% moisture, Fermented / off-smell) - routed to other products.",
-    "link": "/honey/",
+    "user_id": 3,
+    "message": "Inspected RB-2 (Ginger): 11 kg usable, 0.4 kg can't be used, 0.6 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/2",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:26.634241+00:00",
+    "created_at": "2026-10-16T05:39:31.717393+00:00",
     "id": 11
   },
   {
-    "user_id": 2,
-    "message": "Honey container HC-4 FAILED QC (22.7% moisture, Fermented / off-smell) - routed to other products.",
-    "link": "/honey/",
+    "user_id": 4,
+    "message": "Inspected RB-2 (Ginger): 11 kg usable, 0.4 kg can't be used, 0.6 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/2",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:26.663953+00:00",
+    "created_at": "2026-10-16T05:39:31.717393+00:00",
     "id": 12
   },
   {
     "user_id": 1,
-    "message": "Honey container HC-5 FAILED QC (21.2% moisture, With sediment) - routed to other products.",
-    "link": "/honey/",
+    "message": "Inspected RB-3 (Ginger): 11 kg usable, 0.4 kg can't be used, 0.6 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/3",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:26.783141+00:00",
+    "created_at": "2026-10-16T05:39:31.952075+00:00",
     "id": 13
   },
   {
     "user_id": 2,
-    "message": "Honey container HC-5 FAILED QC (21.2% moisture, With sediment) - routed to other products.",
-    "link": "/honey/",
+    "message": "Inspected RB-3 (Ginger): 11 kg usable, 0.4 kg can't be used, 0.6 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/3",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:26.805195+00:00",
+    "created_at": "2026-10-16T05:39:31.952075+00:00",
     "id": 14
   },
   {
-    "user_id": 1,
-    "message": "Packing run PK-1 (Shopee) handed over to SPX Express rider.",
-    "link": "/packing/1",
+    "user_id": 3,
+    "message": "Inspected RB-3 (Ginger): 11 kg usable, 0.4 kg can't be used, 0.6 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/3",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:27.180495+00:00",
+    "created_at": "2026-10-16T05:39:31.952075+00:00",
     "id": 15
   },
   {
-    "user_id": 2,
-    "message": "Packing run PK-1 (Shopee) handed over to SPX Express rider.",
-    "link": "/packing/1",
+    "user_id": 4,
+    "message": "Inspected RB-3 (Ginger): 11 kg usable, 0.4 kg can't be used, 0.6 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/3",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:27.200935+00:00",
+    "created_at": "2026-10-16T05:39:31.952075+00:00",
     "id": 16
   },
   {
     "user_id": 1,
-    "message": "Packing run PK-2 (Lazada) handed over to J&T Express PH rider.",
-    "link": "/packing/2",
+    "message": "Inspected RB-4 (Lemon): 110 pc usable, 6 pc can't be used, 4 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/4",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:27.489789+00:00",
+    "created_at": "2026-10-16T05:39:32.164900+00:00",
     "id": 17
   },
   {
     "user_id": 2,
-    "message": "Packing run PK-2 (Lazada) handed over to J&T Express PH rider.",
-    "link": "/packing/2",
+    "message": "Inspected RB-4 (Lemon): 110 pc usable, 6 pc can't be used, 4 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/4",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:27.518119+00:00",
+    "created_at": "2026-10-16T05:39:32.164900+00:00",
     "id": 18
   },
   {
-    "user_id": 1,
-    "message": "New production request #1 awaiting approval — Out of stock.",
-    "link": "/approvals/1",
+    "user_id": 3,
+    "message": "Inspected RB-4 (Lemon): 110 pc usable, 6 pc can't be used, 4 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/4",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:28.099242+00:00",
+    "created_at": "2026-10-16T05:39:32.164900+00:00",
     "id": 19
   },
   {
-    "user_id": 2,
-    "message": "New production request #1 awaiting approval — Out of stock.",
-    "link": "/approvals/1",
+    "user_id": 4,
+    "message": "Inspected RB-4 (Lemon): 110 pc usable, 6 pc can't be used, 4 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/4",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:28.123565+00:00",
+    "created_at": "2026-10-16T05:39:32.164900+00:00",
     "id": 20
   },
   {
     "user_id": 1,
-    "message": "New material request #2 awaiting approval — Below reorder level.",
-    "link": "/approvals/2",
+    "message": "Inspected RB-5 (Lemon): 110 pc usable, 6 pc can't be used, 4 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/5",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:28.175129+00:00",
+    "created_at": "2026-10-16T05:39:32.390425+00:00",
     "id": 21
   },
   {
     "user_id": 2,
-    "message": "New material request #2 awaiting approval — Below reorder level.",
-    "link": "/approvals/2",
+    "message": "Inspected RB-5 (Lemon): 110 pc usable, 6 pc can't be used, 4 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/5",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:28.206525+00:00",
+    "created_at": "2026-10-16T05:39:32.390425+00:00",
     "id": 22
   },
   {
-    "user_id": 1,
-    "message": "New sales request #61 awaiting approval.",
-    "link": "/sales/",
+    "user_id": 3,
+    "message": "Inspected RB-5 (Lemon): 110 pc usable, 6 pc can't be used, 4 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/5",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:28.264174+00:00",
+    "created_at": "2026-10-16T05:39:32.390425+00:00",
     "id": 23
   },
   {
-    "user_id": 2,
-    "message": "New sales request #61 awaiting approval.",
-    "link": "/sales/",
+    "user_id": 4,
+    "message": "Inspected RB-5 (Lemon): 110 pc usable, 6 pc can't be used, 4 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/5",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:28.288099+00:00",
+    "created_at": "2026-10-16T05:39:32.390425+00:00",
     "id": 24
   },
   {
-    "user_id": 4,
-    "message": "Sales order #1 created for Metro Grocers.",
-    "link": "/orders/1",
+    "user_id": 1,
+    "message": "Inspected RB-6 (Turmeric): 8 kg usable, 0 kg can't be used, 0 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/6",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:28.342604+00:00",
+    "created_at": "2026-10-16T05:39:32.559724+00:00",
     "id": 25
   },
   {
-    "user_id": 4,
-    "message": "Delivery #1 scheduled for order #1.",
-    "link": "/deliveries/",
+    "user_id": 2,
+    "message": "Inspected RB-6 (Turmeric): 8 kg usable, 0 kg can't be used, 0 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/6",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:28.588887+00:00",
+    "created_at": "2026-10-16T05:39:32.559724+00:00",
     "id": 26
   },
   {
+    "user_id": 3,
+    "message": "Inspected RB-6 (Turmeric): 8 kg usable, 0 kg can't be used, 0 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/6",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:32.559724+00:00",
+    "id": 27
+  },
+  {
     "user_id": 4,
+    "message": "Inspected RB-6 (Turmeric): 8 kg usable, 0 kg can't be used, 0 kg damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/6",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:32.559724+00:00",
+    "id": 28
+  },
+  {
+    "user_id": 1,
+    "message": "Received at the Receiving Area — RCV-2026-0002 from Davao CVI: Square Bottle 300 mL 400 pc in 2 box(es); Hexagonal Jar 250 mL 150 pc in 1 box(es). Ready for inspection & cleaning.",
+    "link": "/receiving/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:32.869545+00:00",
+    "id": 29
+  },
+  {
+    "user_id": 2,
+    "message": "Received at the Receiving Area — RCV-2026-0002 from Davao CVI: Square Bottle 300 mL 400 pc in 2 box(es); Hexagonal Jar 250 mL 150 pc in 1 box(es). Ready for inspection & cleaning.",
+    "link": "/receiving/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:32.869545+00:00",
+    "id": 30
+  },
+  {
+    "user_id": 3,
+    "message": "Received at the Receiving Area — RCV-2026-0002 from Davao CVI: Square Bottle 300 mL 400 pc in 2 box(es); Hexagonal Jar 250 mL 150 pc in 1 box(es). Ready for inspection & cleaning.",
+    "link": "/receiving/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:32.869545+00:00",
+    "id": 31
+  },
+  {
+    "user_id": 4,
+    "message": "Received at the Receiving Area — RCV-2026-0002 from Davao CVI: Square Bottle 300 mL 400 pc in 2 box(es); Hexagonal Jar 250 mL 150 pc in 1 box(es). Ready for inspection & cleaning.",
+    "link": "/receiving/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:32.869545+00:00",
+    "id": 32
+  },
+  {
+    "user_id": 1,
+    "message": "Inspected RB-7 (Square Bottle 300 mL): 200 pc usable, 0 pc can't be used, 0 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/7",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:32.997074+00:00",
+    "id": 33
+  },
+  {
+    "user_id": 2,
+    "message": "Inspected RB-7 (Square Bottle 300 mL): 200 pc usable, 0 pc can't be used, 0 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/7",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:32.997074+00:00",
+    "id": 34
+  },
+  {
+    "user_id": 3,
+    "message": "Inspected RB-7 (Square Bottle 300 mL): 200 pc usable, 0 pc can't be used, 0 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/7",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:32.997074+00:00",
+    "id": 35
+  },
+  {
+    "user_id": 4,
+    "message": "Inspected RB-7 (Square Bottle 300 mL): 200 pc usable, 0 pc can't be used, 0 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/7",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:32.997074+00:00",
+    "id": 36
+  },
+  {
+    "user_id": 1,
+    "message": "Inspected RB-8 (Square Bottle 300 mL): 200 pc usable, 0 pc can't be used, 0 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/8",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.174718+00:00",
+    "id": 37
+  },
+  {
+    "user_id": 2,
+    "message": "Inspected RB-8 (Square Bottle 300 mL): 200 pc usable, 0 pc can't be used, 0 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/8",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.174718+00:00",
+    "id": 38
+  },
+  {
+    "user_id": 3,
+    "message": "Inspected RB-8 (Square Bottle 300 mL): 200 pc usable, 0 pc can't be used, 0 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/8",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.174718+00:00",
+    "id": 39
+  },
+  {
+    "user_id": 4,
+    "message": "Inspected RB-8 (Square Bottle 300 mL): 200 pc usable, 0 pc can't be used, 0 pc damaged — Accepted. Moved to the Storage Area.",
+    "link": "/receiving/box/8",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.174718+00:00",
+    "id": 40
+  },
+  {
+    "user_id": 1,
+    "message": "Inspected RB-9 (Hexagonal Jar 250 mL): 146 pc usable, 0 pc can't be used, 4 pc damaged — Hold.",
+    "link": "/receiving/box/9",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.271341+00:00",
+    "id": 41
+  },
+  {
+    "user_id": 2,
+    "message": "Inspected RB-9 (Hexagonal Jar 250 mL): 146 pc usable, 0 pc can't be used, 4 pc damaged — Hold.",
+    "link": "/receiving/box/9",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.271341+00:00",
+    "id": 42
+  },
+  {
+    "user_id": 3,
+    "message": "Inspected RB-9 (Hexagonal Jar 250 mL): 146 pc usable, 0 pc can't be used, 4 pc damaged — Hold.",
+    "link": "/receiving/box/9",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.271341+00:00",
+    "id": 43
+  },
+  {
+    "user_id": 4,
+    "message": "Inspected RB-9 (Hexagonal Jar 250 mL): 146 pc usable, 0 pc can't be used, 4 pc damaged — Hold.",
+    "link": "/receiving/box/9",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.271341+00:00",
+    "id": 44
+  },
+  {
+    "user_id": 1,
+    "message": "Received at the Receiving Area — RCV-2026-0003 from Highland Produce Traders: Ginger 30 kg in 2 box(es); Calamansi 10 kg in 1 box(es); Lemon 300 pc in 2 box(es). Ready for inspection & cleaning.",
+    "link": "/receiving/3",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.758245+00:00",
+    "id": 45
+  },
+  {
+    "user_id": 2,
+    "message": "Received at the Receiving Area — RCV-2026-0003 from Highland Produce Traders: Ginger 30 kg in 2 box(es); Calamansi 10 kg in 1 box(es); Lemon 300 pc in 2 box(es). Ready for inspection & cleaning.",
+    "link": "/receiving/3",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.758245+00:00",
+    "id": 46
+  },
+  {
+    "user_id": 3,
+    "message": "Received at the Receiving Area — RCV-2026-0003 from Highland Produce Traders: Ginger 30 kg in 2 box(es); Calamansi 10 kg in 1 box(es); Lemon 300 pc in 2 box(es). Ready for inspection & cleaning.",
+    "link": "/receiving/3",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.758245+00:00",
+    "id": 47
+  },
+  {
+    "user_id": 4,
+    "message": "Received at the Receiving Area — RCV-2026-0003 from Highland Produce Traders: Ginger 30 kg in 2 box(es); Calamansi 10 kg in 1 box(es); Lemon 300 pc in 2 box(es). Ready for inspection & cleaning.",
+    "link": "/receiving/3",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.758245+00:00",
+    "id": 48
+  },
+  {
+    "user_id": 1,
+    "message": "Honey received — 1 container(s), 28.5 kg in total (HNY-2026-0001). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.825145+00:00",
+    "id": 49
+  },
+  {
+    "user_id": 2,
+    "message": "Honey received — 1 container(s), 28.5 kg in total (HNY-2026-0001). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.825145+00:00",
+    "id": 50
+  },
+  {
+    "user_id": 4,
+    "message": "Honey received — 1 container(s), 28.5 kg in total (HNY-2026-0001). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.825145+00:00",
+    "id": 51
+  },
+  {
+    "user_id": 1,
+    "message": "Honey container HC-1 PASSED QC (17.4% moisture, clear) — for selling.",
+    "link": "/honey/1",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.969550+00:00",
+    "id": 52
+  },
+  {
+    "user_id": 2,
+    "message": "Honey container HC-1 PASSED QC (17.4% moisture, clear) — for selling.",
+    "link": "/honey/1",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.969550+00:00",
+    "id": 53
+  },
+  {
+    "user_id": 3,
+    "message": "Honey container HC-1 PASSED QC (17.4% moisture, clear) — for selling.",
+    "link": "/honey/1",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.969550+00:00",
+    "id": 54
+  },
+  {
+    "user_id": 4,
+    "message": "Honey container HC-1 PASSED QC (17.4% moisture, clear) — for selling.",
+    "link": "/honey/1",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:33.969550+00:00",
+    "id": 55
+  },
+  {
+    "user_id": 1,
+    "message": "Honey received — 1 container(s), 31 kg in total (HNY-2026-0002). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.100557+00:00",
+    "id": 56
+  },
+  {
+    "user_id": 2,
+    "message": "Honey received — 1 container(s), 31 kg in total (HNY-2026-0002). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.100557+00:00",
+    "id": 57
+  },
+  {
+    "user_id": 4,
+    "message": "Honey received — 1 container(s), 31 kg in total (HNY-2026-0002). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.100557+00:00",
+    "id": 58
+  },
+  {
+    "user_id": 1,
+    "message": "Honey container HC-2 PASSED QC (18.9% moisture, clear) — for selling.",
+    "link": "/honey/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.299147+00:00",
+    "id": 59
+  },
+  {
+    "user_id": 2,
+    "message": "Honey container HC-2 PASSED QC (18.9% moisture, clear) — for selling.",
+    "link": "/honey/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.299147+00:00",
+    "id": 60
+  },
+  {
+    "user_id": 3,
+    "message": "Honey container HC-2 PASSED QC (18.9% moisture, clear) — for selling.",
+    "link": "/honey/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.299147+00:00",
+    "id": 61
+  },
+  {
+    "user_id": 4,
+    "message": "Honey container HC-2 PASSED QC (18.9% moisture, clear) — for selling.",
+    "link": "/honey/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.299147+00:00",
+    "id": 62
+  },
+  {
+    "user_id": 1,
+    "message": "Honey received — 1 container(s), 26.2 kg in total (HNY-2026-0003). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.385722+00:00",
+    "id": 63
+  },
+  {
+    "user_id": 2,
+    "message": "Honey received — 1 container(s), 26.2 kg in total (HNY-2026-0003). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.385722+00:00",
+    "id": 64
+  },
+  {
+    "user_id": 4,
+    "message": "Honey received — 1 container(s), 26.2 kg in total (HNY-2026-0003). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.385722+00:00",
+    "id": 65
+  },
+  {
+    "user_id": 1,
+    "message": "Honey container HC-3 PASSED QC (19.6% moisture, crystallized) — for selling.",
+    "link": "/honey/3",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.565532+00:00",
+    "id": 66
+  },
+  {
+    "user_id": 2,
+    "message": "Honey container HC-3 PASSED QC (19.6% moisture, crystallized) — for selling.",
+    "link": "/honey/3",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.565532+00:00",
+    "id": 67
+  },
+  {
+    "user_id": 3,
+    "message": "Honey container HC-3 PASSED QC (19.6% moisture, crystallized) — for selling.",
+    "link": "/honey/3",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.565532+00:00",
+    "id": 68
+  },
+  {
+    "user_id": 4,
+    "message": "Honey container HC-3 PASSED QC (19.6% moisture, crystallized) — for selling.",
+    "link": "/honey/3",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.565532+00:00",
+    "id": 69
+  },
+  {
+    "user_id": 1,
+    "message": "Honey received — 1 container(s), 24.8 kg in total (HNY-2026-0004). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.625922+00:00",
+    "id": 70
+  },
+  {
+    "user_id": 2,
+    "message": "Honey received — 1 container(s), 24.8 kg in total (HNY-2026-0004). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.625922+00:00",
+    "id": 71
+  },
+  {
+    "user_id": 4,
+    "message": "Honey received — 1 container(s), 24.8 kg in total (HNY-2026-0004). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.625922+00:00",
+    "id": 72
+  },
+  {
+    "user_id": 1,
+    "message": "Honey container HC-4 FAILED QC (22.7% moisture, fermented / off-smell) — for other products.",
+    "link": "/honey/4",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.808911+00:00",
+    "id": 73
+  },
+  {
+    "user_id": 2,
+    "message": "Honey container HC-4 FAILED QC (22.7% moisture, fermented / off-smell) — for other products.",
+    "link": "/honey/4",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.808911+00:00",
+    "id": 74
+  },
+  {
+    "user_id": 3,
+    "message": "Honey container HC-4 FAILED QC (22.7% moisture, fermented / off-smell) — for other products.",
+    "link": "/honey/4",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.808911+00:00",
+    "id": 75
+  },
+  {
+    "user_id": 4,
+    "message": "Honey container HC-4 FAILED QC (22.7% moisture, fermented / off-smell) — for other products.",
+    "link": "/honey/4",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.808911+00:00",
+    "id": 76
+  },
+  {
+    "user_id": 1,
+    "message": "Honey received — 1 container(s), 29.4 kg in total (HNY-2026-0005). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.941219+00:00",
+    "id": 77
+  },
+  {
+    "user_id": 2,
+    "message": "Honey received — 1 container(s), 29.4 kg in total (HNY-2026-0005). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.941219+00:00",
+    "id": 78
+  },
+  {
+    "user_id": 4,
+    "message": "Honey received — 1 container(s), 29.4 kg in total (HNY-2026-0005). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:34.941219+00:00",
+    "id": 79
+  },
+  {
+    "user_id": 1,
+    "message": "Honey container HC-5 FAILED QC (21.2% moisture, with sediment) — for other products.",
+    "link": "/honey/5",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:35.097120+00:00",
+    "id": 80
+  },
+  {
+    "user_id": 2,
+    "message": "Honey container HC-5 FAILED QC (21.2% moisture, with sediment) — for other products.",
+    "link": "/honey/5",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:35.097120+00:00",
+    "id": 81
+  },
+  {
+    "user_id": 3,
+    "message": "Honey container HC-5 FAILED QC (21.2% moisture, with sediment) — for other products.",
+    "link": "/honey/5",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:35.097120+00:00",
+    "id": 82
+  },
+  {
+    "user_id": 4,
+    "message": "Honey container HC-5 FAILED QC (21.2% moisture, with sediment) — for other products.",
+    "link": "/honey/5",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:35.097120+00:00",
+    "id": 83
+  },
+  {
+    "user_id": 1,
+    "message": "Honey received — 3 container(s), 82.5 kg in total (HNY-2026-0006). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:35.293472+00:00",
+    "id": 84
+  },
+  {
+    "user_id": 2,
+    "message": "Honey received — 3 container(s), 82.5 kg in total (HNY-2026-0006). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:35.293472+00:00",
+    "id": 85
+  },
+  {
+    "user_id": 4,
+    "message": "Honey received — 3 container(s), 82.5 kg in total (HNY-2026-0006). Ready for moisture & appearance check.",
+    "link": "/honey/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:35.293472+00:00",
+    "id": 86
+  },
+  {
+    "user_id": 1,
+    "message": "Packing run PK-1 (Shopee, 18 item(s)) handed to SPX Express (Shopee) (SPX rider — Ben).",
+    "link": "/packing/1",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:35.562114+00:00",
+    "id": 87
+  },
+  {
+    "user_id": 2,
+    "message": "Packing run PK-1 (Shopee, 18 item(s)) handed to SPX Express (Shopee) (SPX rider — Ben).",
+    "link": "/packing/1",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:35.562114+00:00",
+    "id": 88
+  },
+  {
+    "user_id": 5,
+    "message": "Packing run PK-1 (Shopee, 18 item(s)) handed to SPX Express (Shopee) (SPX rider — Ben).",
+    "link": "/packing/1",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:35.562114+00:00",
+    "id": 89
+  },
+  {
+    "user_id": 1,
+    "message": "Packing run PK-2 (Lazada, 12 item(s)) handed to J&T Express (J&T rider — Al).",
+    "link": "/packing/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:35.888794+00:00",
+    "id": 90
+  },
+  {
+    "user_id": 2,
+    "message": "Packing run PK-2 (Lazada, 12 item(s)) handed to J&T Express (J&T rider — Al).",
+    "link": "/packing/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:35.888794+00:00",
+    "id": 91
+  },
+  {
+    "user_id": 5,
+    "message": "Packing run PK-2 (Lazada, 12 item(s)) handed to J&T Express (J&T rider — Al).",
+    "link": "/packing/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:35.888794+00:00",
+    "id": 92
+  },
+  {
+    "user_id": 1,
+    "message": "Packing run PK-3 (VIP, 20 item(s)) disbursed to Liza Tan (Metro Grocers).",
+    "link": "/packing/3",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:36.193831+00:00",
+    "id": 93
+  },
+  {
+    "user_id": 2,
+    "message": "Packing run PK-3 (VIP, 20 item(s)) disbursed to Liza Tan (Metro Grocers).",
+    "link": "/packing/3",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:36.193831+00:00",
+    "id": 94
+  },
+  {
+    "user_id": 5,
+    "message": "Packing run PK-3 (VIP, 20 item(s)) disbursed to Liza Tan (Metro Grocers).",
+    "link": "/packing/3",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:36.193831+00:00",
+    "id": 95
+  },
+  {
+    "user_id": 1,
+    "message": "Packing run PK-5 (Walk-in, 3 item(s)) disbursed to Walk-in buyer.",
+    "link": "/packing/5",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:36.670839+00:00",
+    "id": 96
+  },
+  {
+    "user_id": 2,
+    "message": "Packing run PK-5 (Walk-in, 3 item(s)) disbursed to Walk-in buyer.",
+    "link": "/packing/5",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:36.670839+00:00",
+    "id": 97
+  },
+  {
+    "user_id": 5,
+    "message": "Packing run PK-5 (Walk-in, 3 item(s)) disbursed to Walk-in buyer.",
+    "link": "/packing/5",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:36.670839+00:00",
+    "id": 98
+  },
+  {
+    "user_id": 1,
+    "message": "New production request #1 awaiting approval — Out of stock.",
+    "link": "/approvals/1",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:37.001423+00:00",
+    "id": 99
+  },
+  {
+    "user_id": 2,
+    "message": "New production request #1 awaiting approval — Out of stock.",
+    "link": "/approvals/1",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:37.028144+00:00",
+    "id": 100
+  },
+  {
+    "user_id": 1,
+    "message": "New material request #2 awaiting approval — Below reorder level.",
+    "link": "/approvals/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:37.088734+00:00",
+    "id": 101
+  },
+  {
+    "user_id": 2,
+    "message": "New material request #2 awaiting approval — Below reorder level.",
+    "link": "/approvals/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:37.120595+00:00",
+    "id": 102
+  },
+  {
+    "user_id": 1,
+    "message": "New sales request #97 awaiting approval.",
+    "link": "/sales/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:37.203695+00:00",
+    "id": 103
+  },
+  {
+    "user_id": 2,
+    "message": "New sales request #97 awaiting approval.",
+    "link": "/sales/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:37.235436+00:00",
+    "id": 104
+  },
+  {
+    "user_id": 5,
+    "message": "Sales order #1 created for Metro Grocers.",
+    "link": "/orders/1",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:37.300063+00:00",
+    "id": 105
+  },
+  {
+    "user_id": 5,
+    "message": "Delivery #1 scheduled for order #1.",
+    "link": "/deliveries/",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:37.591886+00:00",
+    "id": 106
+  },
+  {
+    "user_id": 5,
     "message": "Sales order #2 created for Health Hub Store.",
     "link": "/orders/2",
     "is_read": false,
-    "created_at": "2026-10-14T13:50:28.674628+00:00",
-    "id": 27
+    "created_at": "2026-10-16T05:39:37.688059+00:00",
+    "id": 107
+  },
+  {
+    "user_id": 1,
+    "message": "Lazada sales uploaded (lazada.xlsx): 3 new row(s), 0 updated, 0 already up to date, 0 without an order reference.",
+    "link": "/platforms/?platform=Lazada",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:37.880424+00:00",
+    "id": 108
+  },
+  {
+    "user_id": 2,
+    "message": "Lazada sales uploaded (lazada.xlsx): 3 new row(s), 0 updated, 0 already up to date, 0 without an order reference.",
+    "link": "/platforms/?platform=Lazada",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:37.880424+00:00",
+    "id": 109
+  },
+  {
+    "user_id": 5,
+    "message": "Lazada sales uploaded (lazada.xlsx): 3 new row(s), 0 updated, 0 already up to date, 0 without an order reference.",
+    "link": "/platforms/?platform=Lazada",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:37.880424+00:00",
+    "id": 110
+  },
+  {
+    "user_id": 1,
+    "message": "Shopee sales uploaded (shopee.xlsx): 83 new row(s), 0 updated, 0 already up to date, 0 without an order reference.",
+    "link": "/platforms/?platform=Shopee",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:38.079402+00:00",
+    "id": 111
+  },
+  {
+    "user_id": 2,
+    "message": "Shopee sales uploaded (shopee.xlsx): 83 new row(s), 0 updated, 0 already up to date, 0 without an order reference.",
+    "link": "/platforms/?platform=Shopee",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:38.079402+00:00",
+    "id": 112
+  },
+  {
+    "user_id": 5,
+    "message": "Shopee sales uploaded (shopee.xlsx): 83 new row(s), 0 updated, 0 already up to date, 0 without an order reference.",
+    "link": "/platforms/?platform=Shopee",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:38.079402+00:00",
+    "id": 113
+  },
+  {
+    "user_id": 1,
+    "message": "TikTok sales uploaded (tiktok.xlsx): 30 new row(s), 0 updated, 0 already up to date, 0 without an order reference.",
+    "link": "/platforms/?platform=TikTok",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:38.229804+00:00",
+    "id": 114
+  },
+  {
+    "user_id": 2,
+    "message": "TikTok sales uploaded (tiktok.xlsx): 30 new row(s), 0 updated, 0 already up to date, 0 without an order reference.",
+    "link": "/platforms/?platform=TikTok",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:38.229804+00:00",
+    "id": 115
+  },
+  {
+    "user_id": 5,
+    "message": "TikTok sales uploaded (tiktok.xlsx): 30 new row(s), 0 updated, 0 already up to date, 0 without an order reference.",
+    "link": "/platforms/?platform=TikTok",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:38.229804+00:00",
+    "id": 116
+  },
+  {
+    "user_id": 1,
+    "message": "Batch BMR-2026-0001 (Moringa Powder 100 g) finished — APPROVED, 12 pouch.",
+    "link": "/production/batch/1",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:41.186089+00:00",
+    "id": 117
+  },
+  {
+    "user_id": 2,
+    "message": "Batch BMR-2026-0001 (Moringa Powder 100 g) finished — APPROVED, 12 pouch.",
+    "link": "/production/batch/1",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:41.186089+00:00",
+    "id": 118
+  },
+  {
+    "user_id": 4,
+    "message": "Batch BMR-2026-0001 (Moringa Powder 100 g) finished — APPROVED, 12 pouch.",
+    "link": "/production/batch/1",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:41.186089+00:00",
+    "id": 119
+  },
+  {
+    "user_id": 1,
+    "message": "Batch BMR-2026-0002 (Honey Lemon Ginger Concentrate 300 mL) finished — APPROVED, 24 bottle.",
+    "link": "/production/batch/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:42.438251+00:00",
+    "id": 120
+  },
+  {
+    "user_id": 2,
+    "message": "Batch BMR-2026-0002 (Honey Lemon Ginger Concentrate 300 mL) finished — APPROVED, 24 bottle.",
+    "link": "/production/batch/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:42.438251+00:00",
+    "id": 121
+  },
+  {
+    "user_id": 4,
+    "message": "Batch BMR-2026-0002 (Honey Lemon Ginger Concentrate 300 mL) finished — APPROVED, 24 bottle.",
+    "link": "/production/batch/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:42.438251+00:00",
+    "id": 122
+  },
+  {
+    "user_id": 1,
+    "message": "Repair needed (post-production, Thu, 15 Oct): Washing Area.",
+    "link": "/facility/sanitation/10",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:43.139725+00:00",
+    "id": 123
+  },
+  {
+    "user_id": 2,
+    "message": "Repair needed (post-production, Thu, 15 Oct): Washing Area.",
+    "link": "/facility/sanitation/10",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:43.139725+00:00",
+    "id": 124
+  },
+  {
+    "user_id": 8,
+    "message": "Repair needed (post-production, Thu, 15 Oct): Washing Area.",
+    "link": "/facility/sanitation/10",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:43.139725+00:00",
+    "id": 125
+  },
+  {
+    "user_id": 1,
+    "message": "Pest activity found (September 2026): Storage Area.",
+    "link": "/facility/pest/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:43.206265+00:00",
+    "id": 126
+  },
+  {
+    "user_id": 2,
+    "message": "Pest activity found (September 2026): Storage Area.",
+    "link": "/facility/pest/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:43.206265+00:00",
+    "id": 127
+  },
+  {
+    "user_id": 8,
+    "message": "Pest activity found (September 2026): Storage Area.",
+    "link": "/facility/pest/2",
+    "is_read": false,
+    "created_at": "2026-10-16T05:39:43.206265+00:00",
+    "id": 128
   }
 ]

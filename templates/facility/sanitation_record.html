@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Cleaning {{ rec.record_date }}{% endblock %}
+{% block content %}
+<div class="focus">
+<a class="back-link" href="{{ url_for('facility.sanitation') }}">{{ icon('arrow-left', 15) }} Cleaning &amp; Sanitation</a>
+
+<div class="record-head">
+  <div>
+    <div class="record-code">{{ rec.phase }}</div>
+    <h1 class="record-title">{{ rec.nice_date }}</h1>
+    <div class="muted small">Conducted by {{ rec.conducted_by }} · inspected by {{ rec.inspected_by }}</div>
+  </div>
+  {% if rec.open_count %}<span class="badge badge-danger">{{ rec.open_count }} need{{ 's' if rec.open_count == 1 }} action</span>
+  {% elif rec.flagged %}<span class="badge badge-muted">All actions done</span>
+  {% elif rec.not_checked %}<span class="badge badge-muted">{{ rec.not_checked }} not checked</span>
+  {% else %}<span class="badge badge-ok">All clean</span>{% endif %}
+</div>
+
+{% if rec.open_count %}
+<div class="next-action">
+  <div class="next-action-text">
+    <b>Next: take care of {{ rec.open_areas|map(attribute='location')|join(', ') }}</b>
+    <span>When the action has been undertaken, enter the date below to close it.</span>
+  </div>
+</div>
+{% endif %}
+
+<div class="section-label">The five areas</div>
+<div class="area-list mb">
+  {% for a in rec.areas %}
+  <div class="area-row {{ 'is-open' if a.is_open }}" id="area-{{ a.index }}">
+    <span class="area-name">{{ a.location }}</span>
+    <span class="badge {{ a.badge }}">{{ a.current_status }}</span>
+    {% if a.action or a.remarks or a.date_undertaken %}
+    <span class="area-note">
+      {% if a.action %}Action: <b>{{ a.action }}</b>{% endif %}
+      {% if a.date_undertaken %} · done {{ a.date_undertaken }}{% elif a.is_open %} · <span style="color:var(--danger)">not done yet</span>{% endif %}
+      {% if a.remarks %}{% if a.action %} · {% endif %}{{ a.remarks }}{% endif %}
+    </span>
+    {% endif %}
+    {% if a.is_open %}
+    <form method="post" class="done-form" action="{{ url_for('facility.sanitation_done', record_id=rec.id, index=a.index) }}">
+      <div class="form-row">
+        <label class="form-label" for="du{{ a.index }}">Date undertaken</label>
+        <input type="date" id="du{{ a.index }}" name="date_undertaken" required value="{{ today }}" min="{{ rec.record_date }}" max="{{ today }}">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="dr{{ a.index }}">Note (optional)</label>
+        <input type="text" id="dr{{ a.index }}" name="remarks" maxlength="200" placeholder="e.g. faucet replaced">
+      </div>
+      <button class="btn btn-primary" type="submit">{{ icon("check", 15) }} Mark done</button>
+    </form>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <div class="card-title">Details</div>
+  <dl class="review-list">
+    <dt>Date</dt><dd>{{ rec.nice_date }}</dd>
+    <dt>Phase</dt><dd>{{ rec.phase }}</dd>
+    <dt>Conducted by</dt><dd>{{ rec.conducted_by }}</dd>
+    <dt>Inspected by</dt><dd>{{ rec.inspected_by }}</dd>
+    {% if rec.remarks %}<dt>Remarks</dt><dd>{{ rec.remarks }}</dd>{% endif %}
+    <dt>Recorded by</dt><dd>{{ rec.recorded_by_name }} · {{ rec.created }}</dd>
+  </dl>
+  <a class="btn btn-ghost btn-sm mt" href="{{ url_for('facility.sanitation_print', **{'from': rec.record_date, 'to': rec.record_date}) }}">{{ icon('printer', 15) }} Print this day</a>
+</div>
+</div>
+{% endblock %}

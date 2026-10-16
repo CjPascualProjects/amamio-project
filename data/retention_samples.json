@@ -1,0 +1,38 @@
+[
+  {
+    "batch_no": "BMR-2026-0001",
+    "batch_record_id": 1,
+    "product_id": 28,
+    "product_name": "Moringa Powder 100 g",
+    "description": "Moringa Powder 100 g, sealed as sold",
+    "prod_date": "2026-10-06",
+    "exp_date": "2027-10-06",
+    "qty": 2.0,
+    "disposal_date": "",
+    "status": "Retained",
+    "remarks": "Kept in the retention cabinet.",
+    "inspected_by": "Production Team Head",
+    "approved_by": "Amamio Admin",
+    "created_by": 4,
+    "created_at": "2026-10-16T05:39:42.837929+00:00",
+    "id": 1
+  },
+  {
+    "batch_no": "BMR-2026-0002",
+    "batch_record_id": 2,
+    "product_id": 9,
+    "product_name": "Honey Lemon Ginger Concentrate 300 mL",
+    "description": "Honey Lemon Ginger Concentrate 300 mL, sealed as sold",
+    "prod_date": "2026-10-10",
+    "exp_date": "2026-10-14",
+    "qty": 1.0,
+    "disposal_date": "",
+    "status": "Retained",
+    "remarks": "Opened-bottle stability sample — keep until test is closed.",
+    "inspected_by": "Production Team Head",
+    "approved_by": "Amamio Admin",
+    "created_by": 4,
+    "created_at": "2026-10-16T05:39:42.845966+00:00",
+    "id": 2
+  }
+]

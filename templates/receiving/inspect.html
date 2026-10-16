@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block title %}Inspect {{ box.box_code }}{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('receiving.inspection') }}">{{ icon('arrow-left', 15) }} Inspection &amp; Cleaning</a>
+
+{% macro chips(name, options, current, label) %}
+<div class="chip-choices" data-review-label="{{ label }}">
+  {% for o in options %}
+  <label class="chip-choice"><input type="radio" name="{{ name }}" value="{{ o }}" {{ 'checked' if current == o }} required><span>{{ o }}</span></label>
+  {% endfor %}
+</div>
+{% endmacro %}
+
+<form method="post" class="wizard" data-wizard data-wizard-start="{{ start }}"
+      data-submit-label="Save inspection" data-cancel="{{ url_for('receiving.box', box_id=box.id) }}" id="inspectForm">
+  <input type="hidden" name="has_losses" id="has_losses" value="0">
+
+  <section class="wz-step" data-title="Is this the right box?" data-no-review
+           data-hint="Check the code on the label matches before you start.">
+    <div class="wz-body">
+      <div class="qr-inline">
+        <img src="{{ url_for('qr.image', token=box.box_code) }}" alt="QR code {{ box.box_code }}">
+        <div>
+          <div class="record-code">{{ box.box_code }}</div>
+          <div class="record-title" style="font-size:1.3rem">{{ box.material_name }}</div>
+          <div class="muted small">
+            {{ box.declared_qty|qty(box.unit) }} on the label · {{ box.supplier_name }}<br>
+            {{ box.batch_ref }} · received {{ box.received_date }}
+            {% if box.lot_no %} · Lot {{ box.lot_no }}{% endif %}
+            {% if box.expiry_date %} · Exp {{ box.expiry_date }}{% endif %}
+          </div>
+        </div>
+      </div>
+      {% if waiting_count > 1 %}<p class="muted small mt">{{ waiting_count - 1 }} more box(es) are waiting after this one.</p>{% endif %}
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Clean the content"
+           data-hint="Wash or wipe the content as your procedure requires, then confirm.">
+    <div class="choice-grid cols-2" data-review-label="Cleaning">
+      <label class="choice"><input type="radio" name="cleaned" value="1" required data-autonext {{ 'checked' if form.cleaned == '1' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('sparkle', 20) }}</span>
+        <span><span class="choice-title">Cleaned</span><span class="choice-sub">Washed / wiped and ready to count</span></span></span></label>
+      <label class="choice"><input type="radio" name="cleaned" value="0" data-autonext {{ 'checked' if form.cleaned == '0' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('check', 20) }}</span>
+        <span><span class="choice-title">No cleaning needed</span><span class="choice-sub">e.g. sealed bottles or jars</span></span></span></label>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Count what you found"
+           data-hint="Split the content of the box into three: usable, can't be used, and damaged.">
+    <div class="wz-body">
+      <div class="count-grid cols-3">
+        <div class="form-row">
+          <label class="form-label" for="usable_qty">Usable <span class="req">*</span></label>
+          <div class="big-field">
+            <input type="number" id="usable_qty" name="usable_qty" step="0.001" min="0" required inputmode="decimal"
+                   value="{{ form.usable_qty or ('%g'|format(box.declared_qty|float)) }}">
+            <span class="unit">{{ box.unit }}</span>
+          </div>
+          <div class="form-hint">Good to use in production.</div>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="unusable_qty">Can't be used</label>
+          <div class="big-field">
+            <input type="number" id="unusable_qty" name="unusable_qty" step="0.001" min="0" inputmode="decimal"
+                   value="{{ form.unusable_qty or 0 }}">
+            <span class="unit">{{ box.unit }}</span>
+          </div>
+          <div class="form-hint">Not damaged, but not fit (wrong size, overripe…).</div>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="damaged_qty">Damaged</label>
+          <div class="big-field">
+            <input type="number" id="damaged_qty" name="damaged_qty" step="0.001" min="0" inputmode="decimal"
+                   value="{{ form.damaged_qty or 0 }}">
+            <span class="unit">{{ box.unit }}</span>
+          </div>
+          <div class="form-hint">Bruised, crushed, broken, leaking…</div>
+        </div>
+      </div>
+      <div data-tally data-total="{{ '%g'|format(box.declared_qty|float) }}" data-unit="{{ box.unit }}"
+           data-fields="usable_qty,unusable_qty,damaged_qty" class="tally"></div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Why couldn't some be used?" data-when="has_losses=1"
+           data-hint="A short reason is enough — it goes on the damage report.">
+    <div class="wz-body">
+      <div class="form-row" id="unusableReasonRow">
+        <label class="form-label" for="unusable_reason">Why it can't be used</label>
+        <input type="text" id="unusable_reason" name="unusable_reason" maxlength="200"
+               value="{{ form.unusable_reason or '' }}" placeholder="e.g. overripe, undersized, wrong variety">
+      </div>
+      <div class="form-row" id="damageReasonRow">
+        <label class="form-label" for="damage_reason">What is the damage?</label>
+        <input type="text" id="damage_reason" name="damage_reason" maxlength="200"
+               value="{{ form.damage_reason or '' }}" placeholder="e.g. bruised in transit, cracked bottles">
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Quality checks"
+           data-hint="As on the paper Receiving and Inspection Report.">
+    <div class="wz-body">
+      <div class="form-row">
+        <div class="form-label">Visual / organoleptic inspection <span class="req">*</span></div>
+        {{ chips('visual_inspection', results, form.visual_inspection, 'Visual / organoleptic') }}
+        <div class="form-hint">Look, smell, feel — colour, odour, texture, foreign matter.</div>
+      </div>
+      <div class="form-row">
+        <div class="form-label">COA / document check <span class="req">*</span></div>
+        {{ chips('coa_check', coa, form.coa_check, 'COA / documents') }}
+      </div>
+      <div class="form-row">
+        <div class="form-label">Sampling / test <span class="req">*</span></div>
+        {{ chips('sampling_test', sampling, form.sampling_test, 'Sampling / test') }}
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Decision" id="decisionStep"
+           data-hint="Accepted = meets specifications · Rejected = does not meet requirements · Hold = pending test, document or QA decision.">
+    <div class="choice-grid cols-3 mb" data-review-label="Decision">
+      <label class="choice is-pass"><input type="radio" name="acceptance" value="Accepted" required {{ 'checked' if form.acceptance == 'Accepted' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('check', 20) }}</span>
+        <span><span class="choice-title">Accepted</span><span class="choice-sub">Usable part joins stock</span></span></span></label>
+      <label class="choice"><input type="radio" name="acceptance" value="Hold" {{ 'checked' if form.acceptance == 'Hold' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('pause', 20) }}</span>
+        <span><span class="choice-title">Hold</span><span class="choice-sub">Decide later</span></span></span></label>
+      <label class="choice is-fail"><input type="radio" name="acceptance" value="Rejected" {{ 'checked' if form.acceptance == 'Rejected' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('x-circle', 20) }}</span>
+        <span><span class="choice-title">Rejected</span><span class="choice-sub">Nothing joins stock</span></span></span></label>
+    </div>
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="nonconformity">Nonconformity / remarks <span class="req" id="ncReq" style="display:none">*</span></label>
+        <input type="text" id="nonconformity" name="nonconformity" maxlength="300" value="{{ form.nonconformity or '' }}"
+               placeholder="Required when rejected or on hold">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="action_taken">Action taken</label>
+        <input type="text" id="action_taken" name="action_taken" maxlength="300" value="{{ form.action_taken or '' }}"
+               placeholder="e.g. returned to supplier, waiting for COA">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="verified_by_name">Verified by</label>
+        <input type="text" id="verified_by_name" name="verified_by_name" maxlength="80" value="{{ form.verified_by_name or '' }}"
+               placeholder="Name of the person who verified">
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Check and save" data-review>
+    <div class="wz-body">
+      {% if waiting_count > 1 %}
+      <label class="check-row mt"><input type="checkbox" name="then" value="next" checked data-review-skip> Go straight to the next box after saving</label>
+      {% endif %}
+    </div>
+  </section>
+</form>
+
+<script>
+(function () {
+  var form = document.getElementById("inspectForm");
+  var flag = document.getElementById("has_losses");
+  function num(name) { return parseFloat(form.querySelector('[name="' + name + '"]').value) || 0; }
+  function sync() {
+    var unusable = num("unusable_qty"), damaged = num("damaged_qty");
+    flag.value = (unusable > 0 || damaged > 0) ? "1" : "0";
+    document.getElementById("unusableReasonRow").style.display = unusable > 0 ? "" : "none";
+    document.getElementById("damageReasonRow").style.display = damaged > 0 ? "" : "none";
+    document.getElementById("unusable_reason").required = unusable > 0;
+    document.getElementById("damage_reason").required = damaged > 0;
+    var decision = (form.querySelector('[name=acceptance]:checked') || {}).value;
+    var needNc = decision === "Rejected" || decision === "Hold";
+    document.getElementById("nonconformity").required = needNc;
+    document.getElementById("ncReq").style.display = needNc ? "" : "none";
+  }
+  form.addEventListener("input", sync);
+  form.addEventListener("change", sync);
+  sync();
+  // Counting nothing at all is never right.
+  form.querySelectorAll(".wz-step")[2].addEventListener("wz:validate", function (e) {
+    if (num("usable_qty") + num("unusable_qty") + num("damaged_qty") <= 0) {
+      e.preventDefault();
+      e.detail.message = "Enter how much is usable, can't be used or damaged.";
+    }
+  });
+})();
+</script>
+{% endblock %}

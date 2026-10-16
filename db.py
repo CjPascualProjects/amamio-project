@@ -42,7 +42,8 @@ SCHEMA = {
         "columns": {
             "id": ID, "name": STR, "username": "VARCHAR(64) NOT NULL",
             "password_hash": "VARCHAR(255) NULL", "role": SHORT, "email": STR,
-            "phone": SHORT, "team": SHORT, "active": BOOL,
+            "phone": SHORT, "team": SHORT, "theme": SHORT, "hide_notes": BOOL,
+            "active": BOOL,
             "last_login": TS, "created_at": TS,
         },
         "unique": ["username"],
@@ -52,10 +53,13 @@ SCHEMA = {
     },
 
     # --- Partners ----------------------------------------------------------
+    # Mirrors the paper Supplier Directory: supplier, TIN, items, contact,
+    # filed under Office / Production / Packing.
     "suppliers": {
         "columns": {
-            "id": ID, "name": STR, "contact_person": STR, "phone": SHORT,
-            "email": STR, "address": TEXT, "materials_supplied": TEXT,
+            "id": ID, "name": STR, "tin": SHORT, "category": SHORT,
+            "contact_person": STR, "phone": SHORT, "email": STR,
+            "address": TEXT, "materials_supplied": TEXT, "buy_from": STR,
             "lead_time_days": "INT NULL", "notes": TEXT, "created_at": TS,
         },
     },
@@ -68,20 +72,28 @@ SCHEMA = {
     },
 
     # --- Catalog -----------------------------------------------------------
+    # Every stocked item that is not equipment: raw materials, packaging
+    # (jars / bottles / pouches / cap seals / packing supplies), cleaning and
+    # office supplies.  ``category`` says which month-end report it is on,
+    # ``subcategory`` the heading within that report.
     "raw_materials": {
         "columns": {
-            "id": ID, "name": STR, "category": SHORT, "unit": SHORT,
-            "track_mode": SHORT, "stock_qty": NUM, "reorder_level": NUM,
-            "supplier_id": FK, "unit_cost": MONEY, "expiry_date": DATE,
-            "storage_location": STR, "created_at": TS,
+            "id": ID, "name": STR, "category": SHORT, "subcategory": SHORT,
+            "unit": SHORT, "track_mode": SHORT, "stock_qty": NUM,
+            "reorder_level": NUM, "supplier_id": FK, "unit_cost": MONEY,
+            "expiry_date": DATE, "storage_location": STR, "created_at": TS,
         },
         "foreign_keys": {"supplier_id": "suppliers"},
     },
+    # Finished goods, one row per size (as on the Daily Production Report):
+    # ``product_group`` = Honey / Cacao / Coffee / Powder / Others,
+    # ``family`` = e.g. "Pure Honey", ``variant`` = e.g. "250 mL".
     "products": {
         "columns": {
-            "id": ID, "name": STR, "sku": SHORT, "variant": SHORT, "unit": SHORT,
-            "stock_qty": NUM, "reorder_level": NUM, "price": MONEY,
-            "location": STR, "category": SHORT, "created_at": TS,
+            "id": ID, "name": STR, "sku": SHORT, "product_group": SHORT,
+            "family": STR, "variant": SHORT, "unit": SHORT, "stock_qty": NUM,
+            "reorder_level": NUM, "price": MONEY, "location": STR,
+            "category": SHORT, "sort_order": "INT NULL", "created_at": TS,
         },
     },
     "bill_of_materials": {
@@ -92,13 +104,19 @@ SCHEMA = {
         "foreign_keys": {"product_id": "products", "material_id": "raw_materials"},
     },
 
-    # --- Receiving area (crates / cage boxes, by weight or by piece) --------
+    # --- Module 1: receiving area, then inspection & cleaning ---------------
+    # Part 1: the Receiving Team Head opens a delivery and labels every box /
+    # crate with a QR code.  Part 2: each box is inspected and cleaned, and
+    # its content split into usable / can't be used / damaged.  The columns
+    # follow the paper "Raw Materials Receiving and Inspection Report".
     "receiving_batches": {
         "columns": {
             "id": ID, "ref_no": SHORT, "supplier_id": FK, "supplier_name": STR,
-            "delivery_ref": STR, "received_date": DATE, "received_by": FK,
-            "status": SHORT, "remarks": TEXT, "box_count": "INT NULL",
-            "total_good": NUM, "total_damaged": NUM,
+            "po_no": SHORT, "delivery_ref": STR, "received_date": DATE,
+            "received_by": FK, "status": SHORT, "remarks": TEXT,
+            "box_count": "INT NULL", "total_declared": NUM, "total_good": NUM,
+            "total_unusable": NUM, "total_damaged": NUM,
+            "checked_by_name": STR, "approved_by_name": STR,
             "created_at": TS, "closed_at": TS,
         },
         "foreign_keys": {"supplier_id": "suppliers", "received_by": "users"},
@@ -107,13 +125,24 @@ SCHEMA = {
         "columns": {
             "id": ID, "batch_id": FK, "box_code": SHORT, "seq": "INT NULL",
             "material_id": FK, "material_name": STR, "unit": SHORT,
-            "track_mode": SHORT, "declared_qty": NUM, "good_qty": NUM,
-            "damaged_qty": NUM, "damage_reason": TEXT, "status": SHORT,
-            "stage": SHORT, "location": STR, "checked_by": FK, "checked_at": TS,
-            "released_to": SHORT, "released_at": TS, "created_at": TS,
+            "track_mode": SHORT, "declared_qty": NUM, "lot_no": SHORT,
+            "expiry_date": DATE, "packaging_condition": SHORT,
+            "temperature_c": NUM,
+            # Part 2 — inspection & cleaning
+            "good_qty": NUM, "unusable_qty": NUM, "unusable_reason": TEXT,
+            "damaged_qty": NUM, "damage_reason": TEXT, "cleaned": BOOL,
+            "visual_inspection": SHORT, "coa_check": SHORT,
+            "sampling_test": SHORT, "acceptance_status": SHORT,
+            "nonconformity": TEXT, "action_taken": TEXT,
+            "verified_by_name": STR, "checked_by": FK, "checked_at": TS,
+            # Where the box is on the floor
+            "status": SHORT, "stage": SHORT, "location": STR,
+            "released_to": SHORT, "released_at": TS,
+            "received_by": FK, "created_at": TS,
         },
         "foreign_keys": {"batch_id": "receiving_batches",
-                         "material_id": "raw_materials", "checked_by": "users"},
+                         "material_id": "raw_materials", "checked_by": "users",
+                         "received_by": "users"},
     },
 
     # --- Honey production: containers + moisture/appearance QC --------------
@@ -125,20 +154,36 @@ SCHEMA = {
             "net_weight_kg": NUM, "status": SHORT, "moisture_pct": NUM,
             "appearance": SHORT, "qc_notes": TEXT, "qc_by": FK, "qc_at": TS,
             "disposition": SHORT, "allocated_to": STR, "allocated_at": TS,
+            "allocated_kg": NUM, "remaining_kg": NUM,
             "material_id": FK, "created_by": FK, "created_at": TS,
         },
+        "children": {"allocations": "honey_allocations"},
         "foreign_keys": {"supplier_id": "suppliers", "qc_by": "users",
                          "material_id": "raw_materials", "created_by": "users"},
     },
+    # Where a container's honey went: PASS honey to selling products, FAILED
+    # honey to the products that can still use it.
+    "honey_allocations": {
+        "columns": {
+            "id": ID, "honey_container_id": FK, "product": STR, "kg": NUM,
+            "allocated_by": FK, "allocated_at": TS,
+        },
+        "foreign_keys": {"honey_container_id": "honey_containers",
+                         "allocated_by": "users"},
+    },
 
-    # --- Packing area (per sales channel) ----------------------------------
+    # --- Module 4: packing area (per sales channel) ------------------------
+    # In Progress -> Packed -> Disbursed (handed straight to the customer /
+    # VIP / walk-in) or Handed to Courier (logistics, with tracking number).
     "packing_runs": {
         "columns": {
             "id": ID, "run_code": SHORT, "channel": SHORT, "packer_id": FK,
             "packer_name": STR, "pack_date": DATE, "order_ref": STR,
             "sales_order_id": FK, "status": SHORT, "total_qty": NUM,
-            "damaged_qty": NUM, "stock_released": BOOL, "handed_to": STR,
-            "handed_at": TS, "courier": STR, "tracking_no": SHORT,
+            "damaged_qty": NUM, "stock_released": BOOL,
+            "dispatch_type": SHORT, "handed_to": STR, "handed_at": TS,
+            "courier": STR, "tracking_no": SHORT, "parcel_count": "INT NULL",
+            "dispatch_notes": TEXT, "dispatched_by": FK,
             "remarks": TEXT, "created_by": FK, "created_at": TS,
             "packed_at": TS,
         },
@@ -183,8 +228,8 @@ SCHEMA = {
             "product_name": STR, "variation": STR, "product_id": FK,
             "qty": NUM, "unit_price": MONEY, "gross_amount": MONEY,
             "discount": MONEY, "shipping_fee": MONEY, "net_amount": MONEY,
-            "order_status": SHORT, "buyer_name": STR, "region": STR,
-            "row_no": "INT NULL", "created_at": TS,
+            "order_status": SHORT, "status_group": SHORT, "buyer_name": STR,
+            "region": STR, "row_no": "INT NULL", "created_at": TS,
         },
         "foreign_keys": {"import_id": "platform_imports",
                          "product_id": "products"},
@@ -209,15 +254,153 @@ SCHEMA = {
                          "material_id": "raw_materials"},
     },
 
-    # --- Assets & maintenance ----------------------------------------------
+    # --- Module 3: equipment, supplies and every movement in and out ---------
+    # The asset register follows the paper "Inventory of Assets" (AFP-001 …)
+    # plus the header block of the "Equipment Maintenance Log".
+    "assets": {
+        "columns": {
+            "id": ID, "item_no": SHORT, "name": STR, "category": SHORT,
+            "cost_per_item": MONEY, "quantity": NUM, "unit": SHORT,
+            "qty_out": NUM, "condition": SHORT, "years_in_use": NUM,
+            "remarks": TEXT, "serial_number": SHORT, "model": SHORT,
+            "manufacturer": STR, "date_of_purchase": DATE, "location": STR,
+            "contact_details": STR, "active": BOOL, "created_at": TS,
+        },
+        "unique": ["item_no"],
+    },
+    "asset_movements": {
+        "columns": {
+            "id": ID, "asset_id": FK, "asset_name": STR, "direction": SHORT,
+            "qty": NUM, "reason": SHORT, "person": STR, "destination": STR,
+            "expected_return": DATE, "notes": TEXT, "recorded_by": FK,
+            "moved_at": TS,
+        },
+        "foreign_keys": {"asset_id": "assets", "recorded_by": "users"},
+    },
     "maintenance_logs": {
         "columns": {
             "id": ID, "asset_id": FK, "asset_name": STR, "type": SHORT,
-            "performed_on": DATE, "performed_by": STR, "cost": MONEY,
-            "next_due": DATE, "status": SHORT, "downtime_hours": NUM,
-            "notes": TEXT, "recorded_by": FK, "created_at": TS,
+            "performed_on": DATE, "performed_time": SHORT, "description": TEXT,
+            "performed_by": STR,
+            "cost": MONEY, "next_due": DATE, "status": SHORT,
+            "downtime_hours": NUM, "notes": TEXT, "recorded_by": FK,
+            "created_at": TS,
         },
-        "foreign_keys": {"asset_id": "raw_materials", "recorded_by": "users"},
+        "foreign_keys": {"asset_id": "assets", "recorded_by": "users"},
+    },
+    # Supplies (raw / packaging / cleaning / office) taken in or issued out.
+    "stock_movements": {
+        "columns": {
+            "id": ID, "material_id": FK, "material_name": STR,
+            "category": SHORT, "direction": SHORT, "qty": NUM, "unit": SHORT,
+            "reason": SHORT, "person": STR, "reference": STR, "notes": TEXT,
+            "balance_after": NUM, "recorded_by": FK, "moved_at": TS,
+        },
+        "foreign_keys": {"material_id": "raw_materials", "recorded_by": "users"},
+    },
+    # The paper month-end reports: a physical count per category per month.
+    "month_end_counts": {
+        "columns": {
+            "id": ID, "period": SHORT, "category": SHORT, "counted_by": FK,
+            "counted_at": TS, "notes": TEXT, "adjusted": BOOL,
+        },
+        "children": {"lines": "month_end_count_lines"},
+        "foreign_keys": {"counted_by": "users"},
+    },
+    "month_end_count_lines": {
+        "columns": {
+            "id": ID, "month_end_count_id": FK, "material_id": FK, "name": STR,
+            "unit": SHORT, "system_qty": NUM, "physical_qty": NUM,
+            "variance": NUM,
+        },
+        "foreign_keys": {"month_end_count_id": "month_end_counts",
+                         "material_id": "raw_materials"},
+    },
+
+    # --- Facility records (paper forms) ------------------------------------
+    "sanitation_records": {
+        "columns": {
+            "id": ID, "record_date": DATE, "phase": SHORT,
+            "conducted_by": STR, "inspected_by": STR, "remarks": TEXT,
+            "recorded_by": FK, "created_at": TS,
+        },
+        "children": {"areas": "sanitation_areas"},
+        "foreign_keys": {"recorded_by": "users"},
+    },
+    "sanitation_areas": {
+        "columns": {
+            "id": ID, "sanitation_record_id": FK, "location": STR,
+            "current_status": SHORT, "action": TEXT, "date_undertaken": DATE,
+            "remarks": TEXT,
+        },
+        "foreign_keys": {"sanitation_record_id": "sanitation_records"},
+    },
+    "pest_control_records": {
+        "columns": {
+            "id": ID, "period": SHORT, "record_date": DATE,
+            "monitored_by": STR, "remarks": TEXT, "recorded_by": FK,
+            "created_at": TS,
+        },
+        "children": {"areas": "pest_control_areas"},
+        "foreign_keys": {"recorded_by": "users"},
+    },
+    "pest_control_areas": {
+        "columns": {
+            "id": ID, "pest_control_record_id": FK, "area": STR,
+            "pest_activity": BOOL, "observation": TEXT,
+            "corrective_action": TEXT, "signed_by": STR,
+        },
+        "foreign_keys": {"pest_control_record_id": "pest_control_records"},
+    },
+
+    # --- Production records (paper forms) ----------------------------------
+    # Batch Manufacturing Record: header, dispensing & weighing, procedure,
+    # yield and the QA's final disposition.
+    "batch_records": {
+        "columns": {
+            "id": ID, "batch_no": SHORT, "product_id": FK, "product_name": STR,
+            "batch_size": NUM, "production_date": DATE, "expiry_date": DATE,
+            "start_at": TS, "end_at": TS, "theoretical_yield": NUM,
+            "actual_yield": NUM, "test_date": DATE, "test_result_date": DATE,
+            "yield_conducted_by": STR, "yield_checked_by": STR,
+            "test_conducted_by": STR, "test_checked_by": STR,
+            "disposition": SHORT, "qa_name": STR, "qa_date": DATE,
+            "remarks": TEXT, "status": SHORT, "stock_posted": BOOL,
+            "created_by": FK, "created_at": TS, "completed_at": TS,
+        },
+        "children": {"dispensing": "batch_dispensing",
+                     "steps": "batch_steps"},
+        "foreign_keys": {"product_id": "products", "created_by": "users"},
+    },
+    "batch_dispensing": {
+        "columns": {
+            "id": ID, "batch_record_id": FK, "material_id": FK,
+            "ingredient": STR, "lot_no": SHORT, "expiry_date": DATE,
+            "theoretical_qty": NUM, "unit": SHORT, "conducted_by": STR,
+            "checked_by": STR,
+        },
+        "foreign_keys": {"batch_record_id": "batch_records",
+                         "material_id": "raw_materials"},
+    },
+    "batch_steps": {
+        "columns": {
+            "id": ID, "batch_record_id": FK, "process": STR,
+            "conducted_by": STR, "checked_by": STR, "done": BOOL,
+            "done_at": TS,
+        },
+        "foreign_keys": {"batch_record_id": "batch_records"},
+    },
+    "retention_samples": {
+        "columns": {
+            "id": ID, "batch_no": SHORT, "batch_record_id": FK,
+            "product_id": FK, "product_name": STR, "description": TEXT,
+            "prod_date": DATE, "exp_date": DATE, "qty": NUM,
+            "disposal_date": DATE, "status": SHORT, "remarks": TEXT,
+            "inspected_by": STR, "approved_by": STR, "created_by": FK,
+            "created_at": TS,
+        },
+        "foreign_keys": {"batch_record_id": "batch_records",
+                         "product_id": "products", "created_by": "users"},
     },
 
     # --- Sales / fulfilment -------------------------------------------------

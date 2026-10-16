@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Inspection &amp; Cleaning{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Inspection &amp; Cleaning</h1>
+    <p class="page-sub">Boxes that arrived at the receiving area and are waiting to be cleaned and checked.</p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('receiving.report') }}">{{ icon('reports', 15) }} Inspection report</a>
+    <a class="btn btn-primary" href="{{ url_for('qr.scan') }}">{{ icon('qr', 16) }} Scan a box</a>
+  </div>
+</div>
+
+<div class="section-label" style="margin-top:0">Waiting for you ({{ waiting|length }})</div>
+{% if waiting %}
+<div class="queue">
+  {% for box in waiting %}
+  <a class="queue-item" href="{{ url_for('receiving.inspect', box_id=box.id) }}">
+    <span class="code" style="min-width:58px">{{ box.box_code }}</span>
+    <span class="queue-main">
+      <span class="queue-title">{{ box.material_name }} — {{ box.declared_qty|qty(box.unit) }}</span>
+      <span class="queue-sub">{{ box.supplier_name }} · {{ box.batch_ref }} · received {{ box.received_at }}</span>
+    </span>
+    <span class="queue-go">Inspect {{ icon('arrow-right', 14) }}</span>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card"><div class="empty">
+  <div class="empty-icon">{{ icon('check', 30) }}</div>
+  <div class="empty-title">Nothing waiting</div>
+  <p class="muted">You'll get a notification when the receiving area records a new delivery.</p>
+</div></div>
+{% endif %}
+
+{% if held %}
+<div class="section-label">On hold ({{ held|length }})</div>
+<div class="queue">
+  {% for box in held %}
+  <a class="queue-item" href="{{ url_for('receiving.box', box_id=box.id) }}">
+    <span class="code" style="min-width:58px">{{ box.box_code }}</span>
+    <span class="queue-main">
+      <span class="queue-title">{{ box.material_name }} — {{ box.good_qty|qty(box.unit) }} usable</span>
+      <span class="queue-sub">{{ box.nonconformity }}</span>
+    </span>
+    <span class="badge badge-warn">Decide</span>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if done %}
+<div class="section-label">Recently inspected</div>
+<div class="queue">
+  {% for box in done %}
+  <a class="queue-item" href="{{ url_for('receiving.box', box_id=box.id) }}">
+    <span class="code" style="min-width:58px">{{ box.box_code }}</span>
+    <span class="queue-main">
+      <span class="queue-title">{{ box.material_name }}</span>
+      <span class="queue-sub">{{ box.good_qty|qty(box.unit) }} usable{% if box.unusable_qty %} · {{ box.unusable_qty|qty(box.unit) }} can't be used{% endif %}{% if box.damaged_qty %} · {{ box.damaged_qty|qty(box.unit) }} damaged{% endif %} · {{ box.checked_at }}</span>
+    </span>
+    <span class="badge {{ box.badge }}">{{ box.status }}</span>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

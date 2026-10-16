@@ -1,141 +1,100 @@
 {% extends "base.html" %}
-{% block title %}Packing area{% endblock %}
+{% block title %}Packing &amp; Dispatch{% endblock %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Packing area</h1>
-    <p class="page-sub">
-      Every parcel is packed against a channel — VIP, Shopee, TikTok, Lazada or
-      walk-in — and tracked from In Progress through Packed to Handed Over.
-    </p>
+    <h1 class="page-title">Packing &amp; Dispatch</h1>
+    <p class="page-sub">What was packed, what was disbursed, and what went to the courier.</p>
   </div>
   <div class="page-head-actions">
-    <a class="btn btn-primary btn-sm" href="{{ url_for('packing.new') }}">New packing run</a>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('packing.history') }}">All runs</a>
+    <a class="btn btn-primary" href="{{ url_for('packing.new') }}">{{ icon('plus', 16) }} Record packing</a>
   </div>
 </div>
 
-<div class="stat-grid mb">
-  <div class="stat-card is-primary">
-    <div class="stat-top"><span class="stat-label">Open runs</span></div>
-    <div class="stat-value">{{ summary.open_runs }}</div>
-    <div class="stat-caption">Still being packed</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-top"><span class="stat-label">Packed, awaiting pickup</span></div>
-    <div class="stat-value">{{ summary.packed_runs }}</div>
-    <div class="stat-caption">Ready to hand over</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-top"><span class="stat-label">Items packed</span></div>
-    <div class="stat-value">{{ summary.total_qty }}</div>
-    <div class="stat-caption">Across {{ summary.total_runs }} run(s)</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-top"><span class="stat-label">Channels live</span></div>
-    <div class="stat-value">{{ summary.per_channel|selectattr('runs')|list|length }}</div>
-    <div class="stat-caption">Of {{ channels|length }} tracked</div>
+<div class="toolbar">
+  <div class="seg">
+    {% for key, label in [('today', 'Today'), ('week', 'This week'), ('month', 'This month'), ('all', 'All time')] %}
+    <a href="{{ url_for('packing.index', period=key) }}" class="{{ 'is-active' if period == key }}">{{ label }}</a>
+    {% endfor %}
   </div>
 </div>
 
-<div class="grid grid-2 mb">
-  <div class="card">
-    <div class="card-title">Volume per channel</div>
-    {% set max_qty = summary.per_channel|map(attribute='qty')|max %}
-    <div class="bars">
-      {% for row in summary.per_channel %}
-      <div class="bar-row">
-        <span class="bar-label">{{ row.channel }}</span>
-        <span class="bar-track">
-          <span class="bar-fill" style="width: {{ (100 * row.qty / max_qty)|round(1) if max_qty else 0 }}%"></span>
-        </span>
-        <span class="bar-value">{{ '%g'|format(row.qty) }}</span>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title">Packers</div>
-    {% if leaderboard %}
-    <div class="table-wrap">
-      <table class="table">
-        <thead><tr><th>Packer</th><th class="num">Runs</th><th class="num">Items</th><th>Channels</th></tr></thead>
-        <tbody>
-          {% for row in leaderboard %}
-          <tr>
-            <td>{{ row.name }}</td>
-            <td class="num">{{ row.runs }}</td>
-            <td class="num">{{ '%g'|format(row.qty) }}</td>
-            <td class="muted small">{{ row.channels }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    {% else %}
-    <p class="muted">No packing runs recorded yet.</p>
-    {% endif %}
-  </div>
+<div class="figures mb">
+  <div class="figure is-good"><div class="figure-label">Packed</div><div class="figure-value">{{ summary.packed_qty|qty }}<small>items</small></div></div>
+  <div class="figure"><div class="figure-label">Disbursed</div><div class="figure-value">{{ summary.disbursed_qty|qty }}<small>items</small></div></div>
+  <div class="figure"><div class="figure-label">Delivered to courier</div><div class="figure-value">{{ summary.courier_qty|qty }}<small>items</small></div></div>
+  <div class="figure {{ 'is-bad' if summary.damaged }}"><div class="figure-label">Damaged while packing</div><div class="figure-value">{{ summary.damaged|qty }}</div></div>
 </div>
 
-<div class="filter-bar">
-  <div class="field">
-    <div class="pill-row">
-      <a class="pill {{ 'active' if not channel }}" href="{{ url_for('packing.index', status=status) }}">All channels</a>
-      {% for c in channels %}
-        <a class="pill {{ 'active' if channel == c }}"
-           href="{{ url_for('packing.index', channel=c, status=status) }}">{{ c }}</a>
-      {% endfor %}
-    </div>
-  </div>
+<div class="section-label">Waiting to go out ({{ waiting|length }})</div>
+{% if waiting %}
+<div class="queue">
+  {% for r in waiting %}
+  <a class="queue-item" href="{{ url_for('packing.dispatch', run_id=r.id) }}">
+    <span class="code" style="min-width:56px">{{ r.run_code }}</span>
+    <span class="queue-main">
+      <span class="queue-title">{{ r.channel }} — {{ r.total_qty|qty }} item(s)</span>
+      <span class="queue-sub">Packed {{ r.packed_at }} by {{ r.packer_name or '—' }}{% if r.order_ref %} · {{ r.order_ref }}{% endif %}</span>
+    </span>
+    <span class="queue-go">Disburse / courier {{ icon('arrow-right', 14) }}</span>
+  </a>
+  {% endfor %}
 </div>
+{% else %}
+<div class="card"><div class="empty" style="padding:24px">
+  <div class="empty-title">Nothing waiting</div>
+  <p class="muted">Every packed run has been disbursed or handed to the courier.</p>
+</div></div>
+{% endif %}
 
+{% if in_progress %}
+<div class="section-label">Not yet marked packed ({{ in_progress|length }})</div>
+<div class="queue">
+  {% for r in in_progress %}
+  <a class="queue-item" href="{{ url_for('packing.detail', run_id=r.id) }}">
+    <span class="code" style="min-width:56px">{{ r.run_code }}</span>
+    <span class="queue-main"><span class="queue-title">{{ r.channel }} — {{ r.total_qty|qty }} item(s)</span>
+      <span class="queue-sub">Started {{ r.created_at }}</span></span>
+    <span class="badge badge-warn">In progress</span>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="section-label">By channel</div>
 <div class="card">
-  <div class="card-title">Packing runs</div>
-  {% if runs %}
   <div class="table-wrap">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Run</th><th>Channel</th><th>Packer</th><th>Pack date</th>
-          <th class="num">Lines</th><th class="num">Qty</th><th class="num">Damaged</th>
-          <th>Status</th><th>Courier</th><th class="actions"></th>
-        </tr>
-      </thead>
+    <table class="table" data-no-paginate>
+      <thead><tr><th>Channel</th><th class="num">Packed</th><th class="num">Disbursed</th><th class="num">To courier</th><th class="num">Waiting</th><th class="num">Damaged</th></tr></thead>
       <tbody>
-        {% for r in runs %}
+        {% for c in summary.per_channel %}
         <tr>
-          <td>
-            <span class="code">{{ r.run_code }}</span>
-            {% if r.order_ref %}<span class="cell-sub">{{ r.order_ref|truncate(22, true, '…') }}</span>{% endif %}
-          </td>
-          <td><span class="badge badge-gold">{{ r.channel }}</span></td>
-          <td>{{ r.packer_name or '—' }}</td>
-          <td>{{ r.pack_date }}</td>
-          <td class="num">{{ r.item_count }}</td>
-          <td class="num">{{ '%g'|format(r.total_qty|float) }}</td>
-          {% if r.damaged_qty %}
-            <td class="num num-bad">{{ '%g'|format(r.damaged_qty|float) }}</td>
-          {% else %}
-            <td class="num num-nil">—</td>
-          {% endif %}
-          <td><span class="badge {{ r.badge }}">{{ r.status }}</span></td>
-          <td>
-            {{ r.courier or '—' }}
-            {% if r.tracking_no %}<span class="cell-sub code">{{ r.tracking_no }}</span>{% endif %}
-          </td>
-          <td class="actions"><a class="btn btn-sm btn-ghost" href="{{ url_for('packing.detail', run_id=r.id) }}">Open</a></td>
+          <td>{{ c.channel }}</td>
+          <td class="num">{{ c.packed_qty|qty }}</td>
+          <td class="num">{{ c.disbursed_qty|qty }}</td>
+          <td class="num">{{ c.courier_qty|qty }}</td>
+          <td class="num">{{ c.waiting_qty|qty }}</td>
+          <td class="num {{ 'num-bad' if c.damaged }}">{{ c.damaged|qty }}</td>
         </tr>
         {% endfor %}
       </tbody>
+      <tfoot><tr><td>Total</td><td class="num">{{ summary.packed_qty|qty }}</td><td class="num">{{ summary.disbursed_qty|qty }}</td><td class="num">{{ summary.courier_qty|qty }}</td><td class="num">{{ summary.waiting_qty|qty }}</td><td class="num">{{ summary.damaged|qty }}</td></tr></tfoot>
     </table>
   </div>
-  {% else %}
-  <div class="empty">
-    <div class="empty-icon">{{ icon('packing', 30) }}</div>
-    <div class="empty-title">No packing runs here</div>
-    <p class="muted">Start a run when orders are ready to be packed.</p>
-    <a class="btn btn-primary btn-sm mt" href="{{ url_for('packing.new') }}">New packing run</a>
-  </div>
-  {% endif %}
 </div>
+
+{% if recent %}
+<div class="section-label">Recently sent out</div>
+<div class="queue">
+  {% for r in recent %}
+  <a class="queue-item" href="{{ url_for('packing.detail', run_id=r.id) }}">
+    <span class="code" style="min-width:56px">{{ r.run_code }}</span>
+    <span class="queue-main"><span class="queue-title">{{ r.channel }} — {{ r.total_qty|qty }} item(s)</span>
+      <span class="queue-sub">{{ r.handed_at }} · {% if r.status == 'Handed to Courier' %}{{ r.courier }}{% if r.tracking_no %} · {{ r.tracking_no }}{% endif %}{% else %}to {{ r.handed_to }}{% endif %}</span></span>
+    <span class="badge {{ r.badge }}">{{ r.status }}</span>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
 {% endblock %}

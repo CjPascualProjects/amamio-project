@@ -1,106 +1,98 @@
 {% extends "base.html" %}
-{% block title %}Assets &amp; maintenance{% endblock %}
+{% block title %}Equipment & Assets{% endblock %}
 {% block content %}
+<style>
+  .asset-no { flex: none; min-width: 66px; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: .76rem; font-weight: 700; color: var(--gold-ink); letter-spacing: .04em; }
+  .asset-qty { flex: none; text-align: right; font-variant-numeric: tabular-nums; font-size: .84rem; color: var(--muted); white-space: nowrap; }
+  .asset-qty b { color: var(--heading); font-size: .95rem; }
+  .asset-tags { flex: none; display: flex; gap: 6px; align-items: center; }
+  .group-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .group-head .section-label { margin-bottom: 10px; }
+  @media (max-width: 640px) { .asset-tags .badge-ok { display: none; } .asset-no { min-width: 0; } }
+</style>
+
 <div class="page-head">
   <div>
-    <h1 class="page-title">Assets &amp; maintenance</h1>
-    <p class="page-sub">
-      Equipment and cleaning supplies, with the service history and what falls
-      due next.
-    </p>
+    <h1 class="page-title">Equipment &amp; Assets</h1>
+    <p class="page-sub">Every unit on the Inventory of Assets — and every time one goes out or comes back.</p>
   </div>
   <div class="page-head-actions">
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('assets.maintenance') }}">Maintenance log</a>
-    {% if can('requests') %}
-      <a class="btn btn-primary btn-sm" href="{{ url_for('requests.new_material') }}">Request a purchase</a>
-    {% endif %}
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('assets.new') }}">{{ icon('plus', 15) }} Add equipment</a>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('assets.inventory_print') }}">{{ icon('printer', 15) }} Inventory of Assets</a>
+    <a class="btn btn-primary" href="{{ url_for('assets.move') }}">{{ icon('swap', 16) }} Record IN / OUT</a>
   </div>
 </div>
 
-<div class="stat-grid mb">
-  <div class="stat-card is-primary">
-    <div class="stat-top"><span class="stat-label">Equipment</span></div>
-    <div class="stat-value">{{ stats.asset_count }}</div>
-    <div class="stat-caption">{{ stats.cleaning_count }} cleaning supply line(s)</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-top"><span class="stat-label">Service due</span></div>
-    <div class="stat-value" {% if stats.due_count %}style="color:var(--warn)"{% endif %}>{{ stats.due_count }}</div>
-    <div class="stat-caption">Within the next 14 days</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-top"><span class="stat-label">Overdue</span></div>
-    <div class="stat-value" {% if stats.overdue_count %}style="color:var(--danger)"{% endif %}>{{ stats.overdue_count }}</div>
-    <div class="stat-caption">Past the scheduled date</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-top"><span class="stat-label">Maintenance spend</span></div>
-    <div class="stat-value">₱{{ '{:,.0f}'.format(stats.spend) }}</div>
-    <div class="stat-caption">Recorded to date</div>
-  </div>
+<div class="figures mb">
+  <div class="figure"><div class="figure-label">Items on the register</div><div class="figure-value">{{ stats['items'] }}<small>{{ stats.units|qty }} units</small></div></div>
+  <div class="figure {{ 'is-good' if stats.out }}"><div class="figure-label">Out right now</div><div class="figure-value">{{ stats.out|qty }}<small>unit(s)</small></div></div>
+  <div class="figure {{ 'is-bad' if stats.repair }}"><div class="figure-label">Under repair / not serviceable</div><div class="figure-value">{{ stats.repair }}</div></div>
+  <div class="figure {{ 'is-bad' if stats.due }}"><div class="figure-label">Maintenance due soon</div><div class="figure-value">{{ stats.due }}</div></div>
 </div>
 
-{% if due %}
-<div class="card mb">
-  <div class="card-title">Falling due</div>
-  <div class="table-wrap">
-    <table class="table">
-      <thead><tr><th>Asset</th><th>Type</th><th>Due</th><th>When</th></tr></thead>
-      <tbody>
-        {% for d in due %}
-        <tr>
-          <td>{{ d.asset_name }}</td>
-          <td class="muted">{{ d.type }}</td>
-          <td>{{ d.due }}</td>
-          <td>
-            {% if d.overdue %}<span class="badge badge-danger">{{ -d.days }} day(s) overdue</span>
-            {% else %}<span class="badge badge-warn">in {{ d.days }} day(s)</span>{% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+<div class="toolbar">
+  <div class="seg">
+    <a href="{{ url_for('assets.index') }}" class="{{ 'is-active' if show == 'all' }}">All</a>
+    <a href="{{ url_for('assets.index', show='out') }}" class="{{ 'is-active' if show == 'out' }}">Out now{% if stats.out_items %} ({{ stats.out_items }}){% endif %}</a>
+    <a href="{{ url_for('assets.index', show='attention') }}" class="{{ 'is-active' if show == 'attention' }}">Needs attention{% if stats.attention %} ({{ stats.attention }}){% endif %}</a>
   </div>
+  <a class="small" href="{{ url_for('assets.movements') }}">{{ icon('clipboard', 14) }} Every IN / OUT</a>
 </div>
-{% endif %}
 
-<div class="card">
-  <div class="card-title">Register</div>
-  {% if rows %}
-  <div class="table-wrap">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Item</th><th>Category</th><th class="num">On hand</th>
-          <th>Location</th><th>Last service</th><th>Next due</th>
-          <th>Status</th><th class="num">Logs</th><th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for row in rows %}
-        <tr>
-          <td>{{ row.name }}</td>
-          <td><span class="badge badge-muted">{{ row.category }}</span></td>
-          <td class="num">{{ '%g'|format(row.stock_qty|float) }} {{ row.unit }}</td>
-          <td class="muted small">{{ row.location or '—' }}</td>
-          <td class="muted small">
-            {% if row.last_done %}{{ row.last_done }}<span class="cell-sub">{{ row.last_type }}</span>{% else %}—{% endif %}
-          </td>
-          <td>{{ row.next_due or '—' }}</td>
-          <td><span class="badge {{ row.badge }}">{{ row.status }}</span></td>
-          <td class="num">{{ row.log_count }}</td>
-          <td><a class="btn btn-sm btn-ghost" href="{{ url_for('assets.detail', asset_id=row.id) }}">History</a></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+{% if show == 'out' %}
+  {% if out_rows %}
+  <div class="queue">
+    {% for o in out_rows %}
+    <a class="queue-item" href="{{ url_for('assets.move', asset_id=o.asset_id, direction='IN', reason=('Back from repair' if o.reason == 'Sent for repair' else 'Returned'), qty=o.qty|qty, person=o.person) }}">
+      <span class="task-icon" style="width:40px;height:40px">{{ icon('out', 18) }}</span>
+      <span class="queue-main">
+        <span class="queue-title">{{ o.qty|qty }} × {{ o.asset_name }}</span>
+        <span class="queue-sub">
+          {{ o.reason }}{% if o.person %} · {{ o.person }}{% endif %}{% if o.destination and o.destination != o.person %} · {{ o.destination }}{% endif %}
+          {% if o.since %} · since {{ o.since }}{% endif %}
+        </span>
+      </span>
+      {% if o.expected_return %}
+        <span class="badge {{ 'badge-danger' if o.overdue else 'badge-muted' }}">{{ 'Overdue — ' if o.overdue else 'Back by ' }}{{ o.expected_return }}</span>
+      {% endif %}
+      <span class="queue-go">Record IN</span>
+    </a>
+    {% endfor %}
   </div>
   {% else %}
-  <div class="empty">
-    <div class="empty-icon">{{ icon('assets', 30) }}</div>
-    <div class="empty-title">No equipment registered</div>
-    <p class="muted">Add equipment and cleaning supplies under Recipes &amp; Items.</p>
-  </div>
+  <div class="card"><div class="empty">
+    <div class="empty-icon">{{ icon('check', 30) }}</div>
+    <div class="empty-title">Everything is on site</div>
+    <p class="muted">No equipment is borrowed, lent or out for repair right now.</p>
+  </div></div>
   {% endif %}
-</div>
+{% else %}
+  {% for category, rows in groups %}
+  <div class="section-label">{{ category }}</div>
+  <div class="queue">
+    {% for a in rows %}
+    <a class="queue-item" href="{{ url_for('assets.detail', asset_id=a.id) }}">
+      <span class="asset-no">{{ a.item_no }}</span>
+      <span class="queue-main">
+        <span class="queue-title">{{ a.name }}</span>
+        {% if a.overdue %}<span class="queue-sub" style="color:var(--danger)">Maintenance overdue since {{ a.next_due }}</span>
+        {% elif a.due_soon %}<span class="queue-sub">Maintenance due {{ a.next_due }}</span>{% endif %}
+      </span>
+      <span class="asset-tags">
+        {% if a.qty_out %}<span class="badge badge-gold">{{ a.qty_out|qty }} out</span>{% endif %}
+        {% if a.condition != 'Serviceable' %}<span class="badge {{ a.badge }}">{{ a.condition }}</span>{% endif %}
+      </span>
+      <span class="asset-qty"><b>{{ a.available|qty }}</b> / {{ a.quantity|qty }} {{ a.unit }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card"><div class="empty">
+    <div class="empty-icon">{{ icon('assets', 30) }}</div>
+    <div class="empty-title">{{ 'Nothing needs attention' if show == 'attention' else 'No equipment yet' }}</div>
+    <p class="muted">{{ 'All equipment is serviceable and no maintenance is due in the next 14 days.' if show == 'attention' else 'Add the first item from the Inventory of Assets.' }}</p>
+    {% if show != 'attention' %}<a class="btn btn-primary mt" href="{{ url_for('assets.new') }}">Add equipment</a>{% endif %}
+  </div></div>
+  {% endfor %}
+{% endif %}
 {% endblock %}

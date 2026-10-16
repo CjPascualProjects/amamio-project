@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% from "_paper.html" import paper_head, paper_signoff %}
+{% block title %}Inventory of Assets{% endblock %}
+{% block content %}
+<a class="back-link no-print" href="{{ url_for('assets.index') }}">{{ icon('arrow-left', 15) }} Equipment &amp; Assets</a>
+<div class="filter-bar no-print">
+  <span class="muted small" style="flex:1">The register as of {{ today }} — quantities are the full count, including units that are out.</span>
+  <button class="btn btn-primary" type="button" onclick="window.print()">{{ icon('printer', 15) }} Print</button>
+</div>
+
+<div class="paper">
+  {{ paper_head('Inventory of Assets', 'As of ' ~ today) }}
+  <table class="paper-table">
+    <thead>
+      <tr>
+        <th>Item No.</th><th>Description</th><th class="num">Cost per Item</th><th class="num">Quantity</th>
+        <th>Unit/Pcs</th><th>Serviceable / Non-serviceable</th><th class="num">No. of Years</th><th>Remarks</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for category, rows in groups %}
+      <tr class="group"><td colspan="8">{{ category }}</td></tr>
+      {% for a in rows %}
+      <tr class="sub">
+        <td>{{ a.item_no }}</td>
+        <td>{{ a.name }}</td>
+        <td class="num">{{ a.cost_per_item|peso if a.cost_per_item not in (none, '') else '' }}</td>
+        <td class="num">{{ a.quantity|qty }}</td>
+        <td>{{ a.unit }}</td>
+        <td>{{ 'Serviceable' if a.condition == 'Serviceable' else ('Non-serviceable' if a.condition == 'Non-serviceable' else 'Non-serviceable (under repair)') }}</td>
+        <td class="num">{{ a.years_in_use|qty if a.years_in_use not in (none, '') else '' }}</td>
+        <td>{{ a.remarks or '' }}{% if a.qty_out %}{{ '; ' if a.remarks }}{{ a.qty_out|qty }} out{% endif %}</td>
+      </tr>
+      {% endfor %}
+      {% else %}
+      <tr><td colspan="8" style="text-align:center;color:#666;padding:20px">No equipment on the register.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="paper-note">{{ groups|length }} categories · {{ total_units|qty }} units in total.</div>
+  {{ paper_signoff(['Prepared by:', 'Checked by:', 'Approved by:']) }}
+</div>
+{% endblock %}

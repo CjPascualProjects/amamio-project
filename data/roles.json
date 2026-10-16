@@ -12,21 +12,33 @@
     "id": 2
   },
   {
+    "key": "receiving_head",
+    "name": "Receiving Team Head",
+    "description": "Records every delivery at the receiving area and labels it with QR codes",
+    "id": 3
+  },
+  {
     "key": "production_head",
     "name": "Production Team Head",
-    "description": "Receiving, recipe checking, honey QC and production runs",
-    "id": 3
+    "description": "Inspection & cleaning, honey QC, batch records and production runs",
+    "id": 4
   },
   {
     "key": "packing_head",
     "name": "Packing Team Head",
-    "description": "Packs per channel (VIP, Shopee, TikTok, Lazada, Walk-in) and ships out",
-    "id": 4
+    "description": "Leads packing and dispatch per channel; uploads platform sales",
+    "id": 5
+  },
+  {
+    "key": "packing_member",
+    "name": "Packing Team Member",
+    "description": "Records what was packed, disbursed and handed to the courier",
+    "id": 6
   },
   {
     "key": "assets_head",
-    "name": "Assets & Maintenance Team Head",
-    "description": "Equipment, cleaning supplies, maintenance schedules and repairs",
-    "id": 5
+    "name": "Assets Maintenance Head",
+    "description": "Equipment, supplies in/out, maintenance, cleaning and pest control",
+    "id": 7
   }
 ]

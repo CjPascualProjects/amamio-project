@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block title %}{{ rec.batch_no }}{% endblock %}
+{% block content %}
+<style>
+  .step-now { padding: 22px; border-radius: var(--radius); border: 1px solid var(--gold-line);
+    background: linear-gradient(160deg, rgba(212, 175, 55, .10), rgba(212, 175, 55, .02) 70%), var(--surface); margin-bottom: 16px; }
+  .step-now-count { font-size: .74rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-ink); }
+  .step-now-title { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--heading); margin: 6px 0 16px; letter-spacing: -.01em; }
+  .step-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .step-list li { display: flex; align-items: center; gap: 10px; font-size: .86rem; padding: 8px 12px; border-radius: var(--radius-xs); background: var(--sunken); border: 1px solid var(--border); }
+  .step-list .n { flex: none; width: 22px; font-weight: 700; color: var(--muted-2); font-size: .76rem; }
+  .step-list .who { margin-left: auto; color: var(--muted); font-size: .76rem; text-align: right; }
+  .step-list li.is-done .n { color: var(--gold-ink); }
+  .step-list li.is-todo { color: var(--muted); background: transparent; border-style: dashed; }
+  details.fold { margin-bottom: 16px; }
+  details.fold > summary { cursor: pointer; font-size: .82rem; font-weight: 600; color: var(--muted); padding: 6px 0; list-style: none; }
+  details.fold > summary::-webkit-details-marker { display: none; }
+  details.fold > summary::before { content: "\25B8"; display: inline-block; margin-right: 8px; transition: transform .15s ease; }
+  details.fold[open] > summary::before { transform: rotate(90deg); }
+  .disp-big { font-family: var(--font-display); font-weight: 800; font-size: 1.4rem; letter-spacing: .04em; }
+  .disp-big.is-ok { color: var(--gold-ink); }
+  .disp-big.is-bad { color: var(--danger); }
+</style>
+<div class="focus">
+<a class="back-link" href="{{ url_for('production.index') }}">{{ icon('arrow-left', 15) }} Batch Records</a>
+
+<div class="record-head">
+  <div>
+    <div class="record-code">{{ rec.batch_no }}</div>
+    <h1 class="record-title">{{ rec.product_name }}</h1>
+    <div class="muted small">Batch of {{ rec.batch_size|qty(rec.unit) }} · produced {{ rec.production_date }} · expires {{ rec.expiry_date }}</div>
+  </div>
+  <span class="badge {{ rec.badge }}">{{ rec.status_label }}</span>
+</div>
+
+<div class="track mb">
+  {% for label, state in track %}<span class="track-step is-{{ state }}">{{ label }}</span>{% endfor %}
+</div>
+
+{% set steps = rec.steps or [] %}
+
+{% if rec.stage == 'dispensing' %}
+  <div class="next-action">
+    <div class="next-action-text">
+      <b>Next: sign off dispensing &amp; weighing</b>
+      <span>Weigh each of the {{ (rec.dispensing or [])|length }} ingredient(s), then record who weighed and who checked.</span>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('production.dispensing', batch_id=rec.id) }}">Sign off dispensing</a>
+  </div>
+  <div class="card mb">
+    <div class="card-title">What to dispense</div>
+    <div class="queue">
+      {% for l in rec.dispensing or [] %}
+      <div class="queue-item">
+        <span class="queue-main"><span class="queue-title">{{ l.ingredient }}</span>
+          <span class="queue-sub">{% if l.lot_no %}Lot {{ l.lot_no }}{% else %}No lot no. yet{% endif %}{% if l.expiry_date %} · Exp {{ l.expiry_date }}{% endif %}</span></span>
+        <b>{{ l.theoretical_qty|qty(l.unit) }}</b>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+{% elif rec.stage == 'procedure' %}
+  {% set cur = steps[current] %}
+  <div class="step-now">
+    <div class="step-now-count">Procedure · step {{ current + 1 }} of {{ steps|length }}</div>
+    <div class="step-now-title">{{ cur.process }}</div>
+    <form method="post" action="{{ url_for('production.step', batch_id=rec.id) }}">
+      <input type="hidden" name="index" value="{{ current }}">
+      <div class="form-grid cols-2">
+        <div class="form-row">
+          <label class="form-label" for="conducted_by">Conducted by <span class="req">*</span></label>
+          <input type="text" id="conducted_by" name="conducted_by" required maxlength="80" value="{{ conducted }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="checked_by">Checked by <span class="req">*</span></label>
+          <input type="text" id="checked_by" name="checked_by" required maxlength="80" value="{{ checked }}" placeholder="Name of the checker">
+        </div>
+      </div>
+      <button class="btn btn-primary" type="submit">{{ icon('check', 16) }}
+        {{ 'Done — next step' if current + 1 < steps|length else 'Done — last step' }}</button>
+    </form>
+  </div>
+
+  {% if rec.steps_done %}
+  <details class="fold">
+    <summary>{{ rec.steps_done }} step(s) done</summary>
+    <ol class="step-list">
+      {% for s in steps if s.done %}
+      <li class="is-done"><span class="n">{{ loop.index }}</span>{{ s.process }}<span class="who">{{ s.conducted_by }} · checked {{ s.checked_by }}</span></li>
+      {% endfor %}
+    </ol>
+    <form method="post" action="{{ url_for('production.undo_step', batch_id=rec.id) }}" class="mt-sm"
+          data-confirm="Re-open the last signed step?">
+      <button class="btn btn-ghost btn-sm" type="submit">Undo the last step</button>
+    </form>
+  </details>
+  {% endif %}
+  {% if current + 1 < steps|length %}
+  <div class="section-label">Coming next</div>
+  <ol class="step-list mb">
+    {% for s in steps[current + 1:current + 4] %}
+    <li class="is-todo"><span class="n">{{ current + 1 + loop.index }}</span>{{ s.process }}</li>
+    {% endfor %}
+  </ol>
+  {% set more = steps|length - current - 4 %}
+  {% if more > 0 %}
+  <details class="fold">
+    <summary>{{ more }} more step(s) after these</summary>
+    <ol class="step-list">
+      {% for s in steps[current + 4:] %}
+      <li class="is-todo"><span class="n">{{ current + 4 + loop.index }}</span>{{ s.process }}</li>
+      {% endfor %}
+    </ol>
+  </details>
+  {% endif %}
+  {% endif %}
+
+{% elif rec.stage == 'finish' %}
+  <div class="next-action">
+    <div class="next-action-text">
+      <b>Next: yield and QA release</b>
+      <span>All {{ steps|length }} steps are signed. Record the end time, the actual yield and the QA's final disposition.</span>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('production.finish', batch_id=rec.id) }}">Finish the batch</a>
+  </div>
+  {% if shortages %}
+  <div class="card mb" style="border-color: rgba(236,125,108,.45)">
+    <div class="card-title">Not enough stock to finish yet</div>
+    <p class="muted small">{% for s in shortages %}{{ s.name }}: needs {{ s.required|qty(s.unit) }}, {{ s.available|qty(s.unit) }} on hand{{ '; ' if not loop.last }}{% endfor %}.</p>
+  </div>
+  {% endif %}
+
+{% elif rec.status == 'Completed' %}
+  <div class="card mb">
+    <div class="flex-between" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+      <div>
+        <div class="muted small">Final disposition</div>
+        <div class="disp-big {{ 'is-ok' if rec.disposition == 'APPROVED' else 'is-bad' }}">{{ rec.disposition }}</div>
+      </div>
+      <div class="muted small" style="text-align:right">QA: <b style="color:var(--heading)">{{ rec.qa_name }}</b><br>{{ rec.qa_date }}</div>
+    </div>
+    {% if rec.remarks %}<p class="muted small mt">{{ rec.remarks }}</p>{% endif %}
+  </div>
+  <div class="figures mb">
+    <div class="figure"><div class="figure-label">Theoretical yield</div><div class="figure-value">{{ rec.theoretical_yield|qty }}<small>{{ rec.unit }}</small></div></div>
+    <div class="figure {{ 'is-good' if rec.disposition == 'APPROVED' else 'is-bad' }}"><div class="figure-label">Actual yield</div><div class="figure-value">{{ rec.actual_yield|qty }}<small>{{ rec.unit }}</small></div></div>
+    <div class="figure"><div class="figure-label">{{ 'Added to stock' if rec.disposition == 'APPROVED' else 'Logged as damage' }}</div><div class="figure-value">{{ rec.actual_yield|qty }}<small>{{ rec.unit }}</small></div></div>
+  </div>
+  <div class="card mb">
+    <div class="card-title">Batch details</div>
+    <dl class="review-list">
+      <dt>Started</dt><dd>{{ rec.start_at[:16]|replace('T', ' ') }}</dd>
+      <dt>Ended</dt><dd>{{ (rec.end_at or '')[:16]|replace('T', ' ') or '—' }}</dd>
+      <dt>Test date</dt><dd>{{ rec.test_date or '—' }}</dd>
+      <dt>Test result date</dt><dd>{{ rec.test_result_date or '—' }}</dd>
+      <dt>Ingredients</dt><dd>{% for l in rec.dispensing or [] %}{{ l.ingredient }} {{ l.theoretical_qty|qty(l.unit) }}{{ ', ' if not loop.last }}{% endfor %}</dd>
+      <dt>Procedure</dt><dd>{{ steps|length }} steps signed</dd>
+    </dl>
+  </div>
+  {% if can('production') %}
+  <a class="btn btn-ghost btn-sm mb" href="{{ url_for('production.retention_new', batch_id=rec.id) }}">{{ icon('retention', 14) }} Keep a retention sample</a>
+  {% endif %}
+
+{% else %}
+  <div class="card mb"><p class="muted">This batch was cancelled before it was finished. No stock was moved.</p></div>
+{% endif %}
+
+<div class="flex gap-sm wrap" style="display:flex;flex-wrap:wrap;gap:8px">
+  <a class="btn btn-ghost btn-sm" href="{{ url_for('production.batch_print', batch_id=rec.id) }}">{{ icon('printer', 14) }} Print BMR</a>
+  {% if rec.status == 'In Progress' %}
+  <form method="post" action="{{ url_for('production.cancel', batch_id=rec.id) }}"
+        data-confirm="Cancel batch {{ rec.batch_no }}? Nothing has been taken from stock yet.">
+    <button class="btn btn-ghost btn-sm" type="submit">Cancel batch</button>
+  </form>
+  {% endif %}
+</div>
+<p class="muted small mt">Started by {{ created_by }} · {{ rec.start_at[:16]|replace('T', ' ') }}</p>
+</div>
+{% endblock %}

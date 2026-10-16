@@ -1,221 +1,225 @@
 {% extends "base.html" %}
-{% block title %}Sales platforms{% endblock %}
+{% block title %}Sales Reports{% endblock %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Sales platforms</h1>
-    <p class="page-sub">
-      Marketplace exports imported into one consolidated view —
-      {{ row_count }} sales line(s) on record.
-    </p>
+    <h1 class="page-title">Sales Reports</h1>
+    <p class="page-sub">What sold, where and when — from the files uploaded from Shopee, TikTok, Lazada, Shopify and others.</p>
   </div>
   <div class="page-head-actions">
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('platforms.template_list') }}">Templates</a>
-    <a class="btn btn-primary btn-sm" href="{{ url_for('platforms.import_file') }}">Import a file</a>
-  </div>
-</div>
-
-<div class="stat-grid mb">
-  <div class="stat-card is-primary">
-    <div class="stat-top"><span class="stat-label">Net sales</span></div>
-    <div class="stat-value">₱{{ '{:,.0f}'.format(totals.net) }}</div>
-    <div class="stat-caption">After discounts, across all platforms</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-top"><span class="stat-label">Gross sales</span></div>
-    <div class="stat-value">₱{{ '{:,.0f}'.format(totals.gross) }}</div>
-    <div class="stat-caption">Before discounts</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-top"><span class="stat-label">Orders</span></div>
-    <div class="stat-value">{{ totals.orders }}</div>
-    <div class="stat-caption">{{ totals.lines }} product line(s)</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-top"><span class="stat-label">Units sold</span></div>
-    <div class="stat-value">{{ totals.qty }}</div>
-    <div class="stat-caption">Across every channel</div>
-  </div>
-</div>
-
-<form method="get" class="filter-bar">
-  <div class="field">
-    <label class="form-label" for="platform">Platform</label>
-    <select id="platform" name="platform">
-      <option value="">All platforms</option>
-      {% for p in platforms %}
-        <option value="{{ p }}" {{ 'selected' if platform == p }}>{{ p }}</option>
-      {% endfor %}
-    </select>
-  </div>
-  <div class="field">
-    <label class="form-label" for="from">From</label>
-    <input type="date" id="from" name="from" value="{{ date_from }}">
-  </div>
-  <div class="field">
-    <label class="form-label" for="to">To</label>
-    <input type="date" id="to" name="to" value="{{ date_to }}">
-  </div>
-  <div>
-    <button class="btn btn-primary btn-sm" type="submit">Apply</button>
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('platforms.index') }}">Reset</a>
-  </div>
-</form>
-
-<div class="grid grid-2 mb">
-  <div class="card">
-    <div class="card-title">Per platform</div>
-    {% if summary %}
-    <div class="table-wrap">
-      <table class="table">
-        <thead>
-          <tr><th>Platform</th><th class="num">Orders</th><th class="num">Units</th>
-              <th class="num">Gross</th><th class="num">Net</th></tr>
-        </thead>
-        <tbody>
-          {% for row in summary %}
-          <tr>
-            <td><span class="badge badge-gold">{{ row.platform }}</span></td>
-            <td class="num">{{ row.orders }}</td>
-            <td class="num">{{ '%g'|format(row.qty) }}</td>
-            <td class="num">₱{{ '{:,.2f}'.format(row.gross) }}</td>
-            <td class="num">₱{{ '{:,.2f}'.format(row.net) }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td>Total</td><td class="num">{{ totals.orders }}</td>
-            <td class="num">{{ totals.qty }}</td>
-            <td class="num">₱{{ '{:,.2f}'.format(totals.gross) }}</td>
-            <td class="num">₱{{ '{:,.2f}'.format(totals.net) }}</td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-    {% else %}
-    <p class="muted">Nothing imported yet for this filter.</p>
+    {% if has_data %}
+    <a class="btn btn-ghost btn-sm" href="{{ export_url }}">{{ icon('in', 15) }} Download for Excel</a>
     {% endif %}
-  </div>
-
-  <div class="card">
-    <div class="card-title">Best sellers</div>
-    {% if top %}
-    {% set max_net = top|map(attribute='net')|max %}
-    <div class="bars">
-      {% for row in top %}
-      <div class="bar-row">
-        <span class="bar-label" title="{{ row.name }}">{{ row.name }}</span>
-        <span class="bar-track">
-          <span class="bar-fill" style="width: {{ (100 * row.net / max_net)|round(1) if max_net else 0 }}%"></span>
-        </span>
-        <span class="bar-value">₱{{ '{:,.0f}'.format(row.net) }}</span>
-      </div>
-      {% endfor %}
-    </div>
-    {% else %}
-    <p class="muted">No product names in the imported data yet.</p>
-    {% endif %}
+    <a class="btn btn-primary" href="{{ url_for('platforms.upload') }}">{{ icon('upload', 16) }} Upload sales file</a>
   </div>
 </div>
 
-{% if series %}
-<div class="card mb">
-  <div class="card-title">Daily net sales</div>
-  {% set max_day = series|map(attribute=1)|max %}
-  <div class="bars">
-    {% for day, value in series %}
-    <div class="bar-row">
-      <span class="bar-label">{{ day }}</span>
-      <span class="bar-track">
-        <span class="bar-fill" style="width: {{ (100 * value / max_day)|round(1) if max_day else 0 }}%"></span>
-      </span>
-      <span class="bar-value">₱{{ '{:,.0f}'.format(value) }}</span>
-    </div>
+{% if not has_data %}
+<div class="card"><div class="empty">
+  <div class="empty-icon">{{ icon('chart', 30) }}</div>
+  <div class="empty-title">No sales uploaded yet</div>
+  <p class="muted">Export your orders from Shopee, TikTok Shop, Lazada or Shopify and upload the file — the reports fill in by themselves.</p>
+  <a class="btn btn-primary mt" href="{{ url_for('platforms.upload') }}">Upload sales file</a>
+</div></div>
+{% else %}
+
+{# One row of filters, above everything they affect. #}
+<div class="toolbar">
+  <div class="seg" aria-label="Date range">
+    {% for key, label in ranges %}
+    <a href="{{ link(range=key, **{'from': '', 'to': ''}) }}" class="{{ 'is-active' if f.range == key }}">{{ label }}</a>
     {% endfor %}
   </div>
+  <div class="flex gap-sm wrap">
+    <div class="seg" aria-label="Group by">
+      {% for key, label in grains %}
+      <a href="{{ link(grain=key) }}" class="{{ 'is-active' if f.grain == key }}">{{ label }}</a>
+      {% endfor %}
+    </div>
+    <form method="get" class="flex gap-sm">
+      {% for k in ('view', 'grain', 'range') %}<input type="hidden" name="{{ k }}" value="{{ {'view': view, 'grain': f.grain, 'range': f.range}[k] }}">{% endfor %}
+      <select name="platform" onchange="this.form.submit()" aria-label="Platform" style="width:auto">
+        <option value="">All platforms</option>
+        {% for p in platforms %}<option {{ 'selected' if f.platform == p }}>{{ p }}</option>{% endfor %}
+      </select>
+    </form>
+  </div>
 </div>
+<details class="mb no-print" {{ 'open' if f.range == 'custom' }}>
+  <summary class="small gold" style="cursor:pointer">Pick exact dates</summary>
+  <form method="get" class="flex gap-sm wrap mt-sm">
+    <input type="hidden" name="view" value="{{ view }}"><input type="hidden" name="grain" value="{{ f.grain }}">
+    <input type="hidden" name="platform" value="{{ f.platform }}"><input type="hidden" name="range" value="custom">
+    <input type="date" name="from" value="{{ f['from'] }}" style="width:auto" aria-label="From">
+    <input type="date" name="to" value="{{ f.to }}" style="width:auto" aria-label="To">
+    <button class="btn btn-ghost btn-sm" type="submit">Show</button>
+  </form>
+</details>
+
+<nav class="tabs">
+  {% for key, label in views %}
+  <a href="{{ link(view=key) }}" class="{{ 'is-active' if view == key }}">{{ label }}</a>
+  {% endfor %}
+</nav>
+
+{% set k = report.kpis %}
+{% if view == 'overview' %}
+  <div class="figures mb">
+    <div class="figure is-good"><div class="figure-label">Net sales · {{ f.range_label }}</div><div class="figure-value">{{ k.net|peso }}</div></div>
+    <div class="figure"><div class="figure-label">Orders</div><div class="figure-value">{{ k.orders }}</div></div>
+    <div class="figure"><div class="figure-label">Items sold</div><div class="figure-value">{{ k.units|qty }}</div></div>
+    <div class="figure"><div class="figure-label">Average order</div><div class="figure-value">{{ k.aov|peso }}</div></div>
+    <div class="figure {{ 'is-bad' if k.lost_orders }}"><div class="figure-label">Cancelled / returned</div><div class="figure-value">{{ k.lost_orders }}<small>orders</small></div></div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-title">Net sales, {{ dict(grains)[f.grain]|lower }} <span class="muted">— hover a column for the amounts</span></div>
+    {% if series|length > 1 %}
+    <div class="legend">{% for s in series %}<span><i style="background:{{ colors[s] }}"></i>{{ s }}</span>{% endfor %}</div>
+    {% endif %}
+    {% if report.periods %}<div class="chart">{{ chart }}</div>
+    {% else %}<p class="muted">No sales in this period.</p>{% endif %}
+    <p class="muted small mt-sm">Counts completed and in-progress orders; cancelled, returned and platform fee/tax lines are left out. <a href="{{ link(view='periods') }}">See the numbers as a table</a>.</p>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">Sales by platform</div>
+      {{ platform_bars or '<p class="muted">No sales in this period.</p>'|safe }}
+    </div>
+    <div class="card">
+      <div class="card-title">Best-selling products</div>
+      {{ product_bars or '<p class="muted">No sales in this period.</p>'|safe }}
+      {% if k.unlinked %}<p class="muted small mt-sm">{{ k.unlinked }} line(s) could not be matched to a catalog product and are shown under their listing title.</p>{% endif %}
+    </div>
+  </div>
+
+{% elif view == 'periods' %}
+  <div class="card">
+    <div class="card-title">{{ dict(grains)[f.grain] }} sales · {{ f.range_label }}</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr>
+          <th>{{ {'day': 'Date', 'week': 'Week', 'month': 'Month', 'year': 'Year'}[f.grain] }}</th>
+          {% for s in series %}<th class="num"><span class="swatch" style="background:{{ colors[s] }}"></span>{{ s }}</th>{% endfor %}
+          <th class="num">Net sales</th><th class="num">Orders</th><th class="num">Items</th><th class="num">Avg order</th>
+        </tr></thead>
+        <tbody>
+          {% for p in report.periods|reverse %}
+          <tr>
+            <td>{{ p.label }}{% if f.grain in ('day', 'week') %} <span class="cell-sub">{{ p.key }}</span>{% endif %}</td>
+            {% for s in series %}<td class="num">{{ p.by_platform.get(s, 0)|peso if p.by_platform.get(s) else '—' }}</td>{% endfor %}
+            <td class="num"><b>{{ p.net|peso }}</b></td><td class="num">{{ p.orders }}</td><td class="num">{{ p.units|qty }}</td><td class="num">{{ p.aov|peso }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="{{ 5 + series|length }}" class="muted">No sales in this period.</td></tr>
+          {% endfor %}
+        </tbody>
+        <tfoot><tr>
+          <td>Total</td>
+          {% for s in series %}{% set b = report.platforms|selectattr('platform', 'equalto', s)|first %}<td class="num">{{ b.net|peso if b else '—' }}</td>{% endfor %}
+          <td class="num">{{ k.net|peso }}</td><td class="num">{{ k.orders }}</td><td class="num">{{ k.units|qty }}</td><td class="num">{{ k.aov|peso }}</td>
+        </tr></tfoot>
+      </table>
+    </div>
+  </div>
+
+{% elif view == 'products' %}
+  <div class="card">
+    <div class="card-title">Products sold · {{ f.range_label }}</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Product</th><th class="num">Items sold</th><th class="num">Net sales</th><th>Platforms</th></tr></thead>
+        <tbody>
+          {% for p in report.products %}
+          <tr>
+            <td class="wrap">{{ p.name }}{% if not p.linked %} <span class="cell-sub">Listing title — not matched to a catalog product</span>{% endif %}</td>
+            <td class="num">{{ p.qty|qty }}</td><td class="num">{{ p.net|peso }}</td><td class="small muted">{{ p.platforms }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" class="muted">No sales in this period.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+{% elif view == 'orders' %}
+  <div class="grid grid-2 mb">
+    <div class="card">
+      <div class="card-title">Order status</div>
+      <div class="queue">
+        {% for s in report.status %}
+        <a class="queue-item" href="{{ link(status=s.group) }}">
+          <span class="queue-main"><span class="queue-title">{{ s.group }}</span>
+            <span class="queue-sub">{{ s.orders }} order(s) · {{ s.lines }} line(s)</span></span>
+          <b>{{ s.amount|peso }}</b>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Where buyers are</div>
+      {% if report.regions %}
+      <div class="queue">
+        {% for r in report.regions[:6] %}
+        <div class="queue-item"><span class="queue-main"><span class="queue-title">{{ r.region }}</span><span class="queue-sub">{{ r.orders }} order(s)</span></span><b>{{ r.net|peso }}</b></div>
+        {% endfor %}
+      </div>
+      {% else %}<p class="muted">No region in these exports.</p>{% endif %}
+    </div>
+  </div>
+  <form method="get" class="toolbar">
+    {% for key, val in {'view': view, 'grain': f.grain, 'range': f.range, 'platform': f.platform}.items() %}<input type="hidden" name="{{ key }}" value="{{ val }}">{% endfor %}
+    <div class="chip-choices">
+      <label class="chip-choice"><input type="radio" name="status" value="" {{ 'checked' if not status }} onchange="this.form.submit()"><span>All</span></label>
+      {% for g in status_groups %}<label class="chip-choice"><input type="radio" name="status" value="{{ g }}" {{ 'checked' if status == g }} onchange="this.form.submit()"><span>{{ g }}</span></label>{% endfor %}
+    </div>
+    <input type="search" name="q" value="{{ q }}" placeholder="Search order, product, buyer…" style="max-width:260px">
+  </form>
+  <div class="card">
+    <div class="card-title">{{ order_count }} line(s){% if order_count > 300 %} <span class="muted">— showing the latest 300</span>{% endif %}</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Date</th><th>Platform</th><th>Order</th><th class="wrap">Product</th><th class="num">Qty</th><th class="num">Net</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for r in orders %}
+          <tr>
+            <td class="nowrap">{{ r.order_date }}</td>
+            <td><span class="swatch" style="background:{{ colors.get(r.platform, colors['Other']) }}"></span>{{ r.platform }}</td>
+            <td class="small">{{ r.order_ref }}</td>
+            <td class="wrap">{{ report.product_names.get(r.product_id) or r.product_name or '—' }}{% if r.variation %}<span class="cell-sub">{{ r.variation }}</span>{% endif %}</td>
+            <td class="num">{{ r.qty|qty }}</td>
+            <td class="num">{{ r.net_amount|peso }}</td>
+            <td><span class="badge {{ {'Completed': 'badge-ok', 'In progress': 'badge-warn', 'Cancelled': 'badge-danger', 'Returned': 'badge-danger'}.get(group_of(r), 'badge-muted') }}">{{ group_of(r) }}</span><span class="cell-sub">{{ r.order_status }}</span></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="7" class="muted">No lines match.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+{% elif view == 'uploads' %}
+  <div class="flex-between mb">
+    <p class="muted" style="margin:0">Every file uploaded. Removing an upload removes the sales it added.</p>
+    {% if is_admin %}<a class="btn btn-ghost btn-sm" href="{{ url_for('platforms.template_list') }}">Column templates (advanced)</a>{% endif %}
+  </div>
+  <div class="queue">
+    {% for i in imports %}
+    <a class="queue-item" href="{{ url_for('platforms.upload_detail', import_id=i.id) }}">
+      <span class="swatch" style="background:{{ colors.get(i.platform, colors['Other']) }}"></span>
+      <span class="queue-main">
+        <span class="queue-title">{{ i.platform }} · {{ i.filename }}</span>
+        <span class="queue-sub">{{ i.imported_at }} by {{ i.imported_by }} · {{ i.message }}</span>
+      </span>
+      <b>{{ i.net_amount|peso }}</b>
+    </a>
+    {% else %}
+    <div class="card"><div class="empty"><div class="empty-title">No uploads yet</div></div></div>
+    {% endfor %}
+  </div>
 {% endif %}
-
-<div class="card mb">
-  <div class="card-title">Recent sales lines</div>
-  {% if recent %}
-  <div class="table-wrap">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Date</th><th>Platform</th><th>Order</th><th class="wrap">Product</th>
-          <th>SKU</th><th class="num">Qty</th><th class="num">Net</th>
-          <th>Status</th><th>Region</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for row in recent %}
-        <tr>
-          <td>{{ row.order_date or '—' }}</td>
-          <td><span class="badge badge-gold">{{ row.platform }}</span></td>
-          <td><span class="code">{{ row.order_ref }}</span></td>
-          <td class="wrap">
-            {{ row.product_name or '—' }}
-            {% if row.variation %}<span class="cell-sub">{{ row.variation }}</span>{% endif %}
-          </td>
-          <td class="muted small">{{ row.sku or '—' }}</td>
-          <td class="num">{{ '%g'|format(row.qty|float) }}</td>
-          <td class="num">₱{{ '{:,.2f}'.format(row.net_amount|float) }}</td>
-          <td class="muted small">{{ row.order_status or '—' }}</td>
-          <td class="muted small">{{ row.region or '—' }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% else %}
-  <div class="empty">
-    <div class="empty-icon">{{ icon('platforms', 30) }}</div>
-    <div class="empty-title">No platform sales yet</div>
-    <p class="muted">
-      Drop a Shopee, TikTok or Lazada export into the sales-platform folder,
-      then import it here.
-    </p>
-    <a class="btn btn-primary btn-sm mt" href="{{ url_for('platforms.import_file') }}">Import a file</a>
-  </div>
-  {% endif %}
-</div>
-
-{% if imports %}
-<div class="card">
-  <div class="card-title">Import history</div>
-  <div class="table-wrap">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Imported</th><th>Platform</th><th class="wrap">File</th>
-          <th class="num">Rows</th><th class="num">Duplicates</th>
-          <th class="num">Net</th><th>Period</th><th>By</th><th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for i in imports %}
-        <tr>
-          <td>{{ i.imported_at }}</td>
-          <td><span class="badge badge-gold">{{ i.platform }}</span></td>
-          <td class="wrap">{{ i.filename }}</td>
-          <td class="num">{{ i.rows_imported }}</td>
-          <td class="num muted">{{ i.duplicates }}</td>
-          <td class="num">₱{{ '{:,.2f}'.format(i.net_amount|float) }}</td>
-          <td class="muted small">{{ i.period_from or '—' }}<span class="cell-sub">to {{ i.period_to or '—' }}</span></td>
-          <td class="muted small">{{ i.imported_by }}</td>
-          <td>
-            <form method="post" action="{{ url_for('platforms.import_delete', import_id=i.id) }}"
-                  data-confirm="Remove this import and all the sales rows it created?">
-              <button class="btn btn-sm btn-ghost" type="submit">Undo</button>
-            </form>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
 {% endif %}
 {% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ record.filename }}{% endblock %}
+{% block content %}
+<div class="focus">
+<a class="back-link" href="{{ url_for('platforms.index', view='uploads') }}">{{ icon('arrow-left', 15) }} Uploads</a>
+
+<div class="record-head">
+  <div>
+    <div class="record-code"><span class="swatch" style="background:{{ colors.get(record.platform, colors['Other']) }}"></span>{{ record.platform }}</div>
+    <h1 class="record-title">{{ record.filename }}</h1>
+    <div class="muted small">Uploaded {{ record.imported_at }} by {{ record.imported_by }}</div>
+  </div>
+  <span class="badge badge-ok">{{ record.status }}</span>
+</div>
+
+<div class="next-action">
+  <div class="next-action-text"><b>{{ record.message }}</b>
+    <span>{% if record.period_from %}Orders from {{ record.period_from }} to {{ record.period_to }}{% endif %}</span></div>
+  <a class="btn btn-primary" href="{{ url_for('platforms.index', platform=record.platform) }}">See the sales report</a>
+</div>
+
+<div class="figures mb">
+  <div class="figure is-good"><div class="figure-label">Net sales added</div><div class="figure-value">{{ net|peso }}</div></div>
+  <div class="figure"><div class="figure-label">Orders</div><div class="figure-value">{{ orders }}</div></div>
+  <div class="figure"><div class="figure-label">Lines saved</div><div class="figure-value">{{ rows|length }}</div></div>
+</div>
+
+<form method="post" action="{{ url_for('platforms.import_delete', import_id=record.id) }}"
+      data-confirm="Remove this upload and the {{ rows|length }} sales line(s) it added?">
+  <button class="btn btn-ghost btn-sm" type="submit">Remove this upload</button>
+</form>
+</div>
+{% endblock %}

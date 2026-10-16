@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}All packing runs{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('packing.index') }}">{{ icon('arrow-left', 15) }} Packing &amp; Dispatch</a>
+<div class="page-head">
+  <div><h1 class="page-title">All packing runs</h1><p class="page-sub">The full record, by channel and status.</p></div>
+</div>
+
+<form method="get" class="filter-bar">
+  <div class="form-row field"><label class="form-label">Channel</label>
+    <select name="channel"><option value="">All channels</option>
+      {% for c in channels %}<option {{ 'selected' if channel == c }}>{{ c }}</option>{% endfor %}</select></div>
+  <div class="form-row field"><label class="form-label">Status</label>
+    <select name="status"><option value="">Any status</option>
+      {% for s in statuses %}<option {{ 'selected' if status == s }}>{{ s }}</option>{% endfor %}</select></div>
+  <button class="btn btn-ghost" type="submit">Show</button>
+</form>
+
+<div class="card mb">
+  {% if runs %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Run</th><th>Channel</th><th>Packed by</th><th>Date</th><th class="num">Items</th><th class="num">Damaged</th><th>Went to</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for r in runs %}
+        <tr>
+          <td><a class="code" href="{{ url_for('packing.detail', run_id=r.id) }}">{{ r.run_code }}</a></td>
+          <td>{{ r.channel }}</td>
+          <td>{{ r.packer_name or '—' }}</td>
+          <td>{{ r.pack_date }}</td>
+          <td class="num">{{ r.total_qty|qty }}</td>
+          <td class="num {{ 'num-bad' if r.damaged_qty }}">{{ r.damaged_qty|qty if r.damaged_qty else '—' }}</td>
+          <td class="small">{% if r.status == 'Handed to Courier' %}{{ r.courier }}{% if r.tracking_no %} · {{ r.tracking_no }}{% endif %}{% elif r.status == 'Disbursed' %}{{ r.handed_to }}{% else %}—{% endif %}</td>
+          <td><span class="badge {{ r.badge }}">{{ r.status }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty"><div class="empty-title">No runs match</div></div>
+  {% endif %}
+</div>
+
+{% if leaderboard %}
+<div class="section-label">Packers</div>
+<div class="card">
+  <div class="table-wrap"><table class="table" data-no-paginate>
+    <thead><tr><th>Packer</th><th class="num">Runs</th><th class="num">Items packed</th><th>Channels</th></tr></thead>
+    <tbody>{% for p in leaderboard %}<tr><td>{{ p.name }}</td><td class="num">{{ p.runs }}</td><td class="num">{{ p.qty|qty }}</td><td class="small muted">{{ p.channels }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+{% endif %}
+{% endblock %}

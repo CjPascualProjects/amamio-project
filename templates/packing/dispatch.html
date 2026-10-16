@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Send out {{ run.run_code }}{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('packing.detail', run_id=run.id) }}">{{ icon('arrow-left', 15) }} {{ run.run_code }}</a>
+
+<form method="post" class="wizard" data-wizard data-wizard-start="{{ start }}"
+      data-submit-label="Save" data-cancel="{{ url_for('packing.detail', run_id=run.id) }}">
+
+  <section class="wz-step" data-title="Where did the parcels go?"
+           data-hint="{{ run.channel }} · {{ run.total_qty|qty }} item(s) packed by {{ run.packer_name or '—' }}">
+    <div class="choice-grid cols-2" data-review-label="Sent out as">
+      {% for value, title, sub in types %}
+      <label class="choice"><input type="radio" name="dispatch_type" value="{{ value }}" required data-autonext
+             {{ 'checked' if form.dispatch_type == value }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('hand' if value == 'Disbursed' else 'truck', 20) }}</span>
+        <span><span class="choice-title">{{ title }}</span><span class="choice-sub">{{ sub }}</span></span></span></label>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Which courier?" data-when="dispatch_type=Handed to Courier">
+    <div class="wz-body">
+      <div class="form-row">
+        <div class="form-label">Courier <span class="req">*</span></div>
+        <div class="chip-choices" data-review-label="Courier">
+          {% for c in couriers %}
+          <label class="chip-choice"><input type="radio" name="courier" value="{{ c }}" required {{ 'checked' if form.courier == c }}><span>{{ c }}</span></label>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="form-grid cols-2">
+        <div class="form-row">
+          <label class="form-label" for="tracking_no">Tracking no.</label>
+          <input type="text" id="tracking_no" name="tracking_no" maxlength="60" value="{{ form.tracking_no or run.tracking_no or '' }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="handed_to_c">Rider / courier staff <span class="req">*</span></label>
+          <input type="text" id="handed_to_c" name="handed_to" maxlength="80" required value="{{ form.handed_to or '' }}" placeholder="Name of who picked it up">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Who received it?" data-when="dispatch_type=Disbursed">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="handed_to_d">Received by <span class="req">*</span></label>
+        <input type="text" id="handed_to_d" name="handed_to" maxlength="80" required value="{{ form.handed_to or '' }}" placeholder="Customer, VIP buyer or team member">
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Parcels &amp; notes">
+    <div class="wz-body">
+      <div class="form-row" style="max-width:260px">
+        <label class="form-label" for="parcel_count">Number of parcels</label>
+        <div class="big-field"><input type="number" id="parcel_count" name="parcel_count" min="0" step="1" inputmode="numeric" value="{{ form.parcel_count or '' }}"><span class="unit">pcs</span></div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="dispatch_notes">Notes</label>
+        <input type="text" id="dispatch_notes" name="dispatch_notes" maxlength="200" value="{{ form.dispatch_notes or '' }}" placeholder="Optional">
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Check and save" data-review>
+    <div class="wz-body"></div>
+  </section>
+</form>
+{% endblock %}

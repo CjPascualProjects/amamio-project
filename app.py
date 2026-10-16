@@ -6,10 +6,11 @@ Run with:  python run.py   (or  python app.py)  then open http://localhost:5000
 import os
 from datetime import date, timedelta
 
-from flask import Flask
+from flask import Flask, g, request
 
 import db
 import icons
+import page_notes
 import platform_service
 import security
 import services
@@ -57,6 +58,8 @@ def create_app():
     from platforms import platforms_bp
     from assets import assets_bp
     from migration import migration_bp
+    from supplies import supplies_bp
+    from facility import facility_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(catalog_bp, url_prefix="/catalog")
@@ -80,14 +83,41 @@ def create_app():
     app.register_blueprint(platforms_bp, url_prefix="/platforms")
     app.register_blueprint(assets_bp, url_prefix="/assets")
     app.register_blueprint(migration_bp, url_prefix="/migration")
+    app.register_blueprint(supplies_bp, url_prefix="/supplies")
+    app.register_blueprint(facility_bp, url_prefix="/facility")
 
     app.jinja_env.globals["icon"] = icons.icon
+    app.jinja_env.filters["qty"] = services.fmt_qty
+    app.jinja_env.filters["peso"] = services.fmt_peso
 
     # --- Global template context ------------------------------------------
+    def _nav_active():
+        """The one sidebar entry to highlight for this request.
+
+        A view may name it via ``g.nav_endpoint``; otherwise an exact endpoint
+        match wins, then the first entry from the same blueprint."""
+        chosen = getattr(g, "nav_endpoint", None)
+        if chosen:
+            return chosen
+        endpoints = [it[3] for _, items in security.NAV for it in items]
+        if request.endpoint in endpoints:
+            return request.endpoint
+        for endpoint in endpoints:
+            if (request.blueprint and request.blueprint != "auth"
+                    and endpoint.split(".")[0] == request.blueprint):
+                return endpoint
+        return None
+
     @app.context_processor
     def inject_globals():
         user = current_user()
+        from auth import theme_of
         return {
+            "theme_pref": theme_of(user) if user else "dark",
+            # "About this page" note (page_notes.py), unless the user hid them.
+            "show_notes": bool(user) and not user.get("hide_notes"),
+            "page_note": page_notes.for_endpoint(request.endpoint) if user else None,
+            "nav_active": _nav_active() if user else None,
             "current_user": user,
             "nav_unread": services.unread_count(user["id"]) if user else 0,
             "can": (lambda module: security.can(user, module)),

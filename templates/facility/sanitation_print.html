@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% from "_paper.html" import range_filter %}
+{% block title %}General Cleaning & Sanitation Record{% endblock %}
+{% block content %}
+<style>
+  .paper-table tr.group td.plain { background: #fff; color: #111; text-transform: none; font-weight: 700; }
+  .paper-table tr.group td.phase { text-decoration: underline; white-space: nowrap; }
+  .paper-table tr.group td:first-child { white-space: nowrap; }
+  .paper-table td.ok { color: #555; }
+  .paper-table td.flag { font-weight: 700; }
+  .san-head { text-align: center; margin-bottom: 14px; }
+  .san-head img { width: 74px; height: 74px; object-fit: cover; border-radius: 4px; }
+  .san-head .paper-org { font-size: 1rem; }
+</style>
+<a class="back-link no-print" href="{{ url_for('facility.sanitation') }}">{{ icon('arrow-left', 15) }} Cleaning &amp; Sanitation</a>
+{{ range_filter(url_for('facility.sanitation_print'), date_from, date_to) }}
+
+<div class="paper">
+  <div class="paper-head" style="justify-content:center;border-bottom:none;margin-bottom:0">
+    <img src="{{ url_for('static', filename='img/amamio-logo.jpg') }}" alt="Amamio Farm Products">
+    <div style="text-align:center">
+      <div class="paper-org">AMAMIO FARM PRODUCT</div>
+      <div class="paper-addr">District 4, Brgy. Kinabjangan, Nasipit, Agusan del Norte</div>
+    </div>
+  </div>
+  <div class="paper-title">General Cleaning &amp; Sanitation Record</div>
+  <div class="paper-sub">{{ date_from }} to {{ date_to }}</div>
+
+  <table class="paper-table">
+    <thead>
+      <tr>
+        <th>DATE</th><th>LOCATION</th><th>CURRENT STATUS</th><th>ACTION TO UNDERTAKEN</th>
+        <th>DATE UNDERTAKEN</th><th>CONDUCTED BY:</th><th>INSPECTED BY:</th><th>REMARKS</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for g in groups %}
+        {% for phase in phases %}
+          {% set rec = (g.records|selectattr('phase', 'equalto', phase)|list|first) %}
+          <tr class="group">
+            <td class="plain">{{ g.date if loop.first else '' }}</td>
+            <td class="phase">{{ phase_paper[phase] }}</td>
+            <td class="plain"></td><td class="plain"></td><td class="plain"></td>
+            <td class="plain"></td><td class="plain"></td>
+            <td class="plain" style="font-weight:400">{{ rec.remarks if rec else '' }}</td>
+          </tr>
+          {% for loc in locations %}
+            {% set a = (rec.areas|selectattr('location', 'equalto', loc)|list|first) if rec else none %}
+            <tr>
+              <td></td>
+              <td>{{ location_paper.get(loc, loc) }}</td>
+              <td class="{{ 'ok' if a and a.current_status == 'Clean' else 'flag' }}">{{ a.current_status if a else '' }}</td>
+              <td>{{ a.action if a else '' }}</td>
+              <td>{{ (a.date_undertaken or '') if a else '' }}</td>
+              {% if loop.first %}
+              <td rowspan="{{ locations|length }}" style="vertical-align:middle">{{ rec.conducted_by if rec else '' }}</td>
+              <td rowspan="{{ locations|length }}" style="vertical-align:middle">{{ rec.inspected_by if rec else '' }}</td>
+              {% endif %}
+              <td>{{ a.remarks if a else '' }}</td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
+      {% else %}
+      <tr><td colspan="8" style="text-align:center;color:#666;padding:20px">No cleaning recorded in this period.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="paper-note">file name: General Cleaning &amp; Sanitation Record</div>
+</div>
+{% endblock %}

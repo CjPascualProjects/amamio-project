@@ -1,0 +1,472 @@
+[
+  {
+    "record_date": "2026-10-09",
+    "phase": "PRE-PRODUCTION",
+    "conducted_by": "Assets Maintenance Head",
+    "inspected_by": "Production Team Head",
+    "remarks": "",
+    "recorded_by": 8,
+    "created_at": "2026-10-16T05:39:42.874971+00:00",
+    "areas": [
+      {
+        "location": "Locker Room",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Storage Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Washing Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Production Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Finished Products Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      }
+    ],
+    "id": 1
+  },
+  {
+    "record_date": "2026-10-09",
+    "phase": "POST-PRODUCTION",
+    "conducted_by": "Assets Maintenance Head",
+    "inspected_by": "Production Team Head",
+    "remarks": "",
+    "recorded_by": 8,
+    "created_at": "2026-10-16T05:39:42.898846+00:00",
+    "areas": [
+      {
+        "location": "Locker Room",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Storage Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Washing Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Production Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Finished Products Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      }
+    ],
+    "id": 2
+  },
+  {
+    "record_date": "2026-10-12",
+    "phase": "PRE-PRODUCTION",
+    "conducted_by": "Assets Maintenance Head",
+    "inspected_by": "Production Team Head",
+    "remarks": "",
+    "recorded_by": 8,
+    "created_at": "2026-10-16T05:39:42.925939+00:00",
+    "areas": [
+      {
+        "location": "Locker Room",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Storage Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Washing Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Production Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Finished Products Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      }
+    ],
+    "id": 3
+  },
+  {
+    "record_date": "2026-10-12",
+    "phase": "POST-PRODUCTION",
+    "conducted_by": "Assets Maintenance Head",
+    "inspected_by": "Production Team Head",
+    "remarks": "",
+    "recorded_by": 8,
+    "created_at": "2026-10-16T05:39:42.950897+00:00",
+    "areas": [
+      {
+        "location": "Locker Room",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Storage Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Washing Area",
+        "current_status": "Needs cleaning",
+        "action": "Scrub floor drain and wash basins with chlorine solution",
+        "date_undertaken": "2026-10-12",
+        "remarks": "Honey residue around the basins"
+      },
+      {
+        "location": "Production Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Finished Products Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      }
+    ],
+    "id": 4
+  },
+  {
+    "record_date": "2026-10-13",
+    "phase": "PRE-PRODUCTION",
+    "conducted_by": "Assets Maintenance Head",
+    "inspected_by": "Production Team Head",
+    "remarks": "",
+    "recorded_by": 8,
+    "created_at": "2026-10-16T05:39:42.975871+00:00",
+    "areas": [
+      {
+        "location": "Locker Room",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Storage Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Washing Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Production Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Finished Products Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      }
+    ],
+    "id": 5
+  },
+  {
+    "record_date": "2026-10-13",
+    "phase": "POST-PRODUCTION",
+    "conducted_by": "Assets Maintenance Head",
+    "inspected_by": "Production Team Head",
+    "remarks": "",
+    "recorded_by": 8,
+    "created_at": "2026-10-16T05:39:43.003936+00:00",
+    "areas": [
+      {
+        "location": "Locker Room",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Storage Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Washing Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Production Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Finished Products Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      }
+    ],
+    "id": 6
+  },
+  {
+    "record_date": "2026-10-14",
+    "phase": "PRE-PRODUCTION",
+    "conducted_by": "Assets Maintenance Head",
+    "inspected_by": "Production Team Head",
+    "remarks": "",
+    "recorded_by": 8,
+    "created_at": "2026-10-16T05:39:43.034139+00:00",
+    "areas": [
+      {
+        "location": "Locker Room",
+        "current_status": "Not checked",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": "Locker room key with the guard"
+      },
+      {
+        "location": "Storage Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Washing Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Production Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Finished Products Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      }
+    ],
+    "id": 7
+  },
+  {
+    "record_date": "2026-10-14",
+    "phase": "POST-PRODUCTION",
+    "conducted_by": "Assets Maintenance Head",
+    "inspected_by": "Production Team Head",
+    "remarks": "",
+    "recorded_by": 8,
+    "created_at": "2026-10-16T05:39:43.067020+00:00",
+    "areas": [
+      {
+        "location": "Locker Room",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Storage Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Washing Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Production Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Finished Products Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      }
+    ],
+    "id": 8
+  },
+  {
+    "record_date": "2026-10-15",
+    "phase": "PRE-PRODUCTION",
+    "conducted_by": "Assets Maintenance Head",
+    "inspected_by": "Production Team Head",
+    "remarks": "",
+    "recorded_by": 8,
+    "created_at": "2026-10-16T05:39:43.098519+00:00",
+    "areas": [
+      {
+        "location": "Locker Room",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Storage Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Washing Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Production Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Finished Products Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      }
+    ],
+    "id": 9
+  },
+  {
+    "record_date": "2026-10-15",
+    "phase": "POST-PRODUCTION",
+    "conducted_by": "Assets Maintenance Head",
+    "inspected_by": "Production Team Head",
+    "remarks": "Faucet repair reported to assets maintenance.",
+    "recorded_by": 8,
+    "created_at": "2026-10-16T05:39:43.129887+00:00",
+    "areas": [
+      {
+        "location": "Locker Room",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Storage Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Washing Area",
+        "current_status": "Needs repair",
+        "action": "Replace leaking faucet at the washing sink",
+        "date_undertaken": null,
+        "remarks": "Water pooling under the sink"
+      },
+      {
+        "location": "Production Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      },
+      {
+        "location": "Finished Products Area",
+        "current_status": "Clean",
+        "action": "",
+        "date_undertaken": null,
+        "remarks": ""
+      }
+    ],
+    "id": 10
+  }
+]

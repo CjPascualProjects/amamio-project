@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Pest control {{ rec.month }}{% endblock %}
+{% block content %}
+<div class="focus">
+<a class="back-link" href="{{ url_for('facility.pest') }}">{{ icon('arrow-left', 15) }} Pest Control</a>
+
+<div class="record-head">
+  <div>
+    <div class="record-code">QMS-PCMR · MONTHLY</div>
+    <h1 class="record-title">{{ rec.month }}</h1>
+    <div class="muted small">Monitored {{ rec.nice_date }} by {{ rec.monitored_by }}</div>
+  </div>
+  {% if rec.activity_count %}<span class="badge badge-danger">Pest activity</span>
+  {% else %}<span class="badge badge-ok">No pest activity</span>{% endif %}
+</div>
+
+{% if rec.activity_count %}
+<div class="next-action">
+  <div class="next-action-text">
+    <b>Pest activity in {{ rec.found|map(attribute='area')|join(', ') }}</b>
+    <span>Follow up the corrective action{{ 's' if rec.activity_count > 1 }} and check the area again before next month.</span>
+  </div>
+</div>
+{% endif %}
+
+<div class="section-label">Areas inspected</div>
+<div class="area-list mb">
+  {% for a in rec.areas %}
+  <div class="area-row {{ 'is-open' if a.pest_activity }}">
+    <span class="area-name">{{ a.area }}</span>
+    {% if a.pest_activity %}<span class="badge badge-danger">Pests seen</span>{% else %}<span class="badge badge-ok">No pests</span>{% endif %}
+    <span class="area-note">{{ a.observation }}{% if a.corrective_action %} · Corrective action: <b>{{ a.corrective_action }}</b>{% endif %}</span>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <div class="card-title">Details</div>
+  <dl class="review-list">
+    <dt>Month</dt><dd>{{ rec.month }}</dd>
+    <dt>Date of monitoring</dt><dd>{{ rec.nice_date }}</dd>
+    <dt>Monitored by (signature)</dt><dd>{{ rec.monitored_by }}</dd>
+    {% if rec.remarks %}<dt>Remarks</dt><dd>{{ rec.remarks }}</dd>{% endif %}
+    <dt>Recorded by</dt><dd>{{ rec.recorded_by_name }} · {{ rec.created }}</dd>
+  </dl>
+  <a class="btn btn-ghost btn-sm mt" href="{{ url_for('facility.pest_print', **{'from': rec.record_date, 'to': rec.record_date}) }}">{{ icon('printer', 15) }} Print this record</a>
+</div>
+</div>
+{% endblock %}

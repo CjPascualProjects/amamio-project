@@ -1,8 +1,8 @@
-HOW TO RUN — Amamio Farm Products Sales & Inventory Management System
-=====================================================================
+HOW TO RUN — Amamio Farm Products Inventory & Sales System
+==========================================================
 
 REQUIREMENTS
-  - Python 3.9+ (tested on 3.11+)
+  - Python 3.9+ (tested on 3.14)
   - pip
 
 SETUP (one time)
@@ -23,40 +23,53 @@ RUN
 
   Then open http://localhost:5000 in your browser.
 
+  To use it from phones / tablets on the same Wi-Fi (e.g. scanning QR codes
+  on the floor), start it like this instead — it prints the address to open:
+        Windows:        set AMAMIO_HOST=0.0.0.0 && python run.py
+        macOS / Linux:  AMAMIO_HOST=0.0.0.0 python run.py
+  (Debug mode is switched off automatically when it is reachable from the
+  network. For a permanent install use a real server, e.g. gunicorn app:app.)
+
 VERIFY (optional)
         python smoke_test.py
-  Runs an end-to-end self-test (logins, role guards, receiving with damage,
-  honey QC, packing, QR receive, orders, MySQL export) against a throwaway
-  temp folder — it never touches your data.
+  End-to-end self-test against a throwaway temp folder — it never touches
+  your data.
 
 DEMO LOGINS (username / password)
-        superadmin / super123    (Super Admin)
-        admin      / admin123    (Admin)
-        production / prod123     (Production Team Head)
-        packing    / pack123     (Packing Team Head)
-        assets     / assets123   (Assets & Maintenance Team Head)
+        superadmin / super123     Super Admin
+        admin      / admin123     Admin
+        receiving  / recv123      Receiving Team Head
+        production / prod123      Production Team Head
+        packing    / pack123      Packing Team Head
+        packer1    / member123    Packing Team Member  (also packer2)
+        assets     / assets123    Assets Maintenance Head
 
-  Change these before the system is used for real: Users & roles > Reset
-  password.
+  Change these before the system is used for real: Users > Reset password.
 
-THE QR CODES
-  Four kinds of code circulate, told apart by their prefix. All four are
-  scanned on the same screen (QR Scanner):
+EVERYDAY USE
+  After signing in, Home shows the few things your role does. Every
+  transaction is a short step-by-step flow (Back / Next, then a check screen
+  before saving). Scan a QR code from the menu to open any box, honey
+  container or packing run.
 
-        RB-<n>   a receiving cage box / crate
-        HC-<n>   a honey container
-        PK-<n>   a packing run
+QR CODES
+        RB-<n>      a receiving box / crate
+        HC-<n>      a honey container
+        PK-<n>      a packing run
         PR-<a>-<b>  an approved purchase-request item
+  Labels print right after a delivery or honey containers are recorded.
+  The QR carries the code plus the item, quantity and delivery details.
 
-  Labels print from: Receiving Area > a batch > Print QR labels, and
-  Honey QC > Print QR labels.
+SALES FILES (Module 5)
+  Sales Uploads & Reports > Upload sales file. Shopee, TikTok Shop, Lazada
+  (Excel) and Shopify (CSV) are built in. Uploaded files are kept in the
+  "sales-platform" folder of this project (set AMAMIO_SALES_DIR to use
+  another folder). Re-uploading a newer export updates statuses instead of
+  counting orders twice.
 
-SALES PLATFORM FILES
-  Put the marketplace exports (.xlsx) in the "sales-platform" folder next to
-  this one, then go to Sales Platforms > Import a file. Shopee, Lazada and
-  TikTok templates ship ready to use; add a template for any other
-  marketplace under Sales Platforms > Templates (it is a column mapping, not
-  a code change).
+HONEY PRODUCT LISTS
+  The products PASSED and FAILED honey go into are placeholders. Edit
+  HONEY_PASS_PRODUCTS and HONEY_FAIL_PRODUCTS in services.py.
 
 MOVING TO MySQL
   Sign in as the Super Admin and open MySQL Export, or run:
@@ -66,11 +79,13 @@ MOVING TO MySQL
   which writes export/schema.sql and export/data.sql. Then on the server:
 
         mysql -u root -p -e "CREATE DATABASE amamio_ims CHARACTER SET utf8mb4"
-        mysql -u root -p amamio_ims < schema.sql
-        mysql -u root -p amamio_ims < data.sql
+        mysql -u root -p amamio_ims < export/schema.sql
+        mysql -u root -p amamio_ims < export/data.sql
 
 NOTES
-  - Demo data is created automatically on first run (in the data/ folder).
+  - Demo data is created automatically on first run (in the data/ folder)
+    from the client's own forms: product list, supplies, asset register and
+    supplier directory. Prices and stock levels are demo figures.
   - To reset everything, stop the app and delete the data/ folder, then run
     again.
   - Everything runs offline — no database server and no internet needed.

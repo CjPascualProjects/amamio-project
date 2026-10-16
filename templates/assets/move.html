@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% block title %}Record equipment IN / OUT{% endblock %}
+{% block content %}
+{% set back = url_for('assets.detail', asset_id=form.asset_id) if form.asset_id else url_for('assets.index') %}
+<a class="back-link" href="{{ back }}">{{ icon('arrow-left', 15) }} {{ 'Back to the equipment' if form.asset_id else 'Equipment & Assets' }}</a>
+
+<form method="post" action="{{ url_for('assets.move') }}" class="wizard" id="moveForm" data-wizard
+      data-wizard-start="{{ start }}" data-submit-label="Save movement" data-cancel="{{ back }}">
+
+  <section class="wz-step" data-title="Is it going out or coming in?"
+           data-hint="Record every time equipment leaves the site or comes back.">
+    <div class="choice-grid cols-2" data-review-label="Direction">
+      <label class="choice"><input type="radio" name="direction" value="OUT" required data-autonext {{ 'checked' if form.direction == 'OUT' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('out', 20) }}</span>
+        <span><span class="choice-title">OUT</span><span class="choice-sub">Borrowed, sent for repair, lent or disposed</span></span></span></label>
+      <label class="choice"><input type="radio" name="direction" value="IN" data-autonext {{ 'checked' if form.direction == 'IN' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('in', 20) }}</span>
+        <span><span class="choice-title">IN</span><span class="choice-sub">Returned, back from repair or newly bought</span></span></span></label>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Which equipment?" id="stepItem"
+           data-hint="Pick it from the register — grouped as on the Inventory of Assets.">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="asset_id">Equipment <span class="req">*</span></label>
+        <select id="asset_id" name="asset_id" required data-review-label="Equipment">
+          <option value="">Choose the equipment…</option>
+          {% for category, rows in groups %}
+          <optgroup label="{{ category }}">
+            {% for a in rows %}
+            <option value="{{ a.id }}" data-unit="{{ a.unit }}" data-avail="{{ a.available }}" data-out="{{ a.qty_out }}"
+                    data-total="{{ a.quantity }}" data-cond="{{ a.condition }}"
+                    {{ 'selected' if form.asset_id|string == a.id|string }}>{{ a.item_no }} · {{ a.name }}</option>
+            {% endfor %}
+          </optgroup>
+          {% endfor %}
+        </select>
+        <div class="form-hint" id="itemInfo">&nbsp;</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Why, and how many?" id="stepWhy">
+    <div class="wz-body">
+      <div class="form-row" id="reasonsOUT">
+        <div class="form-label">Why is it going out? <span class="req">*</span></div>
+        <div class="chip-choices" data-review-label="Reason">
+          {% for r, sub in out_reasons %}
+          <label class="chip-choice" title="{{ sub }}"><input type="radio" name="reason" value="{{ r }}" required {{ 'checked' if form.reason == r and form.direction == 'OUT' }}><span>{{ r }}</span></label>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="form-row" id="reasonsIN">
+        <div class="form-label">Why is it coming in? <span class="req">*</span></div>
+        <div class="chip-choices" data-review-label="Reason">
+          {% for r, sub in in_reasons %}
+          <label class="chip-choice" title="{{ sub }}"><input type="radio" name="reason" value="{{ r }}" required {{ 'checked' if form.reason == r and form.direction == 'IN' }}><span>{{ r }}</span></label>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="form-row" style="max-width:320px">
+        <label class="form-label" for="qty">How many? <span class="req">*</span></label>
+        <div class="big-field">
+          <input type="number" id="qty" name="qty" min="1" step="1" required inputmode="numeric" value="{{ form.qty or 1 }}">
+          <span class="unit" id="qtyUnit">unit</span>
+        </div>
+        <div class="form-hint" id="qtyHint"></div>
+      </div>
+      <div class="form-row" id="condRow" style="display:none">
+        <div class="form-label">Condition after this</div>
+        <div class="chip-choices" data-review-label="Condition">
+          {% for c in conditions %}
+          <label class="chip-choice"><input type="radio" name="condition" value="{{ c }}" {{ 'checked' if form.condition == c }}><span>{{ c }}</span></label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Who and where?" id="stepWho">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="person" id="personLabel">Person responsible</label>
+        <input type="text" id="person" name="person" maxlength="120" value="{{ form.person or '' }}" placeholder="Name of the person">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="destination" id="destLabel">Where</label>
+        <input type="text" id="destination" name="destination" maxlength="160" value="{{ form.destination or '' }}">
+      </div>
+      <div class="form-row" id="returnRow" style="max-width:280px">
+        <label class="form-label" for="expected_return">Expected back on</label>
+        <input type="date" id="expected_return" name="expected_return" min="{{ today }}" value="{{ form.expected_return or '' }}">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="notes">Notes</label>
+        <textarea id="notes" name="notes" rows="2" maxlength="400" placeholder="Anything worth noting">{{ form.notes or '' }}</textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Check and save" data-review
+           data-hint="Make sure this is right — the register updates as soon as you save.">
+    <div class="wz-body"></div>
+  </section>
+</form>
+
+<script>
+(function () {
+  var form = document.getElementById("moveForm");
+  var select = document.getElementById("asset_id");
+  var RETURNABLE = {{ returnable|list|tojson }};
+  var DEFAULT_COND = {"Sent for repair": "Under repair", "Back from repair": "Serviceable"};
+  var COND_REASONS = ["Sent for repair", "Back from repair", "Returned"];
+  function dir() { var r = form.querySelector("[name=direction]:checked"); return r ? r.value : ""; }
+  function reason() { var r = form.querySelector("[name=reason]:checked"); return r ? r.value : ""; }
+  function item() {
+    var o = select.options[select.selectedIndex];
+    if (!o || !o.value) return null;
+    return { name: o.textContent.trim(), unit: o.getAttribute("data-unit") || "unit",
+             avail: parseFloat(o.getAttribute("data-avail")) || 0,
+             out: parseFloat(o.getAttribute("data-out")) || 0,
+             total: parseFloat(o.getAttribute("data-total")) || 0,
+             cond: o.getAttribute("data-cond") };
+  }
+  function n(v) { return Math.round(v * 1000) / 1000; }
+  function show(id, on) { document.getElementById(id).style.display = on ? "" : "none"; }
+
+  function sync() {
+    var d = dir(), r = reason(), it = item();
+    ["IN", "OUT"].forEach(function (k) {
+      var on = d === k;
+      show("reasons" + k, on);
+      document.querySelectorAll("#reasons" + k + " input").forEach(function (i) {
+        i.disabled = !on; if (!on) i.checked = false;
+      });
+    });
+    r = reason();
+    var unit = it ? it.unit : "unit";
+    document.getElementById("qtyUnit").textContent = unit;
+    document.getElementById("itemInfo").textContent = it
+      ? n(it.avail) + " " + unit + " on site · " + n(it.out) + " out · " + n(it.total) + " in total · " + it.cond
+      : " ";
+    var hint = "";
+    if (it && d === "OUT") hint = n(it.avail) + " " + unit + " on site can go out.";
+    if (it && d === "IN" && (r === "Returned" || r === "Back from repair")) hint = n(it.out) + " " + unit + " out right now.";
+    if (it && d === "IN" && r === "New purchase / acquisition") hint = "These units are added to the register.";
+    if (r === "Disposed / condemned") hint += " Disposed units are removed from the register.";
+    document.getElementById("qtyHint").textContent = hint;
+
+    var cond = COND_REASONS.indexOf(r) !== -1;
+    show("condRow", cond);
+    document.querySelectorAll("#condRow input").forEach(function (i) { i.disabled = !cond; });
+
+    var returnable = d === "OUT" && RETURNABLE.indexOf(r) !== -1;
+    show("returnRow", returnable);
+    document.getElementById("expected_return").disabled = !returnable;
+
+    var who = document.getElementById("stepWho");
+    if (d === "OUT") {
+      document.getElementById("personLabel").textContent = r === "Disposed / condemned" ? "Approved / disposed by" : (r === "Sent for repair" ? "Repair shop / technician" : "Who is taking it?");
+      document.getElementById("destLabel").textContent = r === "Disposed / condemned" ? "How it was disposed of" : "Where is it going?";
+      who.setAttribute("data-hint", "So everyone knows where it is and when it should be back.");
+    } else {
+      document.getElementById("personLabel").textContent = r === "New purchase / acquisition" ? "Bought from / received by" : "Who brought it back?";
+      document.getElementById("destLabel").textContent = r === "New purchase / acquisition" ? "Where it will be kept" : "Where did it come from?";
+      who.setAttribute("data-hint", "Optional, but it helps when someone asks later.");
+    }
+    document.getElementById("stepWhy").setAttribute("data-hint", it ? it.name : "");
+  }
+
+  form.addEventListener("change", function (e) {
+    if (e.target.name === "reason") {
+      var want = DEFAULT_COND[e.target.value];
+      var it = item();
+      if (!want && e.target.value === "Returned" && it) want = it.cond;
+      form.querySelectorAll("[name=condition]").forEach(function (i) { i.checked = i.value === want; });
+    }
+    sync();
+  });
+  form.addEventListener("input", sync);
+  sync();
+  if (reason() && !form.querySelector("[name=condition]:checked")) {
+    var want = DEFAULT_COND[reason()] || (item() || {}).cond;
+    form.querySelectorAll("[name=condition]").forEach(function (i) { i.checked = i.value === want; });
+  }
+  document.getElementById("stepWhy").addEventListener("wz:enter", sync);
+  document.getElementById("stepWho").addEventListener("wz:enter", sync);
+
+  document.getElementById("stepItem").addEventListener("wz:validate", function (e) {
+    var it = item(), d = dir();
+    if (it && d === "OUT" && it.avail <= 0) {
+      e.preventDefault(); e.detail.message = "All of this equipment is already out — none on site to take out.";
+    }
+  });
+  document.getElementById("stepWhy").addEventListener("wz:validate", function (e) {
+    var it = item(), d = dir(), r = reason();
+    var q = parseFloat(document.getElementById("qty").value) || 0;
+    if (!it) return;
+    if (d === "OUT" && q > it.avail) {
+      e.preventDefault(); e.detail.message = "Only " + n(it.avail) + " " + it.unit + " on site — you can't take out " + q + ".";
+    } else if (d === "IN" && (r === "Returned" || r === "Back from repair")) {
+      if (it.out <= 0) {
+        e.preventDefault(); e.detail.message = "None of this equipment is out right now. Choose “New purchase” if these are new units.";
+      } else if (q > it.out) {
+        e.preventDefault(); e.detail.message = "Only " + n(it.out) + " " + it.unit + " is out — you can't bring back " + q + ".";
+      }
+    }
+  });
+})();
+</script>
+{% endblock %}

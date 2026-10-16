@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "_paper.html" import paper_head, paper_signoff %}
+{% block title %}Maintenance Log · {{ a.name }}{% endblock %}
+{% block content %}
+<a class="back-link no-print" href="{{ url_for('assets.detail', asset_id=a.id) }}">{{ icon('arrow-left', 15) }} {{ a.name }}</a>
+<div class="filter-bar no-print">
+  <span class="muted small" style="flex:1">{{ logs|length }} record(s), oldest first.</span>
+  <a class="btn btn-ghost" href="{{ url_for('assets.maintenance', asset_id=a.id) }}">{{ icon('plus', 15) }} Log maintenance</a>
+  <button class="btn btn-primary" type="button" onclick="window.print()">{{ icon('printer', 15) }} Print</button>
+</div>
+
+<div class="paper">
+  {{ paper_head('Equipment Maintenance Log') }}
+  <div class="paper-fields">
+    <div><b>Equipment Name:</b> {{ a.name }} ({{ a.item_no }})</div>
+    <div><b>Serial Number:</b> {{ a.serial_number or '' }}</div>
+    <div><b>Date of Purchase:</b> {{ a.date_of_purchase or '' }}</div>
+    <div><b>Model:</b> {{ a.model or '' }}</div>
+    <div><b>Location:</b> {{ a.location or '' }}</div>
+    <div><b>Service Date:</b> {{ logs[-1].performed_on if logs else '' }}</div>
+    <div><b>Manufacturer:</b> {{ a.manufacturer or '' }}</div>
+    <div><b>Contact Details:</b> {{ a.contact_details or '' }}</div>
+  </div>
+  <table class="paper-table">
+    <thead>
+      <tr><th>Date</th><th>Time</th><th>Maintenance Description</th><th>Maintenance Performed By</th><th>Next Maintenance Date</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      {% for l in logs %}
+      <tr>
+        <td style="white-space:nowrap">{{ l.performed_on }}</td>
+        <td>{{ l.performed_time or '' }}</td>
+        <td><b>{{ l.type }}</b>{% if l.description %} — {{ l.description }}{% endif %}</td>
+        <td>{{ l.performed_by or '' }}</td>
+        <td style="white-space:nowrap">{{ l.next_due or '' }}</td>
+        <td>{{ l.status }}{% if l.cost %} · {{ l.cost|peso }}{% endif %}{% if l.downtime_hours %} · {{ l.downtime_hours|qty }} h down{% endif %}{% if l.notes %} · {{ l.notes }}{% endif %}</td>
+      </tr>
+      {% endfor %}
+      {% for i in range([0, 8 - logs|length]|max) %}
+      <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {{ paper_signoff(['Prepared by:', 'Checked by:', 'Approved by:']) }}
+</div>
+{% endblock %}

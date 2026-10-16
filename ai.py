@@ -11,27 +11,47 @@ runs fully offline.  It provides:
 
 Weekly series use ISO year-week labels ('YYYY-Www') and are gap-filled with 0.
 """
+import re
 import math
 from datetime import date, datetime
 
 import db
 
 # --- Palette (Amamio brand: black and white, gold as the accent) ----------
-# Charts sit on near-black cards.  Series use gold, white and muted golds only
-# — no other hues — so the charts read as part of the brand, not a rainbow.
-PALETTE = ["#d4af37", "#f5f5f5", "#8a7330", "#e9d9a6", "#b8892a", "#a3a3a3",
-           "#f0d27a"]
-GREEN = "#d4af37"          # default line accent (gold)
-AMBER = "#e9d9a6"
-VIOLET = "#8a7330"         # production series (deep gold)
-BLUE = "#f0d27a"
-MAGENTA = "#e9d9a6"
-GRID = "rgba(255,255,255,.06)"
-AXIS = "#8a8a8a"
+# Series use gold, white/ink and muted golds only — no other hues — so the
+# charts read as part of the brand.  The values are CSS variables (--ai-*,
+# --viz-* in static/css/style.css) so each theme gets steps that read on its
+# own card colour; _themed() moves them into style attributes.
+PALETTE = ["var(--ai-1)", "var(--ai-2)", "var(--ai-3)", "var(--ai-4)",
+           "var(--ai-5)", "var(--ai-6)", "var(--ai-7)"]
+GREEN = "var(--ai-1)"          # default line accent (gold)
+AMBER = "var(--ai-4)"
+VIOLET = "var(--ai-3)"         # production series (deep gold)
+BLUE = "var(--ai-7)"
+MAGENTA = "var(--ai-4)"
+GRID = "var(--viz-grid)"
+AXIS = "var(--viz-text)"
 BAND_FILL = "rgba(212,175,55,.16)"
-DANGER = "#e5735f"
-WARN = "#e9d9a6"
-OK = "#d4af37"
+DANGER = "var(--danger)"
+WARN = "var(--ai-4)"
+OK = "var(--ai-1)"
+
+_TAG_RE = re.compile(r"<[a-zA-Z][^<>]*>")
+_ATTR_RE = re.compile(r'\s(fill|stroke|stop-color)="(var\([^"]*\))"')
+
+
+def _themed(svg):
+    """SVG presentation attributes can't hold var(); move them into style."""
+    def tag(m):
+        text = m.group(0)
+        found = _ATTR_RE.findall(text)
+        if not found:
+            return text
+        text = _ATTR_RE.sub("", text)
+        style = ";".join("%s:%s" % (k, v) for k, v in found)
+        end = "/>" if text.endswith("/>") else ">"
+        return text[: -len(end)].rstrip() + ' style="%s"%s' % (style, end)
+    return _TAG_RE.sub(tag, svg)
 
 PERIODS = 4          # forecast horizon (weeks)
 Z = 1.96             # 95% confidence
@@ -224,11 +244,20 @@ def kpis():
 _W = 640
 
 
+def _theme_output(fn):
+    """Decorator: run a chart builder's SVG through _themed()."""
+    def wrapper(*args, **kwargs):
+        return _themed(fn(*args, **kwargs))
+    wrapper.__name__ = fn.__name__
+    wrapper.__doc__ = fn.__doc__
+    return wrapper
+
+
 def _placeholder(height, msg="No data yet"):
     return (
         '<svg viewBox="0 0 %d %d" width="100%%" role="img" aria-label="%s" '
         'xmlns="http://www.w3.org/2000/svg">'
-        '<rect x="1" y="1" width="%d" height="%d" rx="10" fill="#141414" '
+        '<rect x="1" y="1" width="%d" height="%d" rx="10" fill="var(--surface)" '
         'stroke="%s"/>'
         '<text x="%d" y="%d" text-anchor="middle" fill="%s" font-size="14" '
         'font-family="Montserrat,Century Gothic,Segoe UI,sans-serif">%s</text></svg>'
@@ -251,6 +280,7 @@ def _axis_grid(x0, y0, x1, y1, vmax, vmin=0.0):
     return "".join(parts)
 
 
+@_theme_output
 def svg_line_chart(series, color=GREEN, label="", height=260):
     if not series:
         return _placeholder(height)
@@ -298,6 +328,7 @@ def svg_line_chart(series, color=GREEN, label="", height=260):
     )
 
 
+@_theme_output
 def svg_bar_chart(pairs, colors=None, height=260, value_suffix=""):
     if not pairs:
         return _placeholder(height)
@@ -347,6 +378,7 @@ def svg_bar_chart(pairs, colors=None, height=260, value_suffix=""):
     )
 
 
+@_theme_output
 def svg_forecast_chart(history, future_labels, forecast, lower, upper, height=280):
     combined = list(history) + list(zip(future_labels, forecast))
     if not combined:

@@ -15,7 +15,9 @@ date-formatted cells are converted from Excel serials to ``YYYY-MM-DD`` (or
 dates, serial dates and inline strings, so every variant is handled here rather
 than in the import code.
 """
+import csv
 import datetime
+import os
 import re
 import zipfile
 from xml.etree import ElementTree as ET
@@ -225,8 +227,39 @@ class _Workbook:
         return _clean_number(raw)
 
 
+# --- CSV (Shopify and most web shops export CSV, not Excel) ----------------
+def _is_csv(path):
+    return str(path).lower().endswith(".csv")
+
+
+def _csv_rows(path, max_rows=MAX_ROWS):
+    """A CSV file read like a one-sheet workbook (list of lists of strings)."""
+    for encoding in ("utf-8-sig", "cp1252"):
+        try:
+            with open(path, newline="", encoding=encoding) as handle:
+                sample = handle.read(4096)
+                handle.seek(0)
+                try:
+                    dialect = csv.Sniffer().sniff(sample, delimiters=",;\t")
+                except csv.Error:
+                    dialect = csv.excel
+                rows = []
+                for row in csv.reader(handle, dialect):
+                    rows.append([cell.strip() for cell in row])
+                    if len(rows) >= max_rows:
+                        break
+                return rows
+        except UnicodeDecodeError:
+            continue
+        except OSError as exc:
+            raise XlsxError("The file could not be read: %s" % exc)
+    raise XlsxError("The CSV file is not in a readable text encoding.")
+
+
 # --- Public helpers --------------------------------------------------------
 def sheet_names(path):
+    if _is_csv(path):
+        return [os.path.splitext(os.path.basename(path))[0]]
     wb = _Workbook(path)
     try:
         return [name for name, _ in wb.sheets]
@@ -236,6 +269,8 @@ def sheet_names(path):
 
 def read_sheet(path, sheet_index=0, max_rows=MAX_ROWS):
     """Return every row of one sheet as a list of lists of strings."""
+    if _is_csv(path):
+        return _csv_rows(path, max_rows=max_rows)
     wb = _Workbook(path)
     try:
         if not wb.sheets:

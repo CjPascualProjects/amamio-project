@@ -3,13 +3,13 @@
     "sales_order_id": 1,
     "customer_name": "Metro Grocers",
     "status": "Delivered",
-    "scheduled_date": "2026-10-13",
+    "scheduled_date": "2026-10-15",
     "driver": "Rey (Truck 1)",
-    "address": "SM North EDSA, Quezon City",
-    "delivered_at": "2026-10-14T13:50:28.617642+00:00",
+    "address": "Butuan City",
+    "delivered_at": "2026-10-16T05:39:37.626206+00:00",
     "confirmed_by_customer": true,
     "notes": "",
-    "created_by": 4,
+    "created_by": 5,
     "id": 1
   }
 ]

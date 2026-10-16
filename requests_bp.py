@@ -91,7 +91,8 @@ def new_production():
 
 
 @requests_bp.route("/new/material", methods=["GET", "POST"])
-@role_required("production_head", "assets_head", "packing_head")
+@role_required("production_head", "assets_head", "packing_head",
+               "receiving_head")
 def new_material():
     if request.method == "POST":
         category = request.form.get("category") or ""

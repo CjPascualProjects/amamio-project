@@ -1,0 +1,398 @@
+[
+  {
+    "batch_no": "BMR-2026-0001",
+    "product_id": 28,
+    "product_name": "Moringa Powder 100 g",
+    "batch_size": 12.0,
+    "production_date": "2026-10-06",
+    "expiry_date": "2027-10-06",
+    "start_at": "2026-10-06T08:00",
+    "end_at": "2026-10-06T16:30",
+    "theoretical_yield": 12.0,
+    "actual_yield": 12.0,
+    "test_date": "2026-10-07",
+    "test_result_date": "2026-10-09",
+    "disposition": "APPROVED",
+    "qa_name": "Amamio Admin",
+    "qa_date": "2026-10-09",
+    "remarks": "Passed QA — released for selling.",
+    "status": "Completed",
+    "stock_posted": true,
+    "dispensing": [
+      {
+        "material_id": 7,
+        "ingredient": "Moringa",
+        "lot_no": "MOR-1009",
+        "expiry_date": "",
+        "theoretical_qty": 7.2,
+        "unit": "kg",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin"
+      },
+      {
+        "material_id": 24,
+        "ingredient": "Matte Kraft Pouch (white) 13x21 cm",
+        "lot_no": "PCH-W-0412",
+        "expiry_date": "",
+        "theoretical_qty": 12.0,
+        "unit": "pc",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin"
+      }
+    ],
+    "steps": [
+      {
+        "process": "QUALITY INSPECTION",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:40.638051+00:00"
+      },
+      {
+        "process": "WASHING OF MORINGA LEAVES",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:40.667453+00:00"
+      },
+      {
+        "process": "DEHYDRATING MORINGA LEAVES",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:40.698870+00:00"
+      },
+      {
+        "process": "GRINDING",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:40.723012+00:00"
+      },
+      {
+        "process": "SIFTING",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:40.751857+00:00"
+      },
+      {
+        "process": "OVEN HEATING",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:40.777061+00:00"
+      },
+      {
+        "process": "PACKAGING",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:40.806899+00:00"
+      },
+      {
+        "process": "LABELING & MARKING",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:40.844342+00:00"
+      },
+      {
+        "process": "FINISHED PRODUCT",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:40.875048+00:00"
+      }
+    ],
+    "created_by": 4,
+    "created_at": "2026-10-06T08:30:00+00:00",
+    "completed_at": "2026-10-06T08:30:00+00:00",
+    "id": 1,
+    "yield_conducted_by": "Production Team Head",
+    "yield_checked_by": "Amamio Admin",
+    "test_conducted_by": "Production Team Head",
+    "test_checked_by": "Amamio Admin"
+  },
+  {
+    "batch_no": "BMR-2026-0002",
+    "product_id": 9,
+    "product_name": "Honey Lemon Ginger Concentrate 300 mL",
+    "batch_size": 24.0,
+    "production_date": "2026-10-10",
+    "expiry_date": "2027-10-10",
+    "start_at": "2026-10-10T08:00",
+    "end_at": "2026-10-10T16:30",
+    "theoretical_yield": 24.0,
+    "actual_yield": 24.0,
+    "test_date": "2026-10-11",
+    "test_result_date": "2026-10-13",
+    "disposition": "APPROVED",
+    "qa_name": "Amamio Admin",
+    "qa_date": "2026-10-13",
+    "remarks": "Passed QA — released for selling.",
+    "status": "Completed",
+    "stock_posted": true,
+    "dispensing": [
+      {
+        "material_id": 1,
+        "ingredient": "Raw Honey",
+        "lot_no": "RH-1003",
+        "expiry_date": "",
+        "theoretical_qty": 4.32,
+        "unit": "kg",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin"
+      },
+      {
+        "material_id": 2,
+        "ingredient": "Lemon",
+        "lot_no": "LEM-1016",
+        "expiry_date": "",
+        "theoretical_qty": 72.0,
+        "unit": "pc",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin"
+      },
+      {
+        "material_id": 3,
+        "ingredient": "Ginger",
+        "lot_no": "GIN-1004",
+        "expiry_date": "",
+        "theoretical_qty": 1.92,
+        "unit": "kg",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin"
+      },
+      {
+        "material_id": 17,
+        "ingredient": "Square Bottle 300 mL",
+        "lot_no": "SQB-0920",
+        "expiry_date": "",
+        "theoretical_qty": 24.0,
+        "unit": "pc",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin"
+      }
+    ],
+    "steps": [
+      {
+        "process": "QUALITY INSPECTION",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:41.521653+00:00"
+      },
+      {
+        "process": "WASHING OF RAW MATERIALS",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:41.551206+00:00"
+      },
+      {
+        "process": "PEELING & SLICING",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:41.586417+00:00"
+      },
+      {
+        "process": "EXTRACTION / JUICING",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:41.617664+00:00"
+      },
+      {
+        "process": "MIXING WITH HONEY",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:41.647603+00:00"
+      },
+      {
+        "process": "HEATING / PASTEURIZATION",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:41.675080+00:00"
+      },
+      {
+        "process": "COOLING",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:41.707844+00:00"
+      },
+      {
+        "process": "BOTTLE SANITATION",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:41.736307+00:00"
+      },
+      {
+        "process": "FILLING / BOTTLING",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:41.782078+00:00"
+      },
+      {
+        "process": "CAPPING & SEALING",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:41.813766+00:00"
+      },
+      {
+        "process": "LABELING & MARKING",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:41.843449+00:00"
+      },
+      {
+        "process": "FINISHED PRODUCT",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:41.874140+00:00"
+      }
+    ],
+    "created_by": 4,
+    "created_at": "2026-10-10T08:30:00+00:00",
+    "completed_at": "2026-10-10T08:30:00+00:00",
+    "id": 2,
+    "yield_conducted_by": "Production Team Head",
+    "yield_checked_by": "Amamio Admin",
+    "test_conducted_by": "Production Team Head",
+    "test_checked_by": "Amamio Admin"
+  },
+  {
+    "batch_no": "BMR-2026-0003",
+    "product_id": 18,
+    "product_name": "Pure Tableya 200 g",
+    "batch_size": 20.0,
+    "production_date": "2026-10-16",
+    "expiry_date": "2027-10-16",
+    "start_at": "2026-10-16T08:00",
+    "end_at": "",
+    "theoretical_yield": 20.0,
+    "actual_yield": null,
+    "test_date": "",
+    "test_result_date": "",
+    "disposition": "",
+    "qa_name": "",
+    "qa_date": "",
+    "remarks": "",
+    "status": "In Progress",
+    "stock_posted": false,
+    "dispensing": [
+      {
+        "material_id": 6,
+        "ingredient": "Cacao Beans",
+        "lot_no": "CAC-0930",
+        "expiry_date": "",
+        "theoretical_qty": 5.0,
+        "unit": "kg",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin"
+      },
+      {
+        "material_id": 28,
+        "ingredient": "Cookie Pouch 5.5x8.5 cm",
+        "lot_no": "",
+        "expiry_date": "",
+        "theoretical_qty": 20.0,
+        "unit": "pc",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin"
+      }
+    ],
+    "steps": [
+      {
+        "process": "QUALITY INSPECTION OF CACAO BEANS",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:42.739994+00:00"
+      },
+      {
+        "process": "SORTING",
+        "conducted_by": "Production Team Head",
+        "checked_by": "Amamio Admin",
+        "done": true,
+        "done_at": "2026-10-16T05:39:42.771402+00:00"
+      },
+      {
+        "process": "ROASTING",
+        "conducted_by": "",
+        "checked_by": "",
+        "done": false,
+        "done_at": ""
+      },
+      {
+        "process": "COOLING",
+        "conducted_by": "",
+        "checked_by": "",
+        "done": false,
+        "done_at": ""
+      },
+      {
+        "process": "WINNOWING (DEHULLING)",
+        "conducted_by": "",
+        "checked_by": "",
+        "done": false,
+        "done_at": ""
+      },
+      {
+        "process": "GRINDING",
+        "conducted_by": "",
+        "checked_by": "",
+        "done": false,
+        "done_at": ""
+      },
+      {
+        "process": "MOLDING",
+        "conducted_by": "",
+        "checked_by": "",
+        "done": false,
+        "done_at": ""
+      },
+      {
+        "process": "COOLING & SETTING",
+        "conducted_by": "",
+        "checked_by": "",
+        "done": false,
+        "done_at": ""
+      },
+      {
+        "process": "PACKAGING",
+        "conducted_by": "",
+        "checked_by": "",
+        "done": false,
+        "done_at": ""
+      },
+      {
+        "process": "LABELING & MARKING",
+        "conducted_by": "",
+        "checked_by": "",
+        "done": false,
+        "done_at": ""
+      },
+      {
+        "process": "FINISHED PRODUCT",
+        "conducted_by": "",
+        "checked_by": "",
+        "done": false,
+        "done_at": ""
+      }
+    ],
+    "created_by": 4,
+    "created_at": "2026-10-15T16:00:00+00:00",
+    "completed_at": "",
+    "id": 3
+  }
+]

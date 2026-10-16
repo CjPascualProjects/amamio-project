@@ -71,9 +71,9 @@
     <div class="card-title">Top products by demand</div>
     <div class="chart">{{ charts.top_products | safe }}</div>
     <div class="chart-legend">
-      <span><i class="dot" style="background:#d4af37"></i> High demand</span>
-      <span><i class="dot" style="background:#e9d9a6"></i> Medium</span>
-      <span><i class="dot" style="background:#e5735f"></i> Low demand</span>
+      <span><i class="dot" style="background:var(--ai-1)"></i> High demand</span>
+      <span><i class="dot" style="background:var(--ai-4)"></i> Medium</span>
+      <span><i class="dot" style="background:var(--danger)"></i> Low demand</span>
     </div>
   </div>
 </div>
@@ -83,9 +83,9 @@
     <div class="card-title">Material stock <span class="muted" style="font-weight:400">— by stock level</span></div>
     <div class="chart">{{ charts.materials | safe }}</div>
     <div class="chart-legend">
-      <span><i class="dot" style="background:#e5735f"></i> At/below reorder</span>
-      <span><i class="dot" style="background:#e9d9a6"></i> Getting low</span>
-      <span><i class="dot" style="background:#d4af37"></i> Healthy</span>
+      <span><i class="dot" style="background:var(--danger)"></i> At/below reorder</span>
+      <span><i class="dot" style="background:var(--ai-4)"></i> Getting low</span>
+      <span><i class="dot" style="background:var(--ai-1)"></i> Healthy</span>
     </div>
   </div>
   <div class="card">

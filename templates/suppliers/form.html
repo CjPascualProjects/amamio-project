@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }}{% endblock %}
+{% block content %}
+{% if supplier and supplier.id %}
+<a class="back-link" href="{{ url_for('suppliers.detail', supplier_id=supplier.id) }}">{{ icon('arrow-left', 15) }} {{ supplier.name }}</a>
+{% else %}
+<a class="back-link" href="{{ url_for('suppliers.index') }}">{{ icon('arrow-left', 15) }} Supplier Directory</a>
+{% endif %}
+
+<form method="post" class="wizard" data-wizard data-wizard-start="{{ start }}" id="supForm"
+      data-submit-label="{{ submit_label }}"
+      data-cancel="{{ url_for('suppliers.detail', supplier_id=supplier.id) if supplier and supplier.id else url_for('suppliers.index') }}">
+
+  <section class="wz-step" data-title="{{ 'Who is the supplier?' if not (supplier and supplier.id) else 'Name and category' }}"
+           data-hint="The store or company name as it appears on the receipt, and where it is filed in the directory.">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="name">Supplier name <span class="req">*</span></label>
+        <input type="text" id="name" name="name" maxlength="120" required value="{{ f.name or '' }}"
+               placeholder="e.g. Davao CVI">
+      </div>
+      <div class="form-row">
+        <div class="form-label">Filed under <span class="req">*</span></div>
+        <div class="chip-choices" data-review-label="Filed under">
+          {% for c in categories %}
+          <label class="chip-choice" title="{{ hints[c] }}"><input type="radio" name="category" value="{{ c }}" required {{ 'checked' if category == c }}><span>{{ c }}</span></label>
+          {% endfor %}
+        </div>
+        <div class="form-hint" id="catHint">{{ hints[category] if category in hints else 'Raw · Production · Packing · Office' }}</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="What do you buy from them?"
+           data-hint="List the items, sizes included — this is the ITEMS column of the directory. You can skip it and fill it in later.">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="materials_supplied">Items supplied</label>
+        <textarea id="materials_supplied" name="materials_supplied" rows="3" maxlength="1000"
+                  placeholder="e.g. 300 ml plastic jar, brown matte pouch 18x25 cm">{{ f.materials_supplied or '' }}</textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="How do you reach them?"
+           data-hint="Everything here is optional — fill in what you have.">
+    <div class="wz-body">
+      <div class="form-grid cols-2">
+        <div class="form-row">
+          <label class="form-label" for="tin">TIN</label>
+          <input type="text" id="tin" name="tin" maxlength="30" value="{{ f.tin or '' }}" placeholder="000-000-000-00000" inputmode="numeric">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="contact_person">Contact person</label>
+          <input type="text" id="contact_person" name="contact_person" maxlength="120" value="{{ f.contact_person or '' }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="phone">Phone</label>
+          <input type="text" inputmode="tel" id="phone" name="phone" maxlength="40" value="{{ f.phone or '' }}" placeholder="09xx-xxx-xxxx">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="email">Email</label>
+          <input type="email" id="email" name="email" maxlength="120" value="{{ f.email or '' }}">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="address">Address</label>
+        <input type="text" id="address" name="address" maxlength="300" value="{{ f.address or '' }}" placeholder="e.g. Cagayan de Oro City">
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Where do you buy?"
+           data-hint="Online shop, direct from the supplier, or somewhere else.">
+    <div class="wz-body">
+      <div class="form-row">
+        <div class="form-label">Buy from</div>
+        <div class="chip-choices" data-review-label="Buy from">
+          {% for b in buy_options %}
+          <label class="chip-choice"><input type="radio" name="buy_from" value="{{ b }}" {{ 'checked' if buy_chip == b }}><span>{{ b }}</span></label>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="form-row" id="otherRow">
+        <label class="form-label" for="buy_from_other">Where? <span class="req">*</span></label>
+        <input type="text" id="buy_from_other" name="buy_from_other" maxlength="80" required value="{{ buy_other }}"
+               placeholder="e.g. CDO, Facebook page, walk-in store">
+      </div>
+      <div class="form-grid cols-2">
+        <div class="form-row">
+          <label class="form-label" for="lead_time_days">Usual lead time</label>
+          <div class="big-field">
+            <input type="number" id="lead_time_days" name="lead_time_days" min="0" max="365" step="1" inputmode="numeric"
+                   value="{{ f.lead_time_days if f.lead_time_days not in (none, '') else '' }}" style="font-size:1.1rem;padding:10px 14px">
+            <span class="unit">days</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="notes">Notes</label>
+          <input type="text" id="notes" name="notes" maxlength="500" value="{{ f.notes or '' }}" placeholder="Optional">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Check and save" data-review>
+    <div class="wz-body"></div>
+  </section>
+</form>
+
+<script>
+(function () {
+  var form = document.getElementById("supForm");
+  var hints = {{ hints|tojson }};
+  var row = document.getElementById("otherRow"), other = document.getElementById("buy_from_other");
+  function sync() {
+    var b = form.querySelector('[name="buy_from"]:checked');
+    var on = !!b && b.value === "Other";
+    row.style.display = on ? "" : "none";
+    other.disabled = !on;
+    var c = form.querySelector('[name="category"]:checked');
+    if (c) document.getElementById("catHint").textContent = hints[c.value] || "";
+  }
+  form.addEventListener("change", sync);
+  sync();
+})();
+</script>
+{% endblock %}

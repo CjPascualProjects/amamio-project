@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Supplies IN / OUT log{% endblock %}
+{% block content %}
+<div class="focus">
+<a class="back-link" href="{{ url_for('supplies.index', cat=cat or none) }}">{{ icon('arrow-left', 15) }} Supplies In / Out</a>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Every IN / OUT</h1>
+    <p class="page-sub">Supplies taken in or issued out, newest first.</p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-primary" href="{{ url_for('supplies.move', category=cat or none) }}">{{ icon('swap', 16) }} Record IN / OUT</a>
+  </div>
+</div>
+
+<nav class="tabs">
+  <a href="{{ url_for('supplies.movements') }}" class="{{ 'is-active' if not cat }}">All</a>
+  {% for key, label in categories %}
+  <a href="{{ url_for('supplies.movements', cat=key) }}" class="{{ 'is-active' if key == cat }}">{{ label }}</a>
+  {% endfor %}
+</nav>
+
+{% if moves %}
+<div class="queue">
+  {% for mv in moves %}
+  <a class="queue-item" href="{{ url_for('supplies.item', material_id=mv.material_id) }}">
+    <span class="badge {{ 'badge-gold' if mv.direction == 'IN' else 'badge-muted' }}" style="min-width:44px;text-align:center">{{ mv.direction }}</span>
+    <span class="queue-main">
+      <span class="queue-title">{{ mv.qty|qty(mv.unit) }} · {{ mv.material_name }}</span>
+      <span class="queue-sub">{{ mv.reason }}{% if mv.person %} · {{ mv.person }}{% endif %}{% if mv.reference %} · {{ mv.reference }}{% endif %}</span>
+    </span>
+    <span class="muted small nowrap">{{ mv.when }}</span>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card"><div class="empty">
+  <div class="empty-icon">{{ icon('swap', 30) }}</div>
+  <div class="empty-title">Nothing recorded yet</div>
+  <p class="muted">Record every delivery taken in and everything issued out.</p>
+</div></div>
+{% endif %}
+</div>
+{% endblock %}

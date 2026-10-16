@@ -1,0 +1,313 @@
+[
+  {
+    "period": "2026-09",
+    "category": "packaging",
+    "counted_by": 8,
+    "counted_at": "2026-10-01T01:30:00+00:00",
+    "notes": "Counted at the packing area storage.",
+    "adjusted": false,
+    "lines": [
+      {
+        "material_id": 13,
+        "name": "Hexagonal Jar 100 mL",
+        "unit": "pc",
+        "system_qty": 320.0,
+        "physical_qty": 320.0,
+        "variance": 0.0,
+        "id": 1,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 14,
+        "name": "Square Jar 200 mL",
+        "unit": "pc",
+        "system_qty": 240.0,
+        "physical_qty": 240.0,
+        "variance": 0.0,
+        "id": 2,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 15,
+        "name": "Round Jar 240 mL",
+        "unit": "pc",
+        "system_qty": 180.0,
+        "physical_qty": 180.0,
+        "variance": 0.0,
+        "id": 3,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 16,
+        "name": "Hexagonal Jar 250 mL",
+        "unit": "pc",
+        "system_qty": 290.0,
+        "physical_qty": 287.0,
+        "variance": -3.0,
+        "id": 4,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 17,
+        "name": "Square Bottle 300 mL",
+        "unit": "pc",
+        "system_qty": 633.0,
+        "physical_qty": 631.0,
+        "variance": -2.0,
+        "id": 5,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 18,
+        "name": "Hexagonal Jar 500 mL",
+        "unit": "pc",
+        "system_qty": 150.0,
+        "physical_qty": 150.0,
+        "variance": 0.0,
+        "id": 6,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 19,
+        "name": "Round Bottle 1 Liter",
+        "unit": "pc",
+        "system_qty": 143.0,
+        "physical_qty": 143.0,
+        "variance": 0.0,
+        "id": 7,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 20,
+        "name": "Empty Gallon 3.7 Liter",
+        "unit": "pc",
+        "system_qty": 25.0,
+        "physical_qty": 25.0,
+        "variance": 0.0,
+        "id": 8,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 21,
+        "name": "Uriel Bottle 60 mL",
+        "unit": "pc",
+        "system_qty": 140.0,
+        "physical_qty": 140.0,
+        "variance": 0.0,
+        "id": 9,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 22,
+        "name": "Square Jar 150 g (C.C)",
+        "unit": "pc",
+        "system_qty": 110.0,
+        "physical_qty": 110.0,
+        "variance": 0.0,
+        "id": 10,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 23,
+        "name": "Banana Chips Jar 440 mL",
+        "unit": "pc",
+        "system_qty": 90.0,
+        "physical_qty": 90.0,
+        "variance": 0.0,
+        "id": 11,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 24,
+        "name": "Matte Kraft Pouch (white) 13x21 cm",
+        "unit": "pc",
+        "system_qty": 800.0,
+        "physical_qty": 800.0,
+        "variance": 0.0,
+        "id": 12,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 25,
+        "name": "Matte Kraft Pouch (brown) 17x24 cm",
+        "unit": "pc",
+        "system_qty": 482.0,
+        "physical_qty": 482.0,
+        "variance": 0.0,
+        "id": 13,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 26,
+        "name": "Cacao Powder Pouch (black) 15x22 cm",
+        "unit": "pc",
+        "system_qty": 314.0,
+        "physical_qty": 314.0,
+        "variance": 0.0,
+        "id": 14,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 27,
+        "name": "Lip Balm Tube 5 mL",
+        "unit": "pc",
+        "system_qty": 200.0,
+        "physical_qty": 200.0,
+        "variance": 0.0,
+        "id": 15,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 28,
+        "name": "Cookie Pouch 5.5x8.5 cm",
+        "unit": "pc",
+        "system_qty": 651.0,
+        "physical_qty": 641.0,
+        "variance": -10.0,
+        "id": 16,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 29,
+        "name": "48 mm Seal (100 mL)",
+        "unit": "pc",
+        "system_qty": 400.0,
+        "physical_qty": 400.0,
+        "variance": 0.0,
+        "id": 17,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 30,
+        "name": "58 mm Seal (200 mL)",
+        "unit": "pc",
+        "system_qty": 300.0,
+        "physical_qty": 300.0,
+        "variance": 0.0,
+        "id": 18,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 31,
+        "name": "63 mm Seal (250 mL)",
+        "unit": "pc",
+        "system_qty": 470.0,
+        "physical_qty": 470.0,
+        "variance": 0.0,
+        "id": 19,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 32,
+        "name": "70 mm Seal (500 mL)",
+        "unit": "pc",
+        "system_qty": 180.0,
+        "physical_qty": 180.0,
+        "variance": 0.0,
+        "id": 20,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 33,
+        "name": "Lip Balm Seal",
+        "unit": "pc",
+        "system_qty": 220.0,
+        "physical_qty": 220.0,
+        "variance": 0.0,
+        "id": 21,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 34,
+        "name": "Uriel Seal 85 mL",
+        "unit": "pc",
+        "system_qty": 160.0,
+        "physical_qty": 160.0,
+        "variance": 0.0,
+        "id": 22,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 35,
+        "name": "Bubble Wrap",
+        "unit": "roll",
+        "system_qty": 6.0,
+        "physical_qty": 6.0,
+        "variance": 0.0,
+        "id": 23,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 36,
+        "name": "Packaging Tape",
+        "unit": "roll",
+        "system_qty": 24.0,
+        "physical_qty": 25.0,
+        "variance": 1.0,
+        "id": 24,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 37,
+        "name": "Stretch Film",
+        "unit": "roll",
+        "system_qty": 5.0,
+        "physical_qty": 5.0,
+        "variance": 0.0,
+        "id": 25,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 38,
+        "name": "Fragile Tape",
+        "unit": "roll",
+        "system_qty": 10.0,
+        "physical_qty": 10.0,
+        "variance": 0.0,
+        "id": 26,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 39,
+        "name": "Corrugated Box (HLGC)",
+        "unit": "pc",
+        "system_qty": 120.0,
+        "physical_qty": 120.0,
+        "variance": 0.0,
+        "id": 27,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 40,
+        "name": "Small Box",
+        "unit": "pc",
+        "system_qty": 150.0,
+        "physical_qty": 150.0,
+        "variance": 0.0,
+        "id": 28,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 41,
+        "name": "Medium Box",
+        "unit": "pc",
+        "system_qty": 90.0,
+        "physical_qty": 90.0,
+        "variance": 0.0,
+        "id": 29,
+        "month_end_count_id": 1
+      },
+      {
+        "material_id": 42,
+        "name": "Used Carton",
+        "unit": "pc",
+        "system_qty": 40.0,
+        "physical_qty": 40.0,
+        "variance": 0.0,
+        "id": 30,
+        "month_end_count_id": 1
+      }
+    ],
+    "id": 1
+  }
+]

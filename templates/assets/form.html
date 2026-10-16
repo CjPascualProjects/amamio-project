@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit ' ~ asset.name if asset else 'Add equipment' }}{% endblock %}
+{% block content %}
+{% set back = url_for('assets.detail', asset_id=asset.id) if asset else url_for('assets.index') %}
+<a class="back-link" href="{{ back }}">{{ icon('arrow-left', 15) }} {{ asset.name if asset else 'Equipment & Assets' }}</a>
+
+<form method="post" class="wizard" id="assetForm" data-wizard data-cancel="{{ back }}"
+      data-submit-label="{{ 'Save changes' if asset else 'Add to the register' }}">
+
+  <section class="wz-step" data-title="{{ 'What is it?' if not asset else 'Basic details' }}"
+           data-hint="{{ 'It will be listed as ' ~ next_no ~ ' on the Inventory of Assets.' if not asset else next_no ~ ' — quantity changes through Record IN / OUT so every change is on record.' }}">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="name">Equipment name <span class="req">*</span></label>
+        <input type="text" id="name" name="name" maxlength="120" required value="{{ form.get('name') or '' }}" placeholder="e.g. Heat Gun">
+      </div>
+      <div class="form-grid cols-2">
+        <div class="form-row">
+          <label class="form-label" for="category">Category <span class="req">*</span></label>
+          <select id="category" name="category" required data-review-label="Category">
+            <option value="">Choose…</option>
+            {% for c in categories %}<option {{ 'selected' if form.get('category') == c }}>{{ c }}</option>{% endfor %}
+            <option value="__new__" {{ 'selected' if form.get('category') == '__new__' }}>+ New category…</option>
+          </select>
+        </div>
+        <div class="form-row" id="newCatRow" style="display:none">
+          <label class="form-label" for="new_category">New category name <span class="req">*</span></label>
+          <input type="text" id="new_category" name="new_category" maxlength="80" value="{{ form.get('new_category') or '' }}" placeholder="e.g. Weighing Scale">
+        </div>
+      </div>
+      <div class="form-grid cols-2">
+        {% if not asset %}
+        <div class="form-row">
+          <label class="form-label" for="quantity">Quantity <span class="req">*</span></label>
+          <div class="big-field">
+            <input type="number" id="quantity" name="quantity" min="1" step="1" required inputmode="numeric" value="{{ form.get('quantity') or 1 }}">
+            <span class="unit">pcs</span>
+          </div>
+        </div>
+        {% endif %}
+        <div class="form-row">
+          <label class="form-label" for="unit">Unit / pcs</label>
+          <input type="text" id="unit" name="unit" maxlength="20" value="{{ form.get('unit') or 'unit' }}" placeholder="unit, pc, set">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-label">Condition <span class="req">*</span></div>
+        <div class="chip-choices" data-review-label="Condition">
+          {% for c in conditions %}
+          <label class="chip-choice"><input type="radio" name="condition" value="{{ c }}" required {{ 'checked' if (form.get('condition') or 'Serviceable') == c }}><span>{{ c }}</span></label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="More details"
+           data-hint="As on the Equipment Maintenance Log header. Fill in what you know — you can skip this step.">
+    <div class="wz-body">
+      <div class="form-grid cols-2">
+        <div class="form-row"><label class="form-label" for="serial_number">Serial number</label>
+          <input type="text" id="serial_number" name="serial_number" maxlength="60" value="{{ form.get('serial_number') or '' }}"></div>
+        <div class="form-row"><label class="form-label" for="model">Model</label>
+          <input type="text" id="model" name="model" maxlength="60" value="{{ form.get('model') or '' }}"></div>
+        <div class="form-row"><label class="form-label" for="manufacturer">Manufacturer</label>
+          <input type="text" id="manufacturer" name="manufacturer" maxlength="120" value="{{ form.get('manufacturer') or '' }}"></div>
+        <div class="form-row"><label class="form-label" for="date_of_purchase">Date of purchase</label>
+          <input type="date" id="date_of_purchase" name="date_of_purchase" max="{{ today }}" value="{{ form.get('date_of_purchase') or '' }}"></div>
+        <div class="form-row"><label class="form-label" for="location">Location</label>
+          <input type="text" id="location" name="location" maxlength="120" value="{{ form.get('location') or '' }}" placeholder="e.g. Production Area"></div>
+        <div class="form-row"><label class="form-label" for="contact_details">Contact details (supplier / service)</label>
+          <input type="text" id="contact_details" name="contact_details" maxlength="160" value="{{ form.get('contact_details') or '' }}"></div>
+        <div class="form-row"><label class="form-label" for="cost_per_item">Cost per item (₱)</label>
+          <input type="number" id="cost_per_item" name="cost_per_item" min="0" step="0.01" value="{{ form.get('cost_per_item') if form.get('cost_per_item') not in (none, '') else '' }}"></div>
+        <div class="form-row"><label class="form-label" for="years_in_use">No. of years</label>
+          <input type="number" id="years_in_use" name="years_in_use" min="0" step="0.5" value="{{ form.get('years_in_use') if form.get('years_in_use') not in (none, '') else '' }}"></div>
+      </div>
+      <div class="form-row"><label class="form-label" for="remarks">Remarks</label>
+        <input type="text" id="remarks" name="remarks" maxlength="300" value="{{ form.get('remarks') or '' }}" placeholder="e.g. Good condition"></div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Check and save" data-review>
+    <div class="wz-body"></div>
+  </section>
+</form>
+
+<script>
+(function () {
+  var sel = document.getElementById("category");
+  var row = document.getElementById("newCatRow");
+  var input = document.getElementById("new_category");
+  function sync() {
+    var on = sel.value === "__new__";
+    row.style.display = on ? "" : "none";
+    input.disabled = !on;
+    input.required = on;
+  }
+  sel.addEventListener("change", sync);
+  sync();
+})();
+</script>
+{% endblock %}

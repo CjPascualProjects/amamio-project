@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ c.container_code }}{% endblock %}
+{% block content %}
+<div class="focus">
+<a class="back-link" href="{{ url_for('honey.index') }}">{{ icon('arrow-left', 15) }} Honey Containers</a>
+
+<div class="record-head">
+  <div class="qr-inline">
+    <img src="{{ url_for('qr.image', token=c.container_code) }}" alt="QR code {{ c.container_code }}">
+    <div>
+      <div class="record-code">{{ c.container_code }}</div>
+      <h1 class="record-title">Honey — {{ c.net_weight_kg|qty('kg') }}</h1>
+      <div class="muted small">{{ c.supplier_name or c.source }} · {{ c.batch_ref }} · received {{ c.received_date }}</div>
+    </div>
+  </div>
+  <span class="badge {{ c.badge }}">{{ {'Pass': 'PASS', 'Failed': 'FAILED'}.get(c.status, c.status) }}</span>
+</div>
+
+<div class="track mb">
+  {% for label, state in track %}<span class="track-step is-{{ state }}">{{ label }}</span>{% endfor %}
+</div>
+
+{% if c.status == 'Pending QC' %}
+  <div class="next-action">
+    <div class="next-action-text"><b>Next: check moisture &amp; appearance</b><span>The result decides where this honey goes.</span></div>
+    <a class="btn btn-primary" href="{{ url_for('honey.qc', container_id=c.id) }}">Check this container</a>
+  </div>
+{% else %}
+  <div class="figures mb">
+    <div class="figure"><div class="figure-label">Moisture</div><div class="figure-value">{{ c.moisture_pct }}<small>%</small></div></div>
+    <div class="figure"><div class="figure-label">Appearance</div><div class="figure-value" style="font-size:1rem">{{ c.appearance }}</div></div>
+    <div class="figure {{ 'is-good' if c.status == 'Pass' else 'is-bad' }}"><div class="figure-label">Routed to</div><div class="figure-value" style="font-size:1rem">{{ c.disposition }}</div></div>
+    <div class="figure"><div class="figure-label">Not yet used</div><div class="figure-value">{{ c.remaining_kg|qty }}<small>kg</small></div></div>
+  </div>
+
+  {% if c.remaining_kg > 0 %}
+  <form method="post" action="{{ url_for('honey.allocate', container_id=c.id) }}" class="card mb">
+    <div class="card-title">Send honey to a product
+      <span class="muted">— {{ 'PASSED' if c.status == 'Pass' else 'FAILED' }} honey goes to these</span></div>
+    <div class="chip-choices mb">
+      {% for p in products %}
+      <label class="chip-choice"><input type="radio" name="product" value="{{ p }}" required {{ 'checked' if products|length == 1 }}><span>{{ p }}</span></label>
+      {% endfor %}
+    </div>
+    <div class="form-row" style="max-width:320px">
+      <label class="form-label" for="kg">How much was used?</label>
+      <div class="big-field">
+        <input type="number" id="kg" name="kg" step="0.01" min="0.01" max="{{ c.remaining_kg }}" required value="{{ '%g'|format(c.remaining_kg) }}" inputmode="decimal">
+        <span class="unit">kg</span>
+      </div>
+    </div>
+    <button class="btn btn-primary" type="submit">Save</button>
+  </form>
+  {% endif %}
+
+  {% if c.allocations %}
+  <div class="section-label">Used in</div>
+  <div class="queue mb">
+    {% for a in c.allocations %}
+    <div class="queue-item">
+      <span class="queue-main"><span class="queue-title">{{ a.product }}</span><span class="queue-sub">{{ a.at }} · {{ a.by }}</span></span>
+      <b>{{ a.kg|qty('kg') }}</b>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="card-title">Quality check</div>
+    <dl class="review-list">
+      <dt>Result</dt><dd>{{ 'PASS' if c.status == 'Pass' else 'FAILED' }}</dd>
+      <dt>Checked by</dt><dd>{{ c.qc_by }} · {{ c.qc_at }}</dd>
+      {% if c.qc_notes %}<dt>Notes</dt><dd>{{ c.qc_notes }}</dd>{% endif %}
+      {% if c.harvest_date %}<dt>Harvested</dt><dd>{{ c.harvest_date }}</dd>{% endif %}
+      {% if c.gross_weight_kg %}<dt>Gross / tare</dt><dd>{{ c.gross_weight_kg|qty('kg') }} / {{ c.tare_weight_kg|qty('kg') }}</dd>{% endif %}
+      <dt>QR code carries</dt><dd class="small" style="font-weight:500">{{ qr_text }}</dd>
+    </dl>
+  </div>
+{% endif %}
+</div>
+{% endblock %}

@@ -1,107 +1,52 @@
 {% extends "base.html" %}
-{% block title %}Receiving area{% endblock %}
+{% block title %}Receiving Area{% endblock %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1 class="page-title">Receiving area</h1>
-    <p class="page-sub">
-      Every delivery is opened as a batch, logged box by box and counted for
-      good and damaged stock before anything joins inventory.
-    </p>
+    <h1 class="page-title">Receiving Area</h1>
+    <p class="page-sub">Every delivery that arrives at the production site, box by box.</p>
   </div>
   <div class="page-head-actions">
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('receiving.damage') }}">Damage log</a>
-    <a class="btn btn-primary btn-sm" href="{{ url_for('receiving.new') }}">Open a batch</a>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('receiving.report') }}">{{ icon('reports', 15) }} Inspection report</a>
+    <a class="btn btn-primary" href="{{ url_for('receiving.new') }}">{{ icon('plus', 16) }} Receive a delivery</a>
   </div>
 </div>
 
-<div class="stat-grid mb">
-  <div class="stat-card is-primary">
-    <div class="stat-top"><span class="stat-label">Open batches</span></div>
-    <div class="stat-value">{{ stats.open_batches }}</div>
-    <div class="stat-caption">Deliveries still being counted</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-top"><span class="stat-label">Boxes to check</span></div>
-    <div class="stat-value" {% if stats.pending_boxes %}style="color:var(--warn)"{% endif %}>{{ stats.pending_boxes }}</div>
-    <div class="stat-caption">Awaiting a good / damaged count</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-top"><span class="stat-label">Logged today</span></div>
-    <div class="stat-value">{{ stats.boxes_today }}</div>
-    <div class="stat-caption">Boxes registered on {{ ''|safe }}today's date</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-top"><span class="stat-label">Damaged total</span></div>
-    <div class="stat-value" {% if stats.damaged_total %}style="color:var(--danger)"{% endif %}>{{ stats.damaged_total }}</div>
-    <div class="stat-caption">Counted across every box</div>
+<div class="figures mb">
+  <div class="figure"><div class="figure-label">Deliveries still open</div><div class="figure-value">{{ stats.open }}</div></div>
+  <div class="figure {{ 'is-good' if stats.awaiting }}"><div class="figure-label">Boxes awaiting inspection</div><div class="figure-value">{{ stats.awaiting }}</div></div>
+  <div class="figure"><div class="figure-label">Received today</div><div class="figure-value">{{ stats.today }}</div></div>
+</div>
+
+<div class="toolbar">
+  <div class="seg">
+    <a href="{{ url_for('receiving.index', show='open') }}" class="{{ 'is-active' if show == 'open' }}">Open</a>
+    <a href="{{ url_for('receiving.index', show='all') }}" class="{{ 'is-active' if show != 'open' }}">All deliveries</a>
   </div>
 </div>
 
-<div class="card mb">
-  <div class="card-title">Receiving batches</div>
-  {% if batches %}
-  <div class="table-wrap">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Reference</th><th class="wrap-sm">Supplier</th><th>Delivery ref</th>
-          <th>Received</th><th>Checked by</th><th class="num">Boxes</th>
-          <th class="num">Good</th><th class="num">Damaged</th>
-          <th>Status</th><th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for b in batches %}
-        <tr>
-          <td><span class="code">{{ b.ref_no }}</span></td>
-          <td class="wrap-sm">{{ b.supplier_name }}</td>
-          <td class="muted">{{ b.delivery_ref or '—' }}</td>
-          <td>{{ b.received_date }}</td>
-          <td class="muted">{{ b.received_by }}</td>
-          <td class="num">{{ b.box_count }}</td>
-          <td class="num">{{ '%g'|format(b.total_good|float) }}</td>
-          <td class="num">{{ '%g'|format(b.total_damaged|float) }}</td>
-          <td><span class="badge {{ b.badge }}">{{ b.status }}</span></td>
-          <td><a class="btn btn-sm btn-ghost" href="{{ url_for('receiving.batch', batch_id=b.id) }}">Open</a></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% else %}
-  <div class="empty">
-    <div class="empty-icon">{{ icon('receiving', 30) }}</div>
-    <div class="empty-title">No deliveries logged yet</div>
-    <p class="muted">Open a batch when the next delivery arrives at the gate.</p>
-    <a class="btn btn-primary btn-sm mt" href="{{ url_for('receiving.new') }}">Open a batch</a>
-  </div>
-  {% endif %}
+{% if batches %}
+<div class="queue">
+  {% for b in batches %}
+  <a class="queue-item" href="{{ url_for('receiving.batch', batch_id=b.id) }}">
+    <span class="task-icon" style="width:40px;height:40px">{{ icon('receiving', 18) }}</span>
+    <span class="queue-main">
+      <span class="queue-title">{{ b.supplier_name }}</span>
+      <span class="queue-sub">
+        <span class="code">{{ b.ref_no }}</span> · {{ b.received_date }} · {{ b.box_count }} box(es)
+        {% if b.delivery_ref %} · DR {{ b.delivery_ref }}{% endif %}
+      </span>
+    </span>
+    <span class="badge {{ b.badge }}">{{ 'Awaiting inspection' if b.status == 'Open' else b.status }}</span>
+  </a>
+  {% endfor %}
 </div>
-
-{% if recent_boxes %}
-<div class="card">
-  <div class="card-title">Where the boxes are now</div>
-  <div class="tile-grid">
-    {% for box in recent_boxes %}
-    <div class="tile {{ 'is-pending' if box.status == 'Pending Check' else ('is-bad' if box.damaged_qty else 'is-ok') }}">
-      <div class="tile-code">{{ box.box_code }}</div>
-      <div class="tile-name">{{ box.material_name }}</div>
-      <div class="tile-meta">
-        {% if box.status == 'Pending Check' %}
-          Declared {{ '%g'|format(box.declared_qty|float) }} {{ box.unit }} · not yet counted
-        {% else %}
-          {{ '%g'|format(box.good_qty|float) }} {{ box.unit }} good
-          {% if box.damaged_qty %} · {{ '%g'|format(box.damaged_qty|float) }} damaged{% endif %}
-        {% endif %}
-      </div>
-      <div class="tile-foot">
-        <span class="badge {{ box.badge }}">{{ box.stage }}</span>
-        <a class="small" href="{{ url_for('receiving.batch', batch_id=box.batch_id) }}">{{ box.batch_ref }}</a>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-</div>
+{% else %}
+<div class="card"><div class="empty">
+  <div class="empty-icon">{{ icon('receiving', 30) }}</div>
+  <div class="empty-title">{{ 'No open deliveries' if show == 'open' else 'No deliveries yet' }}</div>
+  <p class="muted">When a delivery arrives, record it here and print a QR label for each box.</p>
+  <a class="btn btn-primary mt" href="{{ url_for('receiving.new') }}">Receive a delivery</a>
+</div></div>
 {% endif %}
 {% endblock %}

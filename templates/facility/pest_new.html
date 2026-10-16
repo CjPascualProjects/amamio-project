@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Pest control inspection{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('facility.pest') }}">{{ icon('arrow-left', 15) }} Pest Control</a>
+
+<form method="post" class="wizard" data-wizard data-wizard-start="{{ start }}" id="pestForm"
+      data-submit-label="Save inspection" data-cancel="{{ url_for('facility.pest') }}">
+
+  <section class="wz-step" data-title="Which month?"
+           data-hint="Pest control is done once a month. Enter the month and the day you walked the areas.">
+    <div class="wz-body">
+      <div class="form-grid cols-2">
+        <div class="form-row">
+          <label class="form-label" for="period">Month <span class="req">*</span></label>
+          <input type="month" id="period" name="period" required max="{{ this_month }}"
+                 value="{{ form.period or period }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="record_date">Date of monitoring <span class="req">*</span></label>
+          <input type="date" id="record_date" name="record_date" required max="{{ today }}"
+                 value="{{ form.record_date or default_date }}">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% for area in areas %}
+  {% set i = loop.index0 %}
+  {% set seen = form.get('pest_%d' % i) %}
+  <section class="wz-step" data-title="{{ area }}" data-area="{{ i }}"
+           data-hint="Area {{ loop.index }} of {{ areas|length }}. Look for droppings, gnaw marks, insects, nests or webs.">
+    <div class="choice-grid cols-2 mb" data-review-label="Pest activity seen?">
+      <label class="choice is-pass"><input type="radio" name="pest_{{ i }}" value="0" required data-autonext {{ 'checked' if seen == '0' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('check', 20) }}</span>
+        <span><span class="choice-title">No pests</span><span class="choice-sub">No signs of pest activity</span></span></span></label>
+      <label class="choice is-fail"><input type="radio" name="pest_{{ i }}" value="1" {{ 'checked' if seen == '1' }}>
+        <span class="choice-card"><span class="choice-icon">{{ icon('alert', 20) }}</span>
+        <span><span class="choice-title">Pests seen</span><span class="choice-sub">Note what was found and what was done</span></span></span></label>
+    </div>
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="observation_{{ i }}">Observation <span class="req" data-yes style="display:none">*</span></label>
+        <input type="text" id="observation_{{ i }}" name="observation_{{ i }}" maxlength="300"
+               value="{{ form.get('observation_%d' % i, '') }}" placeholder="e.g. no droppings, traps empty">
+      </div>
+      <div class="form-row" data-corrective>
+        <label class="form-label" for="corrective_{{ i }}">Corrective action undertaken <span class="req">*</span></label>
+        <input type="text" id="corrective_{{ i }}" name="corrective_{{ i }}" maxlength="300" required
+               value="{{ form.get('corrective_%d' % i, '') }}" placeholder="e.g. set bait stations, sealed gaps, called pest control">
+      </div>
+    </div>
+  </section>
+  {% endfor %}
+
+  <section class="wz-step" data-title="Monitored by"
+           data-hint="Your name is the signature of the monitoring in-charge on the paper record.">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="monitored_by">Monitoring in-charge <span class="req">*</span></label>
+        <input type="text" id="monitored_by" name="monitored_by" maxlength="80" required
+               value="{{ form.monitored_by or me_name }}" placeholder="Full name">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="remarks">Remarks</label>
+        <input type="text" id="remarks" name="remarks" maxlength="500" value="{{ form.remarks or '' }}" placeholder="Optional">
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Check and save" data-review
+           data-hint="If pests were seen anywhere, the admins are told when you save.">
+    <div class="wz-body"></div>
+  </section>
+</form>
+
+<script>
+(function () {
+  var form = document.getElementById("pestForm");
+  var period = form.querySelector("#period"), day = form.querySelector("#record_date");
+  var today = "{{ today }}";
+  function lastDay(p) {
+    var y = parseInt(p.slice(0, 4), 10), m = parseInt(p.slice(5, 7), 10);
+    var d = new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);
+    return d > today ? today : d;
+  }
+  function sync() {
+    form.querySelectorAll("[data-area]").forEach(function (step) {
+      var i = step.getAttribute("data-area");
+      var picked = step.querySelector('[name="pest_' + i + '"]:checked');
+      var yes = !!picked && picked.value === "1";
+      var row = step.querySelector("[data-corrective]");
+      row.style.display = yes ? "" : "none";
+      row.querySelector("input").disabled = !yes;
+      var obs = step.querySelector('[name="observation_' + i + '"]');
+      obs.required = yes;
+      obs.placeholder = yes ? "What was seen, and where?" : "e.g. no droppings, traps empty";
+      step.querySelector("[data-yes]").style.display = yes ? "" : "none";
+    });
+  }
+  period.addEventListener("change", function () {
+    if (period.value && day.value.slice(0, 7) !== period.value) day.value = lastDay(period.value);
+    day.min = period.value ? period.value + "-01" : "";
+  });
+  form.querySelector(".wz-step").addEventListener("wz:validate", function (e) {
+    if (period.value && day.value && day.value.slice(0, 7) !== period.value) {
+      e.preventDefault();
+      e.detail.message = "The date of monitoring must fall in the month being inspected.";
+    }
+  });
+  form.addEventListener("change", sync);
+  day.min = period.value ? period.value + "-01" : "";
+  sync();
+})();
+</script>
+{% endblock %}

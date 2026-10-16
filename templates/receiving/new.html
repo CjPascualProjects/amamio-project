@@ -1,45 +1,131 @@
 {% extends "base.html" %}
-{% block title %}Open a receiving batch{% endblock %}
+{% from "receiving/_item_fields.html" import item_fields, item_script %}
+{% block title %}Receive a delivery{% endblock %}
 {% block content %}
-<div class="page-head">
-  <div>
-    <h1 class="page-title">Open a receiving batch</h1>
-    <p class="page-sub">One batch per delivery. Boxes are added on the next screen.</p>
-  </div>
-  <div class="page-head-actions">
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('receiving.index') }}">Back</a>
-  </div>
-</div>
+<a class="back-link" href="{{ url_for('receiving.index') }}">{{ icon('arrow-left', 15) }} Receiving Area</a>
 
-<div class="card" style="max-width:720px">
-  <form method="post" class="form">
-    <div class="form-grid cols-2">
+<form method="post" class="wizard" data-wizard data-wizard-start="{{ start }}"
+      data-submit-label="Save &amp; print QR labels" data-cancel="{{ url_for('receiving.index') }}">
+
+  <section class="wz-step" data-title="Who delivered it?"
+           data-hint="Pick the supplier and the day the delivery arrived at the receiving area.">
+    <div class="wz-body">
       <div class="form-row">
         <label class="form-label" for="supplier_id">Supplier</label>
-        <select id="supplier_id" name="supplier_id">
-          <option value="">Walk-in / own harvest</option>
+        <select id="supplier_id" name="supplier_id" data-review-label="Supplier">
+          <option value="">Own harvest / walk-in (no supplier)</option>
           {% for s in suppliers %}
-            <option value="{{ s.id }}">{{ s.name }}</option>
+            <option value="{{ s.id }}" {{ 'selected' if form.supplier_id == s.id|string }}>{{ s.name }}</option>
           {% endfor %}
         </select>
-        <div class="form-hint">Leave blank for produce from the farm itself.</div>
       </div>
       <div class="form-row">
         <label class="form-label" for="received_date">Date received <span class="req">*</span></label>
-        <input type="date" id="received_date" name="received_date" value="{{ today }}" required>
+        <input type="date" id="received_date" name="received_date" required
+               value="{{ form.received_date or today }}" max="{{ today }}">
       </div>
-      <div class="form-row">
-        <label class="form-label" for="delivery_ref">Delivery receipt no.</label>
-        <input type="text" id="delivery_ref" name="delivery_ref"
-               placeholder="DR-88412">
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Delivery documents"
+           data-hint="Copy the reference numbers from the paperwork, if there is any. You can skip this step.">
+    <div class="wz-body">
+      <div class="form-grid cols-2">
+        <div class="form-row">
+          <label class="form-label" for="po_no">PO no.</label>
+          <input type="text" id="po_no" name="po_no" maxlength="40" value="{{ form.po_no or '' }}" placeholder="e.g. PO-1043">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="delivery_ref">DR / delivery receipt no.</label>
+          <input type="text" id="delivery_ref" name="delivery_ref" maxlength="40" value="{{ form.delivery_ref or '' }}" placeholder="e.g. DR-88412">
+        </div>
       </div>
       <div class="form-row">
         <label class="form-label" for="remarks">Remarks</label>
-        <input type="text" id="remarks" name="remarks"
-               placeholder="e.g. Weekly ginger and lemon delivery">
+        <textarea id="remarks" name="remarks" rows="2" placeholder="Anything worth noting about this delivery">{{ form.remarks or '' }}</textarea>
       </div>
     </div>
-    <button class="btn btn-primary" type="submit">Open batch &amp; add boxes</button>
-  </form>
-</div>
+  </section>
+
+  <section class="wz-step" id="itemsStep" data-title="What arrived?"
+           data-hint="Add each item and how it came packed. Each box gets its own QR code. Several boxes of the same item with the same amount can be added in one go.">
+    <div class="line-cards" id="lineCards">
+      {% for line in (lines or [none]) %}
+      <div class="line-card" data-item>
+        <div class="line-card-head">
+          <span class="line-card-num">Item {{ loop.index }}</span>
+          <button type="button" class="line-remove" data-remove-line aria-label="Remove this item">&times;</button>
+        </div>
+        {{ item_fields(line, materials, categories, category_of, track_labels, conditions) }}
+      </div>
+      {% endfor %}
+    </div>
+    <button type="button" class="add-line mt-sm" id="addLine">{{ icon('plus', 15) }} Add another item</button>
+  </section>
+
+  <section class="wz-step" data-title="Check and save" data-review
+           data-hint="Make sure this matches the delivery. After saving you'll print one QR label per box.">
+    <div class="wz-body"></div>
+  </section>
+</form>
+
+<template id="lineTpl">
+  <div class="line-card" data-item>
+    <div class="line-card-head">
+      <span class="line-card-num">Item</span>
+      <button type="button" class="line-remove" data-remove-line aria-label="Remove this item">&times;</button>
+    </div>
+    {{ item_fields(none, materials, categories, category_of, track_labels, conditions) }}
+  </div>
+</template>
+
+{{ item_script() }}
+<script>
+(function () {
+  var cards = document.getElementById("lineCards");
+  var tpl = document.getElementById("lineTpl");
+  var step = document.getElementById("itemsStep");
+
+  function renumber() {
+    var all = cards.querySelectorAll("[data-item]");
+    all.forEach(function (c, i) {
+      c.querySelector(".line-card-num").textContent = "Item " + (i + 1);
+      c.querySelector("[data-remove-line]").style.visibility = all.length > 1 ? "" : "hidden";
+    });
+  }
+  document.getElementById("addLine").addEventListener("click", function () {
+    var node = tpl.content.firstElementChild.cloneNode(true);
+    cards.appendChild(node);
+    renumber();
+    node.querySelector("select").focus();
+  });
+  cards.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-remove-line]");
+    if (!btn) return;
+    btn.closest("[data-item]").remove();
+    renumber();
+  });
+  renumber();
+
+  // The review shows one line per item: "Ginger — 12 kg × 3 boxes = 36 kg".
+  step.reviewHtml = function () {
+    var esc = window.IMS.esc, out = [], boxes = 0;
+    cards.querySelectorAll("[data-item]").forEach(function (c) {
+      var sel = c.querySelector("select[name=material_id]");
+      var opt = sel.options[sel.selectedIndex];
+      if (!sel.value) return;
+      var unit = opt.getAttribute("data-unit") || "";
+      var per = parseFloat(c.querySelector("[name=qty_per_box]").value) || 0;
+      var n = parseInt(c.querySelector("[name=boxes]").value, 10) || 1;
+      var lot = c.querySelector("[name=lot_no]").value;
+      boxes += n;
+      out.push("<dt>" + esc(opt.textContent.trim()) + "</dt><dd>" + per + " " + esc(unit) +
+        " × " + n + " box" + (n > 1 ? "es" : "") + " = " + (Math.round(per * n * 1000) / 1000) +
+        " " + esc(unit) + (lot ? " · Lot " + esc(lot) : "") + "</dd>");
+    });
+    out.push("<dt>QR labels to print</dt><dd>" + boxes + "</dd>");
+    return out.join("");
+  };
+})();
+</script>
 {% endblock %}

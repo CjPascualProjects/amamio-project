@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}Record cleaning{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('facility.sanitation') }}">{{ icon('arrow-left', 15) }} Cleaning &amp; Sanitation</a>
+
+<form method="post" class="wizard" data-wizard data-wizard-start="{{ start }}" id="sanForm"
+      data-submit-label="Save cleaning record" data-cancel="{{ url_for('facility.sanitation') }}">
+
+  <section class="wz-step" data-title="When was it checked?"
+           data-hint="Pick the day, then whether this is the check before work starts or after it ends.">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="record_date">Date <span class="req">*</span></label>
+        <input type="date" id="record_date" name="record_date" required max="{{ today }}"
+               value="{{ form.record_date or today }}">
+      </div>
+      {% set phase = form.phase or suggested_phase %}
+      <div class="form-row">
+        <div class="form-label">Phase <span class="req">*</span></div>
+        <div class="choice-grid cols-2" data-review-label="Phase">
+          <label class="choice"><input type="radio" name="phase" value="{{ PRE }}" required data-autonext {{ 'checked' if phase == PRE }}>
+            <span class="choice-card"><span class="choice-icon">{{ icon('sparkle', 20) }}</span>
+            <span><span class="choice-title">PRE-PRODUCTION</span><span class="choice-sub">Before work starts — is every area ready?</span></span></span></label>
+          <label class="choice"><input type="radio" name="phase" value="{{ POST }}" data-autonext {{ 'checked' if phase == POST }}>
+            <span class="choice-card"><span class="choice-icon">{{ icon('check', 20) }}</span>
+            <span><span class="choice-title">POST-PRODUCTION</span><span class="choice-sub">After work ends — cleaned up and put away?</span></span></span></label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% for loc in locations %}
+  {% set i = loop.index0 %}
+  {% set st = form.get('status_%d' % i) %}
+  <section class="wz-step" data-title="{{ loc }}" data-area="{{ i }}"
+           data-hint="Area {{ loop.index }} of {{ locations|length }}. Tap Clean to move straight on to the next area.">
+    <div class="wz-body">
+      <div class="form-row">
+        <div class="form-label">Current status <span class="req">*</span></div>
+        <div class="chip-choices" data-review-label="Current status">
+          {% for s in statuses %}
+          <label class="chip-choice"><input type="radio" name="status_{{ i }}" value="{{ s }}" required
+                 {{ 'data-autonext' if s == 'Clean' }} {{ 'checked' if st == s }}><span>{{ s }}</span></label>
+          {% endfor %}
+        </div>
+      </div>
+      <div data-action-box>
+        <div class="form-row">
+          <label class="form-label" for="action_{{ i }}">Action to undertake <span class="req">*</span></label>
+          <input type="text" id="action_{{ i }}" name="action_{{ i }}" maxlength="300" required
+                 value="{{ form.get('action_%d' % i, '') }}" placeholder="e.g. scrub the floor drain, fix the leaking faucet">
+        </div>
+        <div class="form-row">
+          <div class="form-label">Has it been done?</div>
+          <div class="chip-choices" data-review-label="Done?">
+            {% set dn = form.get('done_%d' % i) or ('1' if not form else '') %}
+            <label class="chip-choice"><input type="radio" name="done_{{ i }}" value="1" required {{ 'checked' if dn == '1' }}><span>Yes, done</span></label>
+            <label class="chip-choice"><input type="radio" name="done_{{ i }}" value="0" {{ 'checked' if dn == '0' }}><span>Not yet — keep it open</span></label>
+          </div>
+        </div>
+        <div class="form-row" data-date-row>
+          <label class="form-label" for="date_{{ i }}">Date undertaken <span class="req">*</span></label>
+          <input type="date" id="date_{{ i }}" name="date_{{ i }}" required max="{{ today }}"
+                 value="{{ form.get('date_%d' % i) or today }}">
+        </div>
+      </div>
+      <div class="form-row" data-remarks-row>
+        <label class="form-label" for="remarks_{{ i }}" data-remarks-label>Remarks</label>
+        <input type="text" id="remarks_{{ i }}" name="remarks_{{ i }}" maxlength="300"
+               value="{{ form.get('remarks_%d' % i, '') }}" placeholder="Anything worth noting">
+      </div>
+    </div>
+  </section>
+  {% endfor %}
+
+  <section class="wz-step" data-title="Who did it?"
+           data-hint="The names go on the paper record as CONDUCTED BY and INSPECTED BY.">
+    <div class="wz-body">
+      <div class="form-row">
+        <label class="form-label" for="conducted_by">Conducted by <span class="req">*</span></label>
+        <input type="text" id="conducted_by" name="conducted_by" maxlength="80" required
+               value="{{ form.conducted_by or me_name }}" placeholder="Name of the person who cleaned">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="inspected_by">Inspected by <span class="req">*</span></label>
+        <input type="text" id="inspected_by" name="inspected_by" maxlength="80" required
+               value="{{ form.inspected_by or '' }}" placeholder="Name of the person who inspected">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="remarks">Overall remarks</label>
+        <input type="text" id="remarks" name="remarks" maxlength="500"
+               value="{{ form.remarks or '' }}" placeholder="Optional">
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="Check and save" data-review
+           data-hint="Make sure each area is right. Areas that need repair are sent to the assets maintenance head.">
+    <div class="wz-body"></div>
+  </section>
+</form>
+
+<script>
+(function () {
+  var form = document.getElementById("sanForm");
+  var ACTION = {{ action_statuses|list|tojson }};
+  function setOn(el, on) {
+    el.style.display = on ? "" : "none";
+    el.querySelectorAll("input").forEach(function (f) { f.disabled = !on; });
+  }
+  function sync() {
+    form.querySelectorAll("[data-area]").forEach(function (step) {
+      var i = step.getAttribute("data-area");
+      var picked = step.querySelector('[name="status_' + i + '"]:checked');
+      var status = picked ? picked.value : "";
+      var needs = ACTION.indexOf(status) !== -1;
+      setOn(step.querySelector("[data-action-box]"), needs);
+      setOn(step.querySelector("[data-remarks-row]"), status !== "" && status !== "Clean");
+      step.querySelector("[data-remarks-label]").textContent =
+        status === "Not checked" ? "Why wasn't it checked?" : "Remarks";
+      if (needs) {
+        var done = step.querySelector('[name="done_' + i + '"]:checked');
+        setOn(step.querySelector("[data-date-row]"), !!done && done.value === "1");
+      }
+    });
+    var day = form.querySelector("#record_date").value;
+    form.querySelectorAll('[data-date-row] input[type=date]').forEach(function (d) {
+      d.min = day || "";
+      if (day && d.value && d.value < day) d.value = day;
+    });
+  }
+  form.addEventListener("change", sync);
+  form.addEventListener("input", function (e) { if (e.target.id === "record_date") sync(); });
+  sync();
+})();
+</script>
+{% endblock %}

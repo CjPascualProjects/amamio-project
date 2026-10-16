@@ -1,78 +1,69 @@
 {% extends "base.html" %}
-{% block title %}Production{% endblock %}
-
+{% block title %}Batch Records{% endblock %}
 {% block content %}
-<div class="row flex mb" style="justify-content: space-between; align-items: center;">
-  <h1 class="page-title">Production</h1>
-  <a class="btn btn-primary" href="{{ url_for('production.new') }}">Record Production</a>
-</div>
-
-<div class="card mb">
-  <div class="card-title">Finished goods</div>
-  <div class="table-wrap">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Product</th>
-          <th>SKU</th>
-          <th>Variant</th>
-          <th class="text-right">In stock</th>
-          <th class="text-right">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for p in products %}
-        <tr>
-          <td>{{ p.name }}</td>
-          <td class="muted">{{ p.sku or '—' }}</td>
-          <td class="muted">{{ p.variant or '—' }}</td>
-          <td class="text-right">
-            {% if p.stock and p.stock > 0 %}
-              <span class="badge badge-ok">{{ "%g"|format(p.stock) }} {{ p.unit or '' }}</span>
-            {% else %}
-              <span class="badge badge-muted">0 {{ p.unit or '' }}</span>
-            {% endif %}
-          </td>
-          <td class="text-right">
-            <a class="btn btn-sm btn-primary"
-               href="{{ url_for('production.new', product_id=p.id) }}">Record Production</a>
-          </td>
-        </tr>
-        {% else %}
-        <tr><td colspan="5" class="muted">No products defined yet.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Batch Records</h1>
+    <p class="page-sub">Every production batch, from dispensing to the QA's final disposition.</p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('production.daily_report') }}">{{ icon('reports', 15) }} Daily report</a>
+    <a class="btn btn-primary" href="{{ url_for('production.start') }}">{{ icon('plus', 16) }} Start a batch</a>
   </div>
 </div>
 
-<div class="card">
-  <div class="card-title">Production history</div>
-  <div class="table-wrap">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>When</th>
-          <th>Product</th>
-          <th class="text-right">Qty produced</th>
-          <th>By</th>
-          <th>Run reference</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for h in history %}
-        <tr>
-          <td class="muted">{{ h.timestamp[:19].replace('T',' ') if h.timestamp else '—' }}</td>
-          <td>{{ h.product }}</td>
-          <td class="text-right">{{ "%g"|format(h.qty or 0) }}</td>
-          <td class="muted">{{ h.user }}</td>
-          <td class="muted">{{ h.reference_id or '—' }}</td>
-        </tr>
-        {% else %}
-        <tr><td colspan="5" class="muted">No production runs recorded yet.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
+<div class="figures mb">
+  <div class="figure {{ 'is-good' if stats.in_progress }}"><div class="figure-label">In progress</div><div class="figure-value">{{ stats.in_progress }}</div></div>
+  <div class="figure"><div class="figure-label">Completed this month</div><div class="figure-value">{{ stats.completed_month }}</div></div>
+  <div class="figure"><div class="figure-label">Approved this month</div><div class="figure-value">{{ stats.approved }}</div></div>
+  <div class="figure {{ 'is-bad' if stats.disapproved }}"><div class="figure-label">Disapproved this month</div><div class="figure-value">{{ stats.disapproved }}</div></div>
+</div>
+
+{% if in_progress %}
+<div class="section-label">In progress</div>
+<div class="queue">
+  {% for b in in_progress %}
+  <a class="queue-item" href="{{ url_for('production.batch', batch_id=b.id) }}">
+    <span class="task-icon" style="width:40px;height:40px">{{ icon('production', 18) }}</span>
+    <span class="queue-main">
+      <span class="queue-title">{{ b.product_name }}</span>
+      <span class="queue-sub"><span class="code">{{ b.batch_no }}</span> · {{ b.batch_size|qty(b.unit) }} · started {{ b.start_at[:16]|replace('T', ' ') }}</span>
+    </span>
+    <span class="queue-go" style="white-space:normal;text-align:right;max-width:45%">Next: {{ b.next_label }} {{ icon('arrow-right', 14) }}</span>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="toolbar" style="margin-top:26px">
+  <div class="section-label" style="margin:0">Finished batches</div>
+  <div class="seg">
+    <a href="{{ url_for('production.index') }}" class="{{ 'is-active' if show != 'all' }}">Recent</a>
+    <a href="{{ url_for('production.index', show='all') }}" class="{{ 'is-active' if show == 'all' }}">All</a>
   </div>
 </div>
+{% if finished %}
+<div class="queue">
+  {% for b in finished %}
+  <a class="queue-item" href="{{ url_for('production.batch', batch_id=b.id) }}">
+    <span class="task-icon" style="width:40px;height:40px">{{ icon('clipboard', 18) }}</span>
+    <span class="queue-main">
+      <span class="queue-title">{{ b.product_name }}</span>
+      <span class="queue-sub"><span class="code">{{ b.batch_no }}</span> · produced {{ b.production_date }}
+        {% if b.status == 'Completed' %} · yield {{ b.actual_yield|qty(b.unit) }} of {{ b.theoretical_yield|qty }}{% endif %}</span>
+    </span>
+    <span class="badge {{ b.badge }}">{{ b.status_label }}</span>
+  </a>
+  {% endfor %}
+</div>
+{% elif not in_progress %}
+<div class="card"><div class="empty">
+  <div class="empty-icon">{{ icon('production', 30) }}</div>
+  <div class="empty-title">No batches yet</div>
+  <p class="muted">Start a batch when production begins. The system walks you through dispensing, each procedure step and the QA's release.</p>
+  <a class="btn btn-primary mt" href="{{ url_for('production.start') }}">Start a batch</a>
+</div></div>
+{% else %}
+<p class="muted small">No finished batches yet.</p>
+{% endif %}
 {% endblock %}

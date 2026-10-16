@@ -41,6 +41,12 @@ _PARENT_FK = {
     "purchase_request_items": ("purchase_requests", "purchase_request_id"),
     "production_materials": ("production_orders", "production_order_id"),
     "packing_items": ("packing_runs", "packing_run_id"),
+    "honey_allocations": ("honey_containers", "honey_container_id"),
+    "month_end_count_lines": ("month_end_counts", "month_end_count_id"),
+    "sanitation_areas": ("sanitation_records", "sanitation_record_id"),
+    "pest_control_areas": ("pest_control_records", "pest_control_record_id"),
+    "batch_dispensing": ("batch_records", "batch_record_id"),
+    "batch_steps": ("batch_records", "batch_record_id"),
 }
 
 

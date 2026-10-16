@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "_paper.html" import paper_head, paper_signoff, range_filter %}
+{% block title %}Receiving & Inspection Report{% endblock %}
+{% block content %}
+<a class="back-link no-print" href="{{ url_for('receiving.index') if can('receiving') else url_for('receiving.inspection') }}">{{ icon('arrow-left', 15) }} Back</a>
+{{ range_filter(url_for('receiving.report'), date_from, date_to) }}
+
+<div class="paper">
+  {{ paper_head('Raw Materials Receiving and Inspection Report',
+                'Record the receipt and quality inspection of incoming raw materials before acceptance for production · ' ~ date_from ~ ' to ' ~ date_to) }}
+  <table class="paper-table">
+    <thead>
+      <tr>
+        <th>Date Received</th><th>Supplier</th><th>PO/DR No.</th><th>Raw Material</th>
+        <th>Lot/Batch No.</th><th class="num">Qty Received</th><th>Unit</th><th>Expiry / Best Before</th>
+        <th>Packaging Condition</th><th>Visual / Organoleptic Inspection</th><th class="num">Temp. (°C)</th>
+        <th>COA / Document Check</th><th>Sampling / Test</th><th>Acceptance Status</th>
+        <th>Nonconformity / Remarks</th><th>Action Taken</th><th>Inspected By</th><th>Verified By</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td>{{ r.received_date }}</td>
+        <td>{{ r.supplier_name }}</td>
+        <td>{{ [r.po_no, r.delivery_ref]|select|join(' / ') }}</td>
+        <td>{{ r.material_name }} <span style="color:#666">({{ r.box_code }})</span></td>
+        <td>{{ r.lot_no or '' }}</td>
+        <td class="num">{{ r.declared_qty|qty }}</td>
+        <td>{{ r.unit }}</td>
+        <td>{{ r.expiry_date or '' }}</td>
+        <td>{{ r.packaging_condition or '' }}</td>
+        <td>{{ r.visual_inspection or '' }}{% if r.cleaned %} · cleaned{% endif %}</td>
+        <td class="num">{{ r.temperature_c|qty if r.temperature_c not in (none, '') else '' }}</td>
+        <td>{{ r.coa_check or '' }}</td>
+        <td>{{ r.sampling_test or '' }}</td>
+        <td><b>{{ (r.acceptance_status or 'Pending')|upper }}</b>
+          {% if r.status != 'Awaiting Inspection' %}<br><span style="font-size:.68rem">{{ r.good_qty|qty }} usable{% if r.unusable_qty %}, {{ r.unusable_qty|qty }} unusable{% endif %}{% if r.damaged_qty %}, {{ r.damaged_qty|qty }} damaged{% endif %}</span>{% endif %}</td>
+        <td>{{ [r.nonconformity, r.unusable_reason, r.damage_reason]|select|join('; ') }}</td>
+        <td>{{ r.action_taken or '' }}</td>
+        <td>{{ r.checked_by if r.checked_at else '' }}</td>
+        <td>{{ r.verified_by_name or '' }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="18" style="text-align:center;color:#666;padding:20px">No deliveries received in this period.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="paper-note">Acceptance Guide: ACCEPTED = meets specifications; REJECTED = does not meet requirements; HOLD = pending test/document/QA decision.</div>
+  {{ paper_signoff(['Prepared by:', 'Checked by:', 'Approved by:']) }}
+</div>
+{% endblock %}

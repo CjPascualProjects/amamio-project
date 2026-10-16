@@ -1,13 +1,14 @@
-# Amamio Farm Products — Sales & Inventory Management System
+# Amamio Farm Products — Inventory & Sales System
 
-A monitoring system for the full Amamio flow — **receiving → quality check →
-production → packing → sales → reporting** — built so that at any moment you
-can say where a given batch of stock is, who handled it, and when.
+Follows every product through the production site, from the **receiving
+area** through **inspection & cleaning**, **production**, **packing** and
+**dispatch**, through to **sales on each platform**. At any moment it can say
+how many items or kilos there are, how many were damaged or unusable, where
+they are, and who handled them.
 
-Built with **Flask** + **JSON-file storage** (one file per table under
-`data/`). No database server and no internet are required; the AI layer is
-pure Python heuristics, so it runs completely offline. The JSON store is
-declared as a real relational schema and exports to MySQL with one command —
+Built with **Flask** and **JSON-file storage** (one file per table under
+`data/`). It needs no database server and no internet. The storage is
+declared as a real relational schema and exports to MySQL with one command;
 see [Moving to MySQL](#moving-to-mysql).
 
 ## Quick start
@@ -17,200 +18,289 @@ pip install -r requirements.txt
 python run.py
 ```
 
-Then open <http://localhost:5000> and sign in with a demo account.
+Open <http://localhost:5000> and sign in with a demo account. Demo data is
+created on first run. To start over, delete the `data/` folder.
 
 ### Demo logins (username / password)
 
-| Role | Login | What they do |
-|------|-------|--------------|
-| Super Admin | `superadmin` / `super123` | Everything, plus roles and the MySQL export |
-| Admin | `admin` / `admin123` | Approvals, oversight, reports |
-| Production Team Head | `production` / `prod123` | Receiving, recipes, honey QC, production |
-| Packing Team Head | `packing` / `pack123` | Packing per channel, platforms, shipping |
-| Assets & Maintenance Team Head | `assets` / `assets123` | Equipment, supplies, maintenance |
+| Role | Login | Does |
+|------|-------|------|
+| Super Admin | `superadmin` / `super123` | Everything, plus users, roles and the MySQL export |
+| Admin | `admin` / `admin123` | Approvals, reports, oversight of every module |
+| Receiving Team Head | `receiving` / `recv123` | Records deliveries, prints QR labels, logs honey containers |
+| Production Team Head | `production` / `prod123` | Inspection & cleaning, honey QC, batch records, cleaning checks |
+| Packing Team Head | `packing` / `pack123` | Packing & dispatch, sales uploads and reports |
+| Packing Team Member | `packer1` / `member123` (also `packer2`) | Records packing, disbursement and courier hand-over |
+| Assets Maintenance Head | `assets` / `assets123` | Equipment and supplies in/out, maintenance, sanitation, pest control |
 
-Demo data is seeded on first run. Delete the `data/` folder to reset.
-
----
-
-## The monitored flow
-
-### 1. Receiving area — by crate, by weight or by piece
-
-A delivery is opened as a **receiving batch**. Each cage box in it is logged
-and gets **its own QR code**, printed from the batch screen.
-
-Each item declares how it is counted — ginger by the kilo, lemon by the
-piece, drums by the unit — and the receiving screen uses that when the
-checker counts a box. For every box the checker records the **good** and the
-**damaged** quantity separately:
-
-* only the **good** quantity joins raw-material stock;
-* the **damaged** quantity goes to its own ledger with a mandatory reason, so
-  spoilage can be reported per box, per item and per supplier.
-
-A box then moves along the floor — Receiving Area → Storage → Production
-Floor → Consumed — so its current location is always known. A batch cannot be
-closed while any box is still uncounted.
-
-### 2. Honey production — container QC on moisture and appearance
-
-Honey is monitored **by container**, each with its own QR code. Every
-container is checked on **moisture content** and **appearance**, and the
-result is **Pass** or **Failed** — nothing else:
-
-* **Pass** → joins sellable honey stock (`For Selling`);
-* **Failed** → routed to other products (`For Other Products`), never
-  discarded, and the admins are notified.
-
-The system suggests a result from the readings (the pass limit is 20%
-moisture) but the checker always confirms it. A decided container cannot be
-re-checked.
-
-### 3. Packing area — one run per channel
-
-Nothing ships without a packing run against one of the five channels:
-**VIP, Shopee, TikTok, Lazada, Walk-in**. A run records the packer, the date,
-the products and quantities, any damage spotted while packing, the courier
-and the tracking number, and moves In Progress → Packed → Handed Over.
-
-Stock is released once and only once: a run tied to an internal sales order
-does not move stock (confirming that order already did), while a standalone
-platform or walk-in run releases the finished goods itself when it is marked
-packed.
-
-### 4. Requests to the admin — always with a reason
-
-Any team head can ask the admin to buy something, and **a reason is
-mandatory** on every request — out of stock, below reorder level, upcoming
-batch, spoilage replacement, and so on, or free text. Requests also carry an
-urgency and a needed-by date, and the approver sees all of it before
-deciding. Approved items mint a QR token so the goods can be received by
-scan.
-
-### 5. Sales platforms — a generic import template
-
-Rather than a parser per marketplace, the system keeps a **template**: a
-saved mapping from the fields it stores onto whatever that platform calls its
-columns. Drop an export into the `sales-platform/` folder (or upload it),
-pick the template, check the preview, import.
-
-Shopee, Lazada and TikTok Shop templates ship ready to use. Adding a new
-marketplace is a mapping, not a code change. Re-importing an updated export
-is safe — rows already imported are detected and skipped.
-
-Dates are normalised from any common spelling (`04 Oct 2026 18:58`,
-`2026-10-10 00:13`, `2026/10/09`) and money is parsed through whatever
-commas and currency text the platform uses.
-
-### 6. Assets & maintenance
-
-Equipment and cleaning supplies with their service history: what was done,
-when, by whom, what it cost, the downtime, and when the next service falls
-due. Anything falling due in the next 14 days surfaces on the dashboard.
+**Change these passwords before real use** (Users → Reset password).
 
 ---
 
-## Roles
+## How the screens work: one thing at a time
 
-Access is per *module* and declared once in `security.py` (`PERMISSIONS`),
-which drives both the sidebar and the route guards.
+* **Home** shows only what *your* role does, as a few large task cards, each
+  with a count when something is waiting, plus a short "Waiting for you"
+  list.
+* **Every transaction is a step-by-step flow.** Each screen asks one
+  question, with *Back* and *Next*, and you check everything on a final
+  screen before saving. A mistake is caught on the step where it happens.
+* **Every record has its own page.** It shows where the record is in the
+  flow and the *one* next action (e.g. "Inspect this box", "Disburse or hand
+  to the courier").
+* **Paper forms print as they look on paper.** Each of the client's paper
+  forms has a printable copy, filled in from the system.
+* The sidebar only lists what your role can open.
+* **"About this page" notes (for demos):** every page opens with a short
+  note on what it is for, who uses it, how it fits the flow, and which paper
+  form it replaces. Fold a note with its arrow (remembered per page), or hide
+  them all with *Hide these notes on every page*. Turn them back on from the
+  sun / moon menu → *Page notes*. The wording lives in `page_notes.py`, and
+  `smoke_test.py` fails if a page has no note.
+* **Light or dark:** the sun / moon button in the top bar switches between
+  *Light*, *Dark* and *Match my device*. The choice is saved per user, so it
+  follows you to any computer or phone. Both themes come from the same
+  colour tokens in `static/css/style.css` (`:root` for dark,
+  `:root[data-theme="light"]` for light). Chart colours were checked for
+  colour-blind separation on each theme's card colour.
 
-| Module | Super Admin | Admin | Production | Packing | Assets |
-|---|:--:|:--:|:--:|:--:|:--:|
-| Dashboard, Inventory, Requests, Notifications | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Receiving, Honey QC, Production, Recipes | ✅ | ✅ | ✅ | — | — |
-| Packing, Sales platforms, Orders, Deliveries | ✅ | ✅ | — | ✅ | — |
-| Assets & maintenance | ✅ | ✅ | — | — | ✅ |
-| Approvals, Reports, Analytics, Users | ✅ | ✅ | — | — | — |
-| MySQL export | ✅ | — | — | — | — |
+---
 
-The last active Super Admin cannot be disabled or demoted, and only a Super
-Admin can grant or remove Super Admin access.
+## Module 1: Receiving area, then inspection & cleaning
+
+**Part 1: receiving** (Receiving Team Head, *Receiving Area → Receive a
+delivery*). The steps are: who delivered it → delivery documents (PO / DR
+no.) → what arrived (each item, how much is in each box, how many boxes,
+plus optional lot no., expiry, packaging condition and temperature) → check
+and save.
+
+* Items are counted the way they arrive: ginger by the kilo, lemon by the
+  piece, bottles by the unit.
+* Each box gets a **QR label**. The QR code carries the box code, item,
+  quantity, lot, expiry, delivery reference, date and supplier, so anyone
+  who scans it sees the details even without the system.
+* Saving **notifies the production team** that boxes are waiting at the
+  Receiving Area.
+* Nothing joins stock yet.
+
+**Part 2: inspection & cleaning** (*Inspection & Cleaning*, or scan the
+box). The steps are: is this the right box? → clean the content → count what
+you found → why (only asked when something was lost) → quality checks →
+decision → check and save.
+
+* *Count what you found* splits the box into **usable**, **can't be used**
+  and **damaged**, with a live tally against the label.
+* *Quality checks* are visual / organoleptic, COA / documents and sampling /
+  test.
+* The decision is **Accepted**, **Rejected** or **Hold**:
+  * **Accepted:** only the *usable* quantity joins stock and the box moves to
+    the Storage Area. "Can't be used" and "damaged" go to the damage ledger
+    with their reasons.
+  * **Rejected:** nothing joins stock.
+  * **Hold:** pending a test, document or QA decision. Nothing moves until
+    someone decides Accept or Reject on the box's page.
+
+Each box keeps its location (Receiving → Storage → Production Area →
+Consumed). **Receiving Area → Inspection report** prints the client's *Raw
+Materials Receiving and Inspection Report* for any date range.
+
+## Module 2: Honey
+
+The steps are: *Log honey containers* (source, weight, number of containers)
+→ print a QR label per container → *Check* (moisture % → appearance → PASS
+or FAILED, with a suggestion from the 20% moisture guide; the checker
+decides).
+
+* **PASS** honey joins sellable honey stock.
+* **FAILED** honey is never discarded. It is kept as *Honey for Processing*.
+* Each container is then sent to products **by the kilo**, and PASS honey can
+  only go to PASS products (likewise FAILED). The container shows what is
+  left.
+
+> The two product lists are **placeholders**: `HONEY_PASS_PRODUCTS` and
+> `HONEY_FAIL_PRODUCTS` in `services.py`. Replace them with the client's real
+> lists; nothing else needs to change.
+
+## Module 3: Equipment & supplies, every IN and OUT
+
+* **Equipment & Assets** is the client's *Inventory of Assets* (AFP-001 …,
+  grouped by category). *Record IN / OUT* covers equipment borrowed, sent for
+  repair, lent, disposed, returned, back from repair, or newly purchased.
+  Each piece of equipment has its own maintenance log (the *Equipment
+  Maintenance Log* form), and a printable register.
+* **Supplies In / Out** covers raw materials, jars / bottles / packaging,
+  production (cleaning) supplies and office supplies. Every IN and OUT records
+  who, why and a reference, and moves stock through the ledger.
+* **Month-end count** records the physical count per category. **Month-end
+  report** prints the client's *Month End Report*: opening, IN, OUT, system
+  closing, physical count and variance.
+
+## Module 4: Packing & dispatch
+
+The packing team (head and members) records each run with *Record packing*:
+channel (VIP / Shopee / TikTok / Lazada / Walk-in) → who packed it → products
+and quantities (plus any damaged while packing) → check and save. Saving
+marks the run **packed** and takes the items out of finished-goods stock.
+
+Each packed run then goes out in one of two ways:
+
+* **Disbursed:** handed straight to the customer, VIP buyer, walk-in or
+  another team (with who received it).
+* **Delivered to logistics / courier:** courier, rider, tracking number and
+  parcel count.
+
+The *Packing & Dispatch* page totals **packed / disbursed / delivered to the
+courier**, per channel, for today, this week, this month or all time. Only
+the packing head or an admin can cancel a run.
+
+## Module 5: Sales uploads & reports
+
+**Upload sales file:** pick the platform → choose the exported file (Excel
+or CSV) → **check the preview**, which shows how many lines are new, how
+many were already uploaded, the order date range, and the first lines as
+they will be saved → save.
+
+* Built in: **Shopee** (orders export), **TikTok Shop** (settlement order
+  details), **Lazada** (orders export) and **Shopify** (orders CSV). Any
+  other marketplace is a column mapping, set up under *Uploads → Column
+  templates*, not a code change.
+* The system recognises a file by its columns and warns if the wrong
+  platform was picked.
+* **Re-uploading** a newer export of the same orders adds nothing twice and
+  **updates** order statuses and amounts that changed.
+* Orders are grouped as *Completed, In progress, Cancelled, Returned* or
+  *Adjustment*. Only the first two count as sales. TikTok tax and fee lines
+  are adjustments.
+* Listing titles are matched to the catalog by keyword and size (e.g. "Honey
+  Lemon Ginger Concentrate 300ml" becomes *Honey Lemon Ginger Concentrate
+  300 mL*).
+
+**Sales Reports** has one filter row (date range · daily / weekly / monthly /
+yearly · platform) and five tabs:
+
+| Tab | Shows |
+|---|---|
+| Overview | Net sales, orders, items sold, average order, cancelled/returned, a chart per period by platform, sales by platform, best-selling products |
+| By period | The same numbers as a table, one row per day / week / month / year |
+| Products | Every product sold, items and net sales, which platforms |
+| Orders | Status breakdown, where buyers are, every line (search and filter) |
+| Uploads | Every file uploaded; removing an upload removes its sales |
+
+*Download for Excel* exports the period table as a CSV file.
+
+> **Customer data stays out of git.** Marketplace exports (`sales-platform/`)
+> and the sales imported from them (`data/platform_sales.json`,
+> `data/platform_imports.json`) contain real buyer names, addresses and phone
+> numbers, so `.gitignore` keeps them off GitHub. They live only on the
+> computer running the system.
+
+## The client's paper forms in the system
+
+| Paper form | Where |
+|---|---|
+| Raw Materials Receiving and Inspection Report | Receiving Area → Inspection report |
+| Batch Manufacturing Record | Production → Batch Records (dispensing & weighing, procedure, yield, QA disposition; an approved batch adds finished goods and uses up the dispensed materials) |
+| Daily Production Report | Production → Daily Production Report (IN / OUT / BAL per product, by week or by day) |
+| Retention Record | Production → Retention Samples |
+| Inventory of Assets | Equipment & Assets → print |
+| Equipment Maintenance Log | Equipment & Assets → an equipment item → maintenance log |
+| Month End Report (raw, packaging, cleaning, office) | Supplies In / Out → Month-end report |
+| General Cleaning & Sanitation Record | Cleaning & Sanitation (pre- and post-production, one area per step) |
+| Pest Control Monitoring Record (QMS-PCMR) | Pest Control (monthly; skipped months are flagged) |
+| Supplier Directory | Supplier Directory (by Raw / Production / Packing / Office) |
+
+The demo data comes from these forms: the product list of the Daily
+Production Report, the supplies on the month-end reports, the AFP asset
+register and the supplier directory (`seed_catalog.py`). Prices, stock
+levels and reorder levels are demo figures.
 
 ---
 
 ## QR codes
 
-Four kinds of code circulate, told apart by their prefix, and **all of them
-are scanned on the same screen** (QR Scanner):
-
 | Prefix | Points at |
 |---|---|
-| `RB-<n>` | a receiving cage box / crate |
+| `RB-<n>` | a receiving box / crate |
 | `HC-<n>` | a honey container |
 | `PK-<n>` | a packing run |
 | `PR-<a>-<b>` | an approved purchase-request item |
 
-Scanning resolves the code, shows what it is and its current state, and links
-straight to the record. Printable label sheets come from the receiving batch
-screen and from Honey QC.
+*Scan a QR code* takes a handheld scanner, typed input or (in Chrome on
+Android) the phone camera. It finds the code anywhere in the scanned text,
+shows what it is and where it is, and offers the next action as one
+button.
+
+## Notifications
+
+The next team is told when work arrives: deliveries received (production),
+inspections done (receiving), honey checked, packing runs sent out (packing
+head), sales uploaded, sanitation repairs needed and pest activity (assets
+head), and low supplies. Admins receive all of them.
 
 ---
 
-## Dates
+## Roles
 
-Every transaction is stamped: receiving batches and boxes, QC checks,
-packing runs and hand-overs, requests and decisions, maintenance, imports,
-stock movements and adjustments. The inventory ledger records every movement
-with its type (`received`, `qc_passed`, `consumed`, `produced`, `packed`,
-`sold`, `returned`, `adjusted`), reference and user.
+Access is per *module* and is declared once in `security.py`
+(`PERMISSIONS`). The same declaration drives both the sidebar and the route
+guards.
+
+| Module | Super/Admin | Receiving | Production | Packing head | Packing member | Assets |
+|---|:--:|:--:|:--:|:--:|:--:|:--:|
+| Home, QR scanner, stock on hand, notifications | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Receiving Area | ✅ | ✅ | — | — | — | — |
+| Inspection & Cleaning, Honey | ✅ | ✅ | ✅ | — | — | — |
+| Batch records, daily report, retention, recipes | ✅ | — | ✅ | — | — | — |
+| Packing & Dispatch | ✅ | — | — | ✅ | ✅ | — |
+| Sales uploads & reports, orders, deliveries | ✅ | — | — | ✅ | — | — |
+| Equipment & Assets | ✅ | — | — | — | — | ✅ |
+| Supplies In / Out | ✅ | ✅ | — | — | — | ✅ |
+| Cleaning & Sanitation, Pest Control | ✅ | — | ✅ | — | — | ✅ |
+| Supplier Directory | ✅ | ✅ | ✅ | — | — | ✅ |
+| Requests | ✅ | ✅ | ✅ | ✅ | — | ✅ |
+| Approvals, Reports, Analytics, Users | ✅ | — | — | — | — | — |
+| MySQL export | Super Admin only | | | | | |
 
 ---
 
 ## Moving to MySQL
 
-`db.SCHEMA` declares every collection as a real table — columns, SQL types,
-primary and foreign keys — and marks which embedded lists (an order's items,
-a run's packed products) become their own child tables. `mysql_export.py`
-renders that declaration:
+`db.SCHEMA` declares every collection as a table, with columns, SQL types,
+and primary and foreign keys. Embedded lists (a run's items, a batch
+record's dispensing lines, a sanitation record's areas) become child tables.
 
 ```bash
 python mysql_export.py          # writes export/schema.sql + export/data.sql
-```
-
-or, as the Super Admin, download both from the **MySQL Export** screen. Then:
-
-```bash
 mysql -u root -p -e "CREATE DATABASE amamio_ims CHARACTER SET utf8mb4"
-mysql -u root -p amamio_ims < schema.sql
-mysql -u root -p amamio_ims < data.sql
+mysql -u root -p amamio_ims < export/schema.sql
+mysql -u root -p amamio_ims < export/data.sql
 ```
 
-The result is a normalised database with foreign keys and indexes, not a JSON
-blob dump — 32 tables, created parents-first so the keys resolve on import.
-
----
+The Super Admin can also download both files from the **MySQL Export**
+screen.
 
 ## Where things live
 
 | Area | Files |
 |---|---|
-| Receiving area | `receiving.py`, `templates/receiving/` |
-| Honey QC | `honey.py`, `templates/honey/` |
-| Packing | `packing.py`, `templates/packing/` |
-| Sales platforms | `platforms.py`, `platform_service.py`, `xlsx.py` |
-| Assets & maintenance | `assets.py`, `templates/assets/` |
-| Requests & approvals | `requests_bp.py`, `approvals.py` |
-| Production & recipes | `production.py`, `catalog.py` |
-| Orders, payments, delivery | `orders.py`, `deliveries.py`, `customers.py` |
-| Reports & analytics | `reports.py`, `analytics_bp.py`, `ai.py` |
+| Home screen | `home.py`, `templates/dashboard.html` |
+| Module 1 — receiving, inspection | `receiving.py`, `templates/receiving/` |
+| Module 2 — honey | `honey.py`, `templates/honey/` |
+| Module 3 — equipment, supplies | `assets.py`, `supplies.py`, `assets_service.py`, `templates/assets/`, `templates/supplies/` |
+| Module 4 — packing & dispatch | `packing.py`, `templates/packing/` |
+| Module 5 — sales uploads & reports | `platforms.py`, `platform_service.py`, `charts.py`, `xlsx.py` |
+| Production records | `production.py`, `production_service.py`, `templates/production/` |
+| Sanitation, pest control | `facility.py`, `facility_service.py`, `templates/facility/` |
+| Supplier directory | `suppliers.py`, `templates/suppliers/` |
+| Business rules (stock, receiving, honey, packing) | `services.py`: all stock changes go through `adjust_stock` |
+| Step-by-step flows, shared UI | `static/js/app.js` (wizard, tooltips), `static/css/flow.css` |
+| Printable paper forms | `templates/_paper.html` |
 | Users & access | `auth.py`, `security.py` |
-| Storage & migration | `db.py`, `mysql_export.py`, `migration.py` |
-| Business rules | `services.py` — all stock maths lives here, once |
+| Storage & migration | `db.py`, `mysql_export.py` |
+| Demo data | `seed.py`, `seed_catalog.py` |
 
-`xlsx.py` is a dependency-free `.xlsx` reader built on the standard library,
-so importing marketplace exports needs no pandas or openpyxl install.
-
-## AI features (offline heuristics — `ai.py`)
-
-1. **Demand forecasting** — weekly demand per product with 95% bands.
-2. **Reorder recommendations** — projects consumption through the recipes.
-3. **Production planning** — suggested build quantities from forecasts.
-4. **Stockout & overstock prediction**.
-5. **Sales trend analysis** — fast- vs. slow-moving products.
-6. **Anomaly detection** — unusual adjustments or large movements.
-7. **Assistant** — natural-language Q&A over live data.
+`xlsx.py` reads `.xlsx` and `.csv` with the standard library only, so
+importing marketplace exports needs no pandas or openpyxl.
 
 ## Testing
 
@@ -218,8 +308,15 @@ so importing marketplace exports needs no pandas or openpyxl install.
 python smoke_test.py
 ```
 
-Covers logins and role guards for all five roles, receiving with a damage
-split, honey Pass/Failed routing, packing stock release, QR receive
-idempotency, the mandatory request reason, production, orders and payment,
-QR resolution and the MySQL export. It runs against a temp folder and never
-touches `data/`.
+The smoke test runs against a throwaway folder and never touches `data/`.
+It covers:
+
+* every login and the role guards;
+* receiving → inspection with usable / can't use / damaged, Hold and its
+  decision, and QR label contents;
+* honey PASS/FAILED routing and allocation by kg;
+* packing → disbursed or handed to the courier;
+* sales upload, preview and re-upload, the Shopee per-line amount, TikTok
+  adjustments, a Shopify CSV, and the CSV export;
+* approvals and QR receive, orders and payment;
+* the MySQL export.

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{{ s.name }}{% endblock %}
+{% block content %}
+<div class="focus">
+<a class="back-link" href="{{ url_for('suppliers.index', cat=s.category if s.category != 'Other' else none) }}">{{ icon('arrow-left', 15) }} Supplier Directory</a>
+
+<div class="record-head">
+  <div>
+    <div class="record-code">{{ s.category|upper }}{% if s.tin %} · TIN {{ s.tin }}{% endif %}</div>
+    <h1 class="record-title">{{ s.name }}</h1>
+    <div class="muted small">{{ hints.get(s.category, '') }}</div>
+  </div>
+  <a class="btn btn-primary btn-sm" href="{{ url_for('suppliers.edit', supplier_id=s.id) }}">Edit</a>
+</div>
+
+<div class="card mb">
+  <div class="card-title">Items supplied</div>
+  <p style="margin:0;white-space:pre-line">{{ s.materials_supplied or 'No items listed yet.' }}</p>
+</div>
+
+<div class="card mb">
+  <div class="card-title">Contact</div>
+  <dl class="review-list">
+    <dt>TIN</dt><dd>{{ s.tin or '—' }}</dd>
+    <dt>Contact person</dt><dd>{{ s.contact_person or '—' }}</dd>
+    <dt>Phone</dt><dd>{% if s.phone %}<a href="tel:{{ s.phone|replace('-', '')|replace(' ', '') }}">{{ s.phone }}</a>{% else %}—{% endif %}</dd>
+    <dt>Email</dt><dd>{% if s.email %}<a href="mailto:{{ s.email }}">{{ s.email }}</a>{% else %}—{% endif %}</dd>
+    <dt>Address</dt><dd>{{ s.address or '—' }}</dd>
+    <dt>Buy from</dt><dd>{{ s.buy_from or '—' }}</dd>
+    {% if s.lead_time_days not in (none, '') %}<dt>Usual lead time</dt><dd>{{ s.lead_time_days }} day{{ 's' if s.lead_time_days != 1 }}</dd>{% endif %}
+    {% if s.notes %}<dt>Notes</dt><dd>{{ s.notes }}</dd>{% endif %}
+  </dl>
+</div>
+
+{% if materials or delivery_count %}
+<div class="card">
+  <div class="card-title">In the system</div>
+  <dl class="review-list">
+    {% if materials %}<dt>Stock items</dt><dd>{{ materials|map(attribute='name')|join(', ') }}</dd>{% endif %}
+    {% if delivery_count %}
+    <dt>Deliveries received</dt><dd>{{ delivery_count }}{% if deliveries %} · last {{ deliveries[0].received_date }}{% endif %}</dd>
+    {% endif %}
+  </dl>
+  {% if deliveries and can('receiving') %}
+  <div class="queue mt">
+    {% for b in deliveries %}
+    <a class="queue-item" href="{{ url_for('receiving.batch', batch_id=b.id) }}">
+      <span class="queue-main"><span class="queue-title">{{ b.ref_no }}</span>
+      <span class="queue-sub">{{ b.received_date }} · {{ b.box_count or 0 }} box(es) · {{ b.status }}</span></span>
+      <span class="queue-go">{{ icon('arrow-right', 14) }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+</div>
+{% endblock %}

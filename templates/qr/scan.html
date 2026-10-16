@@ -1,38 +1,31 @@
 {% extends "base.html" %}
-{% block title %}QR scanner{% endblock %}
+{% block title %}Scan a QR code{% endblock %}
 {% block content %}
-<div class="page-head">
-  <div>
-    <h1 class="page-title">QR scanner</h1>
-    <p class="page-sub">
-      One screen for every code on the floor — receiving boxes, honey
-      containers, packing runs and approved purchase items.
-    </p>
+<div class="focus">
+  <div class="home-hello">
+    <h1>Scan a QR code</h1>
+    <p>Point the camera at a label, use a handheld scanner, or type the code. The system shows what it is and what to do next.</p>
   </div>
-</div>
 
-<div class="scan-shell">
-  <div class="card mb">
-    <div class="card-title">Scan or type a code</div>
+  <div class="wz-body mb">
+    <video id="scanVideo" class="scan-video" playsinline muted></video>
     <form id="scanForm" class="flex gap-sm wrap" autocomplete="off">
-      <input type="text" id="token" name="token" style="flex:1 1 240px"
-             placeholder="RB-12 · HC-4 · PK-7 · PR-3-1" autofocus required>
+      <input type="text" id="token" name="token" style="flex:1 1 220px;font-size:1.05rem"
+             placeholder="RB-12 · HC-4 · PK-7" autofocus required>
       <button class="btn btn-primary" type="submit">Look up</button>
+      <button class="btn btn-ghost" type="button" id="camBtn" hidden>{{ icon('camera', 16) }} Use camera</button>
     </form>
-    <div class="form-hint">
-      A handheld scanner types the code and presses Enter for you — just keep
-      the cursor in the box.
-    </div>
-
-    <div class="pill-row mt">
-      <span class="pill"><strong>RB-</strong> receiving box</span>
-      <span class="pill"><strong>HC-</strong> honey container</span>
-      <span class="pill"><strong>PK-</strong> packing run</span>
-      <span class="pill"><strong>PR-</strong> purchase item</span>
-    </div>
+    <div class="form-hint" id="scanHint">A handheld scanner types the code and presses Enter for you — keep the cursor in the box.</div>
   </div>
 
-  <div id="scanResult" class="scan-result"></div>
+  <div id="scanResult" aria-live="polite"></div>
+
+  <div class="pill-row mt">
+    <span class="pill"><strong>RB-</strong>&nbsp;receiving box</span>
+    <span class="pill"><strong>HC-</strong>&nbsp;honey container</span>
+    <span class="pill"><strong>PK-</strong>&nbsp;packing run</span>
+    <span class="pill"><strong>PR-</strong>&nbsp;purchase item</span>
+  </div>
 </div>
 
 <script>
@@ -41,43 +34,32 @@
   var input = document.getElementById("token");
   var out = document.getElementById("scanResult");
   var LOOKUP = "{{ url_for('qr.lookup') }}";
-  var GO = "{{ url_for('qr.go') }}";
-
-  function esc(value) {
-    var d = document.createElement("div");
-    d.textContent = value === null || value === undefined ? "" : String(value);
-    return d.innerHTML;
-  }
+  var esc = window.IMS.esc;
 
   function render(data) {
     if (!data.ok) {
-      out.innerHTML = '<div class="card"><div class="flash flash-error">' +
-        esc(data.message) + "</div></div>";
+      out.innerHTML = '<div class="flash flash-error">' + esc(data.message) + "</div>";
       return;
     }
     var rows = (data.details || []).map(function (pair) {
-      return '<div class="meta-item"><div class="meta-label">' + esc(pair[0]) +
-        '</div><div class="meta-value">' +
-        (pair[1] === null || pair[1] === "" ? "&mdash;" : esc(pair[1])) +
-        "</div></div>";
+      return "<dt>" + esc(pair[0]) + "</dt><dd>" + esc(pair[1]) + "</dd>";
     }).join("");
-
     out.innerHTML =
-      '<div class="card">' +
-        '<div class="flex-between mb">' +
-          '<div><div class="result-title">' + esc(data.title) + "</div>" +
+      '<div class="next-action" style="display:block">' +
+        '<div class="flex-between">' +
+          '<div><div class="record-code">' + esc(data.token) + '</div>' +
+          '<div class="record-title" style="font-size:1.25rem">' + esc(data.title) + "</div>" +
           '<div class="muted small">' + esc(data.subtitle || "") + "</div></div>" +
           '<span class="badge badge-gold">' + esc(data.status || "") + "</span>" +
         "</div>" +
-        '<div class="meta-grid mb">' + rows + "</div>" +
-        '<a class="btn btn-primary" href="' + GO + "?token=" +
-          encodeURIComponent(data.token) + '">Open this record</a>' +
+        (rows ? '<dl class="review-list mt">' + rows + "</dl>" : "") +
+        '<a class="btn btn-primary btn-block mt" href="' + esc(data.url) + '">' +
+          esc(data.action || "Open") + "</a>" +
       "</div>";
   }
 
   function lookup(token) {
-    out.innerHTML = '<div class="card"><p class="muted">Looking up ' +
-      esc(token) + "…</p></div>";
+    out.innerHTML = '<p class="muted">Looking up…</p>';
     window.IMS.fetchJSON(LOOKUP + "?token=" + encodeURIComponent(token))
       .then(render)
       .catch(function (err) {
@@ -92,6 +74,59 @@
     lookup(token);
     input.select();
   });
+
+  // Opened from a link like /qr/scan?token=RB-12
+  var initial = new URLSearchParams(window.location.search).get("token");
+  if (initial) { input.value = initial; lookup(initial); }
+
+  // Camera scanning where the browser can read QR codes (Chrome / Android).
+  // The camera needs https (or localhost); elsewhere the button stays hidden.
+  var camBtn = document.getElementById("camBtn");
+  var video = document.getElementById("scanVideo");
+  var detector = null;
+  try {
+    if ("BarcodeDetector" in window && window.isSecureContext &&
+        navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      detector = new window.BarcodeDetector({ formats: ["qr_code"] });
+    }
+  } catch (e) { detector = null; }
+  if (detector) {
+    camBtn.hidden = false;
+    var stream = null;
+    function stop() {
+      if (stream) stream.getTracks().forEach(function (t) { t.stop(); });
+      stream = null;
+      video.classList.remove("is-on");
+      camBtn.innerHTML = camBtn.innerHTML.replace("Stop camera", "Use camera");
+    }
+    function tick() {
+      if (!stream) return;
+      detector.detect(video).then(function (codes) {
+        if (codes.length) {
+          input.value = codes[0].rawValue;
+          stop();
+          lookup(codes[0].rawValue);
+        } else {
+          window.requestAnimationFrame(tick);
+        }
+      }).catch(function () { window.setTimeout(tick, 300); });
+    }
+    camBtn.addEventListener("click", function () {
+      if (stream) { stop(); return; }
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+        .then(function (s) {
+          stream = s;
+          video.srcObject = s;
+          video.classList.add("is-on");
+          video.play();
+          camBtn.innerHTML = camBtn.innerHTML.replace("Use camera", "Stop camera");
+          tick();
+        })
+        .catch(function () {
+          document.getElementById("scanHint").textContent = "The camera could not be opened — type or scan the code instead.";
+        });
+    });
+  }
 })();
 </script>
 {% endblock %}

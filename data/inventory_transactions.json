@@ -1,1573 +1,93 @@
 [
   {
     "item_type": "product",
-    "item_id": 1,
-    "change_qty": -9.0,
-    "txn_type": "sold",
+    "item_id": 2,
+    "change_qty": 10.0,
+    "txn_type": "produced",
     "reference_id": "seed-history",
     "user_id": 4,
-    "timestamp": "2026-07-27T13:00:00+00:00",
+    "timestamp": "2026-07-27T09:00:00+00:00",
     "id": 1
   },
   {
-    "item_type": "product",
+    "item_type": "material",
     "item_id": 1,
-    "change_qty": 12.0,
-    "txn_type": "produced",
+    "change_qty": -3.5,
+    "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
+    "user_id": 4,
     "timestamp": "2026-07-27T09:00:00+00:00",
     "id": 2
   },
   {
     "item_type": "material",
-    "item_id": 1,
-    "change_qty": -2.16,
+    "item_id": 16,
+    "change_qty": -10.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
+    "user_id": 4,
     "timestamp": "2026-07-27T09:00:00+00:00",
     "id": 3
   },
   {
     "item_type": "material",
-    "item_id": 4,
-    "change_qty": -36.0,
+    "item_id": 31,
+    "change_qty": -10.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
+    "user_id": 4,
     "timestamp": "2026-07-27T09:00:00+00:00",
     "id": 4
   },
   {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -0.96,
-    "txn_type": "consumed",
+    "item_type": "product",
+    "item_id": 4,
+    "change_qty": 16.0,
+    "txn_type": "produced",
     "reference_id": "seed-history",
-    "user_id": 3,
+    "user_id": 4,
     "timestamp": "2026-07-27T09:00:00+00:00",
     "id": 5
   },
   {
     "item_type": "material",
-    "item_id": 6,
-    "change_qty": -12.0,
+    "item_id": 1,
+    "change_qty": -22.4,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
+    "user_id": 4,
     "timestamp": "2026-07-27T09:00:00+00:00",
     "id": 6
   },
   {
     "item_type": "material",
-    "item_id": 10,
-    "change_qty": -12.0,
+    "item_id": 19,
+    "change_qty": -16.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
+    "user_id": 4,
     "timestamp": "2026-07-27T09:00:00+00:00",
     "id": 7
   },
   {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -12.0,
-    "txn_type": "consumed",
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": -10.0,
+    "txn_type": "sold",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-27T09:00:00+00:00",
+    "user_id": 5,
+    "timestamp": "2026-07-28T12:00:00+00:00",
     "id": 8
   },
   {
     "item_type": "product",
-    "item_id": 2,
-    "change_qty": 19.0,
+    "item_id": 9,
+    "change_qty": 16.0,
     "txn_type": "produced",
     "reference_id": "seed-history",
-    "user_id": 3,
+    "user_id": 4,
     "timestamp": "2026-07-27T09:00:00+00:00",
     "id": 9
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -6.08,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-27T09:00:00+00:00",
-    "id": 10
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -19.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-27T09:00:00+00:00",
-    "id": 11
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -19.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-27T09:00:00+00:00",
-    "id": 12
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -19.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-27T09:00:00+00:00",
-    "id": 13
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": -14.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-07-28T12:00:00+00:00",
-    "id": 14
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": 20.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-27T09:00:00+00:00",
-    "id": 15
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -28.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-27T09:00:00+00:00",
-    "id": 16
-  },
-  {
-    "item_type": "material",
-    "item_id": 9,
-    "change_qty": -20.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-27T09:00:00+00:00",
-    "id": 17
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -20.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-27T09:00:00+00:00",
-    "id": 18
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -20.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-27T09:00:00+00:00",
-    "id": 19
-  },
-  {
-    "item_type": "product",
-    "item_id": 4,
-    "change_qty": 26.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-29T09:00:00+00:00",
-    "id": 20
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -3.9,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-29T09:00:00+00:00",
-    "id": 21
-  },
-  {
-    "item_type": "material",
-    "item_id": 3,
-    "change_qty": -1.3,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-29T09:00:00+00:00",
-    "id": 22
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -1.3,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-29T09:00:00+00:00",
-    "id": 23
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -26.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-29T09:00:00+00:00",
-    "id": 24
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -26.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-29T09:00:00+00:00",
-    "id": 25
-  },
-  {
-    "item_type": "product",
-    "item_id": 5,
-    "change_qty": 27.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-28T09:00:00+00:00",
-    "id": 26
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -4.32,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-28T09:00:00+00:00",
-    "id": 27
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -2.4299999999999997,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-28T09:00:00+00:00",
-    "id": 28
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -27.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-28T09:00:00+00:00",
-    "id": 29
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -27.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-28T09:00:00+00:00",
-    "id": 30
-  },
-  {
-    "item_type": "material",
-    "item_id": 5,
-    "change_qty": 68.0,
-    "txn_type": "received",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-07-28T09:00:00+00:00",
-    "id": 31
-  },
-  {
-    "item_type": "product",
-    "item_id": 1,
-    "change_qty": 13.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 32
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -2.34,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 33
-  },
-  {
-    "item_type": "material",
-    "item_id": 4,
-    "change_qty": -39.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 34
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -1.04,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 35
-  },
-  {
-    "item_type": "material",
-    "item_id": 6,
-    "change_qty": -13.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 36
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -13.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 37
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -13.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 38
-  },
-  {
-    "item_type": "product",
-    "item_id": 2,
-    "change_qty": -14.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-08-03T16:00:00+00:00",
-    "id": 39
-  },
-  {
-    "item_type": "product",
-    "item_id": 2,
-    "change_qty": 16.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 40
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -5.12,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 41
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -16.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 42
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -16.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 43
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -16.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 44
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": 19.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-05T09:00:00+00:00",
-    "id": 45
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -26.599999999999998,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-05T09:00:00+00:00",
-    "id": 46
-  },
-  {
-    "item_type": "material",
-    "item_id": 9,
-    "change_qty": -19.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-05T09:00:00+00:00",
-    "id": 47
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -19.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-05T09:00:00+00:00",
-    "id": 48
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -19.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-05T09:00:00+00:00",
-    "id": 49
-  },
-  {
-    "item_type": "product",
-    "item_id": 4,
-    "change_qty": 28.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-03T09:00:00+00:00",
-    "id": 50
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -4.2,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-03T09:00:00+00:00",
-    "id": 51
-  },
-  {
-    "item_type": "material",
-    "item_id": 3,
-    "change_qty": -1.4000000000000001,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-03T09:00:00+00:00",
-    "id": 52
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -1.4000000000000001,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-03T09:00:00+00:00",
-    "id": 53
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -28.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-03T09:00:00+00:00",
-    "id": 54
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -28.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-03T09:00:00+00:00",
-    "id": 55
-  },
-  {
-    "item_type": "product",
-    "item_id": 5,
-    "change_qty": -28.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-08-06T13:00:00+00:00",
-    "id": 56
-  },
-  {
-    "item_type": "product",
-    "item_id": 5,
-    "change_qty": 35.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 57
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -5.6000000000000005,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 58
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -3.15,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 59
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -35.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 60
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -35.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-04T09:00:00+00:00",
-    "id": 61
-  },
-  {
-    "item_type": "product",
-    "item_id": 1,
-    "change_qty": -10.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-08-12T12:00:00+00:00",
-    "id": 62
-  },
-  {
-    "item_type": "product",
-    "item_id": 1,
-    "change_qty": 17.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-12T09:00:00+00:00",
-    "id": 63
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -3.06,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-12T09:00:00+00:00",
-    "id": 64
-  },
-  {
-    "item_type": "material",
-    "item_id": 4,
-    "change_qty": -51.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-12T09:00:00+00:00",
-    "id": 65
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -1.36,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-12T09:00:00+00:00",
-    "id": 66
-  },
-  {
-    "item_type": "material",
-    "item_id": 6,
-    "change_qty": -17.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-12T09:00:00+00:00",
-    "id": 67
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -17.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-12T09:00:00+00:00",
-    "id": 68
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -17.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-12T09:00:00+00:00",
-    "id": 69
-  },
-  {
-    "item_type": "product",
-    "item_id": 2,
-    "change_qty": 23.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-10T09:00:00+00:00",
-    "id": 70
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -7.36,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-10T09:00:00+00:00",
-    "id": 71
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -23.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-10T09:00:00+00:00",
-    "id": 72
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -23.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-10T09:00:00+00:00",
-    "id": 73
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -23.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-10T09:00:00+00:00",
-    "id": 74
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": 21.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-12T09:00:00+00:00",
-    "id": 75
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -29.4,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-12T09:00:00+00:00",
-    "id": 76
-  },
-  {
-    "item_type": "material",
-    "item_id": 9,
-    "change_qty": -21.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-12T09:00:00+00:00",
-    "id": 77
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -21.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-12T09:00:00+00:00",
-    "id": 78
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -21.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-12T09:00:00+00:00",
-    "id": 79
-  },
-  {
-    "item_type": "product",
-    "item_id": 4,
-    "change_qty": -22.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-08-10T12:00:00+00:00",
-    "id": 80
-  },
-  {
-    "item_type": "product",
-    "item_id": 4,
-    "change_qty": 30.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-11T09:00:00+00:00",
-    "id": 81
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -4.5,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-11T09:00:00+00:00",
-    "id": 82
-  },
-  {
-    "item_type": "material",
-    "item_id": 3,
-    "change_qty": -1.5,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-11T09:00:00+00:00",
-    "id": 83
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -1.5,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-11T09:00:00+00:00",
-    "id": 84
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -30.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-11T09:00:00+00:00",
-    "id": 85
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -30.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-11T09:00:00+00:00",
-    "id": 86
-  },
-  {
-    "item_type": "product",
-    "item_id": 5,
-    "change_qty": -27.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-08-10T12:00:00+00:00",
-    "id": 87
-  },
-  {
-    "item_type": "product",
-    "item_id": 5,
-    "change_qty": 34.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-11T09:00:00+00:00",
-    "id": 88
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -5.44,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-11T09:00:00+00:00",
-    "id": 89
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -3.06,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-11T09:00:00+00:00",
-    "id": 90
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -34.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-11T09:00:00+00:00",
-    "id": 91
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -34.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-11T09:00:00+00:00",
-    "id": 92
-  },
-  {
-    "item_type": "material",
-    "item_id": 7,
-    "change_qty": 45.0,
-    "txn_type": "received",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-13T09:00:00+00:00",
-    "id": 93
-  },
-  {
-    "item_type": "product",
-    "item_id": 1,
-    "change_qty": 18.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-17T09:00:00+00:00",
-    "id": 94
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -3.2399999999999998,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-17T09:00:00+00:00",
-    "id": 95
-  },
-  {
-    "item_type": "material",
-    "item_id": 4,
-    "change_qty": -54.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-17T09:00:00+00:00",
-    "id": 96
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -1.44,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-17T09:00:00+00:00",
-    "id": 97
-  },
-  {
-    "item_type": "material",
-    "item_id": 6,
-    "change_qty": -18.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-17T09:00:00+00:00",
-    "id": 98
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -18.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-17T09:00:00+00:00",
-    "id": 99
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -18.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-17T09:00:00+00:00",
-    "id": 100
-  },
-  {
-    "item_type": "product",
-    "item_id": 2,
-    "change_qty": 23.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-19T09:00:00+00:00",
-    "id": 101
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -7.36,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-19T09:00:00+00:00",
-    "id": 102
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -23.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-19T09:00:00+00:00",
-    "id": 103
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -23.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-19T09:00:00+00:00",
-    "id": 104
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -23.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-19T09:00:00+00:00",
-    "id": 105
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": -20.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-08-18T11:00:00+00:00",
-    "id": 106
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": 25.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-17T09:00:00+00:00",
-    "id": 107
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -35.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-17T09:00:00+00:00",
-    "id": 108
-  },
-  {
-    "item_type": "material",
-    "item_id": 9,
-    "change_qty": -25.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-17T09:00:00+00:00",
-    "id": 109
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -25.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-17T09:00:00+00:00",
-    "id": 110
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -25.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-17T09:00:00+00:00",
-    "id": 111
-  },
-  {
-    "item_type": "product",
-    "item_id": 4,
-    "change_qty": -26.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-08-17T11:00:00+00:00",
-    "id": 112
-  },
-  {
-    "item_type": "product",
-    "item_id": 4,
-    "change_qty": 34.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-19T09:00:00+00:00",
-    "id": 113
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -5.1,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-19T09:00:00+00:00",
-    "id": 114
-  },
-  {
-    "item_type": "material",
-    "item_id": 3,
-    "change_qty": -1.7000000000000002,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-19T09:00:00+00:00",
-    "id": 115
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -1.7000000000000002,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-19T09:00:00+00:00",
-    "id": 116
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -34.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-19T09:00:00+00:00",
-    "id": 117
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -34.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-19T09:00:00+00:00",
-    "id": 118
-  },
-  {
-    "item_type": "product",
-    "item_id": 5,
-    "change_qty": 34.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-18T09:00:00+00:00",
-    "id": 119
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -5.44,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-18T09:00:00+00:00",
-    "id": 120
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -3.06,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-18T09:00:00+00:00",
-    "id": 121
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -34.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-18T09:00:00+00:00",
-    "id": 122
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -34.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-18T09:00:00+00:00",
-    "id": 123
-  },
-  {
-    "item_type": "product",
-    "item_id": 1,
-    "change_qty": 21.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-26T09:00:00+00:00",
-    "id": 124
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -3.78,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-26T09:00:00+00:00",
-    "id": 125
-  },
-  {
-    "item_type": "material",
-    "item_id": 4,
-    "change_qty": -63.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-26T09:00:00+00:00",
-    "id": 126
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -1.68,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-26T09:00:00+00:00",
-    "id": 127
-  },
-  {
-    "item_type": "material",
-    "item_id": 6,
-    "change_qty": -21.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-26T09:00:00+00:00",
-    "id": 128
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -21.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-26T09:00:00+00:00",
-    "id": 129
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -21.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-26T09:00:00+00:00",
-    "id": 130
-  },
-  {
-    "item_type": "product",
-    "item_id": 2,
-    "change_qty": -19.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-08-26T10:00:00+00:00",
-    "id": 131
-  },
-  {
-    "item_type": "product",
-    "item_id": 2,
-    "change_qty": 24.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 132
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -7.68,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 133
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -24.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 134
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -24.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 135
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -24.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 136
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": -22.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-08-26T17:00:00+00:00",
-    "id": 137
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": 28.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 138
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -39.199999999999996,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 139
-  },
-  {
-    "item_type": "material",
-    "item_id": 9,
-    "change_qty": -28.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 140
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -28.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 141
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -28.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 142
-  },
-  {
-    "item_type": "product",
-    "item_id": 4,
-    "change_qty": 31.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 143
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -4.6499999999999995,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 144
-  },
-  {
-    "item_type": "material",
-    "item_id": 3,
-    "change_qty": -1.55,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 145
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -1.55,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 146
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -31.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 147
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -31.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-24T09:00:00+00:00",
-    "id": 148
-  },
-  {
-    "item_type": "product",
-    "item_id": 5,
-    "change_qty": -29.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-08-25T17:00:00+00:00",
-    "id": 149
-  },
-  {
-    "item_type": "product",
-    "item_id": 5,
-    "change_qty": 31.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-26T09:00:00+00:00",
-    "id": 150
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -4.96,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-26T09:00:00+00:00",
-    "id": 151
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -2.79,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-26T09:00:00+00:00",
-    "id": 152
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -31.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-26T09:00:00+00:00",
-    "id": 153
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -31.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-26T09:00:00+00:00",
-    "id": 154
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": 21.0,
-    "txn_type": "received",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-27T09:00:00+00:00",
-    "id": 155
-  },
-  {
-    "item_type": "product",
-    "item_id": 1,
-    "change_qty": -14.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-09-02T13:00:00+00:00",
-    "id": 156
-  },
-  {
-    "item_type": "product",
-    "item_id": 1,
-    "change_qty": 16.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-31T09:00:00+00:00",
-    "id": 157
   },
   {
     "item_type": "material",
@@ -1575,789 +95,939 @@
     "change_qty": -2.88,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-31T09:00:00+00:00",
-    "id": 158
+    "user_id": 4,
+    "timestamp": "2026-07-27T09:00:00+00:00",
+    "id": 10
   },
   {
     "item_type": "material",
-    "item_id": 4,
+    "item_id": 2,
     "change_qty": -48.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-31T09:00:00+00:00",
-    "id": 159
+    "user_id": 4,
+    "timestamp": "2026-07-27T09:00:00+00:00",
+    "id": 11
   },
   {
     "item_type": "material",
-    "item_id": 2,
+    "item_id": 3,
     "change_qty": -1.28,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-31T09:00:00+00:00",
-    "id": 160
+    "user_id": 4,
+    "timestamp": "2026-07-27T09:00:00+00:00",
+    "id": 12
   },
   {
     "item_type": "material",
-    "item_id": 6,
+    "item_id": 17,
     "change_qty": -16.0,
     "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-31T09:00:00+00:00",
-    "id": 161
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -16.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-31T09:00:00+00:00",
-    "id": 162
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -16.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-31T09:00:00+00:00",
-    "id": 163
-  },
-  {
-    "item_type": "product",
-    "item_id": 2,
-    "change_qty": -21.0,
-    "txn_type": "sold",
     "reference_id": "seed-history",
     "user_id": 4,
-    "timestamp": "2026-08-31T10:00:00+00:00",
-    "id": 164
+    "timestamp": "2026-07-27T09:00:00+00:00",
+    "id": 13
   },
   {
     "item_type": "product",
-    "item_id": 2,
-    "change_qty": 29.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-31T09:00:00+00:00",
-    "id": 165
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -9.28,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-31T09:00:00+00:00",
-    "id": 166
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -29.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-31T09:00:00+00:00",
-    "id": 167
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -29.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-31T09:00:00+00:00",
-    "id": 168
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -29.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-08-31T09:00:00+00:00",
-    "id": 169
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": 33.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-01T09:00:00+00:00",
-    "id": 170
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -46.199999999999996,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-01T09:00:00+00:00",
-    "id": 171
-  },
-  {
-    "item_type": "material",
-    "item_id": 9,
-    "change_qty": -33.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-01T09:00:00+00:00",
-    "id": 172
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -33.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-01T09:00:00+00:00",
-    "id": 173
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -33.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-01T09:00:00+00:00",
-    "id": 174
-  },
-  {
-    "item_type": "product",
-    "item_id": 4,
-    "change_qty": -30.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-09-01T13:00:00+00:00",
-    "id": 175
-  },
-  {
-    "item_type": "product",
-    "item_id": 4,
-    "change_qty": 38.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-02T09:00:00+00:00",
-    "id": 176
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -5.7,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-02T09:00:00+00:00",
-    "id": 177
-  },
-  {
-    "item_type": "material",
-    "item_id": 3,
-    "change_qty": -1.9000000000000001,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-02T09:00:00+00:00",
-    "id": 178
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -1.9000000000000001,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-02T09:00:00+00:00",
-    "id": 179
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -38.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-02T09:00:00+00:00",
-    "id": 180
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -38.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-02T09:00:00+00:00",
-    "id": 181
-  },
-  {
-    "item_type": "product",
-    "item_id": 5,
-    "change_qty": 38.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-01T09:00:00+00:00",
-    "id": 182
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -6.08,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-01T09:00:00+00:00",
-    "id": 183
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -3.42,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-01T09:00:00+00:00",
-    "id": 184
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -38.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-01T09:00:00+00:00",
-    "id": 185
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -38.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-01T09:00:00+00:00",
-    "id": 186
-  },
-  {
-    "item_type": "product",
-    "item_id": 1,
+    "item_id": 13,
     "change_qty": -16.0,
     "txn_type": "sold",
     "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-09-09T16:00:00+00:00",
-    "id": 187
+    "user_id": 5,
+    "timestamp": "2026-07-31T15:00:00+00:00",
+    "id": 14
   },
   {
     "item_type": "product",
-    "item_id": 1,
+    "item_id": 13,
     "change_qty": 21.0,
     "txn_type": "produced",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-07T09:00:00+00:00",
-    "id": 188
+    "user_id": 4,
+    "timestamp": "2026-07-29T09:00:00+00:00",
+    "id": 15
   },
   {
     "item_type": "material",
     "item_id": 1,
-    "change_qty": -3.78,
+    "change_qty": -4.2,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-07T09:00:00+00:00",
-    "id": 189
+    "user_id": 4,
+    "timestamp": "2026-07-29T09:00:00+00:00",
+    "id": 16
   },
   {
     "item_type": "material",
     "item_id": 4,
-    "change_qty": -63.0,
+    "change_qty": -1.05,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-07T09:00:00+00:00",
-    "id": 190
+    "user_id": 4,
+    "timestamp": "2026-07-29T09:00:00+00:00",
+    "id": 17
   },
   {
     "item_type": "material",
-    "item_id": 2,
-    "change_qty": -1.68,
+    "item_id": 3,
+    "change_qty": -1.05,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-07T09:00:00+00:00",
-    "id": 191
+    "user_id": 4,
+    "timestamp": "2026-07-29T09:00:00+00:00",
+    "id": 18
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -21.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-07-29T09:00:00+00:00",
+    "id": 19
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": -17.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-07-27T11:00:00+00:00",
+    "id": 20
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": 21.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-07-28T09:00:00+00:00",
+    "id": 21
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -4.2,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-07-28T09:00:00+00:00",
+    "id": 22
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.89,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-07-28T09:00:00+00:00",
+    "id": 23
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -21.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-07-28T09:00:00+00:00",
+    "id": 24
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": -5.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-07-29T10:00:00+00:00",
+    "id": 25
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": 10.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-07-27T09:00:00+00:00",
+    "id": 26
   },
   {
     "item_type": "material",
     "item_id": 6,
-    "change_qty": -21.0,
+    "change_qty": -2.5,
     "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-07T09:00:00+00:00",
-    "id": 192
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -21.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-07T09:00:00+00:00",
-    "id": 193
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -21.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-07T09:00:00+00:00",
-    "id": 194
-  },
-  {
-    "item_type": "product",
-    "item_id": 2,
-    "change_qty": 26.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 195
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -8.32,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 196
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -26.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 197
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -26.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 198
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -26.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 199
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": -24.0,
-    "txn_type": "sold",
     "reference_id": "seed-history",
     "user_id": 4,
-    "timestamp": "2026-09-08T09:00:00+00:00",
-    "id": 200
+    "timestamp": "2026-07-27T09:00:00+00:00",
+    "id": 27
+  },
+  {
+    "item_type": "material",
+    "item_id": 28,
+    "change_qty": -10.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-07-27T09:00:00+00:00",
+    "id": 28
   },
   {
     "item_type": "product",
-    "item_id": 3,
-    "change_qty": 31.0,
+    "item_id": 26,
+    "change_qty": 16.0,
     "txn_type": "produced",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 201
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -43.4,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 202
-  },
-  {
-    "item_type": "material",
-    "item_id": 9,
-    "change_qty": -31.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 203
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -31.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 204
+    "user_id": 4,
+    "timestamp": "2026-07-28T09:00:00+00:00",
+    "id": 29
   },
   {
     "item_type": "material",
     "item_id": 11,
-    "change_qty": -31.0,
+    "change_qty": -2.4,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 205
+    "user_id": 4,
+    "timestamp": "2026-07-28T09:00:00+00:00",
+    "id": 30
+  },
+  {
+    "item_type": "material",
+    "item_id": 25,
+    "change_qty": -16.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-07-28T09:00:00+00:00",
+    "id": 31
   },
   {
     "item_type": "product",
-    "item_id": 4,
-    "change_qty": 29.0,
+    "item_id": 22,
+    "change_qty": 17.0,
     "txn_type": "produced",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 206
+    "user_id": 4,
+    "timestamp": "2026-07-29T09:00:00+00:00",
+    "id": 32
   },
   {
     "item_type": "material",
-    "item_id": 1,
-    "change_qty": -4.35,
+    "item_id": 6,
+    "change_qty": -2.55,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 207
+    "user_id": 4,
+    "timestamp": "2026-07-29T09:00:00+00:00",
+    "id": 33
   },
   {
     "item_type": "material",
-    "item_id": 3,
-    "change_qty": -1.4500000000000002,
+    "item_id": 26,
+    "change_qty": -17.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 208
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -1.4500000000000002,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 209
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -29.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 210
+    "user_id": 4,
+    "timestamp": "2026-07-29T09:00:00+00:00",
+    "id": 34
   },
   {
     "item_type": "material",
     "item_id": 10,
-    "change_qty": -29.0,
-    "txn_type": "consumed",
+    "change_qty": 56.0,
+    "txn_type": "received",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 211
+    "user_id": 4,
+    "timestamp": "2026-07-29T09:00:00+00:00",
+    "id": 35
   },
   {
     "item_type": "product",
-    "item_id": 5,
-    "change_qty": 35.0,
+    "item_id": 2,
+    "change_qty": -6.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-03T09:00:00+00:00",
+    "id": 36
+  },
+  {
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": 14.0,
     "txn_type": "produced",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 212
+    "user_id": 4,
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 37
   },
   {
     "item_type": "material",
     "item_id": 1,
-    "change_qty": -5.6000000000000005,
+    "change_qty": -4.8999999999999995,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 213
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -3.15,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 214
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -35.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 215
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -35.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-09T09:00:00+00:00",
-    "id": 216
+    "user_id": 4,
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 38
   },
   {
     "item_type": "material",
     "item_id": 16,
-    "change_qty": 70.0,
-    "txn_type": "received",
+    "change_qty": -14.0,
+    "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-08T09:00:00+00:00",
-    "id": 217
+    "user_id": 4,
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 39
+  },
+  {
+    "item_type": "material",
+    "item_id": 31,
+    "change_qty": -14.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 40
   },
   {
     "item_type": "product",
-    "item_id": 1,
-    "change_qty": 20.0,
+    "item_id": 4,
+    "change_qty": 17.0,
     "txn_type": "produced",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 218
+    "user_id": 4,
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 41
   },
   {
     "item_type": "material",
     "item_id": 1,
-    "change_qty": -3.5999999999999996,
+    "change_qty": -23.799999999999997,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 219
+    "user_id": 4,
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 42
   },
   {
     "item_type": "material",
-    "item_id": 4,
-    "change_qty": -60.0,
+    "item_id": 19,
+    "change_qty": -17.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 220
+    "user_id": 4,
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 43
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": 18.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-03T09:00:00+00:00",
+    "id": 44
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -3.2399999999999998,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-03T09:00:00+00:00",
+    "id": 45
   },
   {
     "item_type": "material",
     "item_id": 2,
-    "change_qty": -1.6,
+    "change_qty": -54.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 221
+    "user_id": 4,
+    "timestamp": "2026-08-03T09:00:00+00:00",
+    "id": 46
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.44,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-03T09:00:00+00:00",
+    "id": 47
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -18.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-03T09:00:00+00:00",
+    "id": 48
+  },
+  {
+    "item_type": "product",
+    "item_id": 13,
+    "change_qty": 25.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-03T09:00:00+00:00",
+    "id": 49
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -5.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-03T09:00:00+00:00",
+    "id": 50
+  },
+  {
+    "item_type": "material",
+    "item_id": 4,
+    "change_qty": -1.25,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-03T09:00:00+00:00",
+    "id": 51
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.25,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-03T09:00:00+00:00",
+    "id": 52
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -25.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-03T09:00:00+00:00",
+    "id": 53
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": 21.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-05T09:00:00+00:00",
+    "id": 54
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -4.2,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-05T09:00:00+00:00",
+    "id": 55
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.89,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-05T09:00:00+00:00",
+    "id": 56
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -21.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-05T09:00:00+00:00",
+    "id": 57
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": -7.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-03T12:00:00+00:00",
+    "id": 58
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": 15.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 59
   },
   {
     "item_type": "material",
     "item_id": 6,
-    "change_qty": -20.0,
+    "change_qty": -3.75,
     "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 222
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -20.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 223
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -20.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 224
-  },
-  {
-    "item_type": "product",
-    "item_id": 2,
-    "change_qty": -22.0,
-    "txn_type": "sold",
     "reference_id": "seed-history",
     "user_id": 4,
-    "timestamp": "2026-09-17T15:00:00+00:00",
-    "id": 225
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 60
+  },
+  {
+    "item_type": "material",
+    "item_id": 28,
+    "change_qty": -15.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 61
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": -10.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-03T12:00:00+00:00",
+    "id": 62
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": 17.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 63
+  },
+  {
+    "item_type": "material",
+    "item_id": 11,
+    "change_qty": -2.55,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 64
+  },
+  {
+    "item_type": "material",
+    "item_id": 25,
+    "change_qty": -17.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 65
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": 15.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 66
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -2.25,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 67
+  },
+  {
+    "item_type": "material",
+    "item_id": 26,
+    "change_qty": -15.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-04T09:00:00+00:00",
+    "id": 68
   },
   {
     "item_type": "product",
     "item_id": 2,
-    "change_qty": 30.0,
+    "change_qty": 14.0,
     "txn_type": "produced",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 226
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 69
   },
   {
     "item_type": "material",
     "item_id": 1,
-    "change_qty": -9.6,
+    "change_qty": -4.8999999999999995,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 227
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 70
   },
   {
     "item_type": "material",
-    "item_id": 8,
-    "change_qty": -30.0,
+    "item_id": 16,
+    "change_qty": -14.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 228
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 71
   },
   {
     "item_type": "material",
-    "item_id": 10,
-    "change_qty": -30.0,
+    "item_id": 31,
+    "change_qty": -14.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 229
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -30.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 230
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": 31.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-15T09:00:00+00:00",
-    "id": 231
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -43.4,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-15T09:00:00+00:00",
-    "id": 232
-  },
-  {
-    "item_type": "material",
-    "item_id": 9,
-    "change_qty": -31.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-15T09:00:00+00:00",
-    "id": 233
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -31.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-15T09:00:00+00:00",
-    "id": 234
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -31.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-15T09:00:00+00:00",
-    "id": 235
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 72
   },
   {
     "item_type": "product",
     "item_id": 4,
-    "change_qty": 35.0,
+    "change_qty": -12.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-14T15:00:00+00:00",
+    "id": 73
+  },
+  {
+    "item_type": "product",
+    "item_id": 4,
+    "change_qty": 15.0,
     "txn_type": "produced",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 236
+    "user_id": 4,
+    "timestamp": "2026-08-10T09:00:00+00:00",
+    "id": 74
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -21.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-10T09:00:00+00:00",
+    "id": 75
+  },
+  {
+    "item_type": "material",
+    "item_id": 19,
+    "change_qty": -15.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-10T09:00:00+00:00",
+    "id": 76
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": 18.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 77
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -3.2399999999999998,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 78
+  },
+  {
+    "item_type": "material",
+    "item_id": 2,
+    "change_qty": -54.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 79
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.44,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 80
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -18.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 81
+  },
+  {
+    "item_type": "product",
+    "item_id": 13,
+    "change_qty": -16.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-13T10:00:00+00:00",
+    "id": 82
+  },
+  {
+    "item_type": "product",
+    "item_id": 13,
+    "change_qty": 21.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 83
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -4.2,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 84
+  },
+  {
+    "item_type": "material",
+    "item_id": 4,
+    "change_qty": -1.05,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 85
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.05,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 86
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -21.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 87
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": 31.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-10T09:00:00+00:00",
+    "id": 88
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -6.2,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-10T09:00:00+00:00",
+    "id": 89
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -2.79,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-10T09:00:00+00:00",
+    "id": 90
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -31.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-10T09:00:00+00:00",
+    "id": 91
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": 18.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 92
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -4.5,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 93
+  },
+  {
+    "item_type": "material",
+    "item_id": 28,
+    "change_qty": -18.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 94
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": 16.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-10T09:00:00+00:00",
+    "id": 95
+  },
+  {
+    "item_type": "material",
+    "item_id": 11,
+    "change_qty": -2.4,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-10T09:00:00+00:00",
+    "id": 96
+  },
+  {
+    "item_type": "material",
+    "item_id": 25,
+    "change_qty": -16.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-10T09:00:00+00:00",
+    "id": 97
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": -17.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-12T17:00:00+00:00",
+    "id": 98
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": 23.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-10T09:00:00+00:00",
+    "id": 99
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -3.4499999999999997,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-10T09:00:00+00:00",
+    "id": 100
+  },
+  {
+    "item_type": "material",
+    "item_id": 26,
+    "change_qty": -23.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-10T09:00:00+00:00",
+    "id": 101
+  },
+  {
+    "item_type": "material",
+    "item_id": 11,
+    "change_qty": 73.0,
+    "txn_type": "received",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-12T09:00:00+00:00",
+    "id": 102
+  },
+  {
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": 15.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 103
   },
   {
     "item_type": "material",
@@ -2365,129 +1035,1129 @@
     "change_qty": -5.25,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 237
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 104
+  },
+  {
+    "item_type": "material",
+    "item_id": 16,
+    "change_qty": -15.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 105
+  },
+  {
+    "item_type": "material",
+    "item_id": 31,
+    "change_qty": -15.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 106
+  },
+  {
+    "item_type": "product",
+    "item_id": 4,
+    "change_qty": -13.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-21T09:00:00+00:00",
+    "id": 107
+  },
+  {
+    "item_type": "product",
+    "item_id": 4,
+    "change_qty": 17.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-18T09:00:00+00:00",
+    "id": 108
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -23.799999999999997,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-18T09:00:00+00:00",
+    "id": 109
+  },
+  {
+    "item_type": "material",
+    "item_id": 19,
+    "change_qty": -17.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-18T09:00:00+00:00",
+    "id": 110
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": -14.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-19T13:00:00+00:00",
+    "id": 111
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": 16.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 112
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -2.88,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 113
+  },
+  {
+    "item_type": "material",
+    "item_id": 2,
+    "change_qty": -48.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 114
   },
   {
     "item_type": "material",
     "item_id": 3,
-    "change_qty": -1.75,
+    "change_qty": -1.28,
     "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 238
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -1.75,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 239
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -35.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 240
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -35.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-16T09:00:00+00:00",
-    "id": 241
-  },
-  {
-    "item_type": "product",
-    "item_id": 5,
-    "change_qty": -34.0,
-    "txn_type": "sold",
     "reference_id": "seed-history",
     "user_id": 4,
-    "timestamp": "2026-09-17T11:00:00+00:00",
-    "id": 242
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 115
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -16.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 116
   },
   {
     "item_type": "product",
-    "item_id": 5,
-    "change_qty": 39.0,
+    "item_id": 13,
+    "change_qty": 29.0,
     "txn_type": "produced",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-14T09:00:00+00:00",
-    "id": 243
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 117
   },
   {
     "item_type": "material",
     "item_id": 1,
-    "change_qty": -6.24,
+    "change_qty": -5.800000000000001,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-14T09:00:00+00:00",
-    "id": 244
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 118
+  },
+  {
+    "item_type": "material",
+    "item_id": 4,
+    "change_qty": -1.4500000000000002,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 119
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.4500000000000002,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 120
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -29.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 121
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": -24.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-21T11:00:00+00:00",
+    "id": 122
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": 31.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-18T09:00:00+00:00",
+    "id": 123
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -6.2,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-18T09:00:00+00:00",
+    "id": 124
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -2.79,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-18T09:00:00+00:00",
+    "id": 125
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -31.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-18T09:00:00+00:00",
+    "id": 126
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": -12.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-18T13:00:00+00:00",
+    "id": 127
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": 20.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-19T09:00:00+00:00",
+    "id": 128
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -5.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-19T09:00:00+00:00",
+    "id": 129
+  },
+  {
+    "item_type": "material",
+    "item_id": 28,
+    "change_qty": -20.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-19T09:00:00+00:00",
+    "id": 130
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": 20.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-18T09:00:00+00:00",
+    "id": 131
+  },
+  {
+    "item_type": "material",
+    "item_id": 11,
+    "change_qty": -3.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-18T09:00:00+00:00",
+    "id": 132
+  },
+  {
+    "item_type": "material",
+    "item_id": 25,
+    "change_qty": -20.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-18T09:00:00+00:00",
+    "id": 133
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": -16.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-19T16:00:00+00:00",
+    "id": 134
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": 21.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 135
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -3.15,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 136
+  },
+  {
+    "item_type": "material",
+    "item_id": 26,
+    "change_qty": -21.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-17T09:00:00+00:00",
+    "id": 137
+  },
+  {
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": -10.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-24T14:00:00+00:00",
+    "id": 138
+  },
+  {
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": 16.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 139
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -5.6,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 140
+  },
+  {
+    "item_type": "material",
+    "item_id": 16,
+    "change_qty": -16.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 141
+  },
+  {
+    "item_type": "material",
+    "item_id": 31,
+    "change_qty": -16.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 142
+  },
+  {
+    "item_type": "product",
+    "item_id": 4,
+    "change_qty": 20.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 143
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -28.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 144
+  },
+  {
+    "item_type": "material",
+    "item_id": 19,
+    "change_qty": -20.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 145
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": -15.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-24T09:00:00+00:00",
+    "id": 146
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": 17.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 147
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -3.06,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 148
   },
   {
     "item_type": "material",
     "item_id": 2,
-    "change_qty": -3.51,
+    "change_qty": -51.0,
     "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-14T09:00:00+00:00",
-    "id": 245
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -39.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-14T09:00:00+00:00",
-    "id": 246
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -39.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-14T09:00:00+00:00",
-    "id": 247
-  },
-  {
-    "item_type": "product",
-    "item_id": 1,
-    "change_qty": -22.0,
-    "txn_type": "sold",
     "reference_id": "seed-history",
     "user_id": 4,
-    "timestamp": "2026-09-21T16:00:00+00:00",
-    "id": 248
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 149
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.36,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 150
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -17.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 151
   },
   {
     "item_type": "product",
+    "item_id": 13,
+    "change_qty": 22.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 152
+  },
+  {
+    "item_type": "material",
     "item_id": 1,
+    "change_qty": -4.4,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 153
+  },
+  {
+    "item_type": "material",
+    "item_id": 4,
+    "change_qty": -1.1,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 154
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.1,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 155
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -22.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 156
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": -25.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-28T16:00:00+00:00",
+    "id": 157
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": 33.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-25T09:00:00+00:00",
+    "id": 158
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -6.6000000000000005,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-25T09:00:00+00:00",
+    "id": 159
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -2.9699999999999998,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-25T09:00:00+00:00",
+    "id": 160
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -33.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-25T09:00:00+00:00",
+    "id": 161
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": 20.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-25T09:00:00+00:00",
+    "id": 162
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -5.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-25T09:00:00+00:00",
+    "id": 163
+  },
+  {
+    "item_type": "material",
+    "item_id": 28,
+    "change_qty": -20.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-25T09:00:00+00:00",
+    "id": 164
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": -14.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-27T16:00:00+00:00",
+    "id": 165
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": 21.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 166
+  },
+  {
+    "item_type": "material",
+    "item_id": 11,
+    "change_qty": -3.15,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 167
+  },
+  {
+    "item_type": "material",
+    "item_id": 25,
+    "change_qty": -21.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-26T09:00:00+00:00",
+    "id": 168
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": 27.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-25T09:00:00+00:00",
+    "id": 169
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -4.05,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-25T09:00:00+00:00",
+    "id": 170
+  },
+  {
+    "item_type": "material",
+    "item_id": 26,
+    "change_qty": -27.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-25T09:00:00+00:00",
+    "id": 171
+  },
+  {
+    "item_type": "material",
+    "item_id": 2,
+    "change_qty": 32.0,
+    "txn_type": "received",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-25T09:00:00+00:00",
+    "id": 172
+  },
+  {
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": -11.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-09-03T11:00:00+00:00",
+    "id": 173
+  },
+  {
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": 14.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 174
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -4.8999999999999995,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 175
+  },
+  {
+    "item_type": "material",
+    "item_id": 16,
+    "change_qty": -14.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 176
+  },
+  {
+    "item_type": "material",
+    "item_id": 31,
+    "change_qty": -14.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 177
+  },
+  {
+    "item_type": "product",
+    "item_id": 4,
+    "change_qty": -15.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-31T16:00:00+00:00",
+    "id": 178
+  },
+  {
+    "item_type": "product",
+    "item_id": 4,
+    "change_qty": 17.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-31T09:00:00+00:00",
+    "id": 179
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -23.799999999999997,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-31T09:00:00+00:00",
+    "id": 180
+  },
+  {
+    "item_type": "material",
+    "item_id": 19,
+    "change_qty": -17.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-31T09:00:00+00:00",
+    "id": 181
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": 27.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-31T09:00:00+00:00",
+    "id": 182
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -4.859999999999999,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-31T09:00:00+00:00",
+    "id": 183
+  },
+  {
+    "item_type": "material",
+    "item_id": 2,
+    "change_qty": -81.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-31T09:00:00+00:00",
+    "id": 184
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -2.16,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-31T09:00:00+00:00",
+    "id": 185
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -27.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-08-31T09:00:00+00:00",
+    "id": 186
+  },
+  {
+    "item_type": "product",
+    "item_id": 13,
+    "change_qty": -20.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-09-03T16:00:00+00:00",
+    "id": 187
+  },
+  {
+    "item_type": "product",
+    "item_id": 13,
+    "change_qty": 28.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 188
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -5.6000000000000005,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 189
+  },
+  {
+    "item_type": "material",
+    "item_id": 4,
+    "change_qty": -1.4000000000000001,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 190
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.4000000000000001,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 191
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -28.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 192
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": 32.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 193
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -6.4,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 194
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -2.88,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 195
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -32.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 196
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": 22.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-02T09:00:00+00:00",
+    "id": 197
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -5.5,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-02T09:00:00+00:00",
+    "id": 198
+  },
+  {
+    "item_type": "material",
+    "item_id": 28,
+    "change_qty": -22.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-02T09:00:00+00:00",
+    "id": 199
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": -18.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-09-04T16:00:00+00:00",
+    "id": 200
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": 21.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 201
+  },
+  {
+    "item_type": "material",
+    "item_id": 11,
+    "change_qty": -3.15,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 202
+  },
+  {
+    "item_type": "material",
+    "item_id": 25,
+    "change_qty": -21.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 203
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": -17.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-08-31T17:00:00+00:00",
+    "id": 204
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
     "change_qty": 24.0,
     "txn_type": "produced",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-21T09:00:00+00:00",
-    "id": 249
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 205
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -3.5999999999999996,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 206
+  },
+  {
+    "item_type": "material",
+    "item_id": 26,
+    "change_qty": -24.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-01T09:00:00+00:00",
+    "id": 207
+  },
+  {
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": 19.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 208
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -6.6499999999999995,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 209
+  },
+  {
+    "item_type": "material",
+    "item_id": 16,
+    "change_qty": -19.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 210
+  },
+  {
+    "item_type": "material",
+    "item_id": 31,
+    "change_qty": -19.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 211
+  },
+  {
+    "item_type": "product",
+    "item_id": 4,
+    "change_qty": 17.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 212
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -23.799999999999997,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 213
+  },
+  {
+    "item_type": "material",
+    "item_id": 19,
+    "change_qty": -17.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 214
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": -18.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-09-08T15:00:00+00:00",
+    "id": 215
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": 24.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-07T09:00:00+00:00",
+    "id": 216
   },
   {
     "item_type": "material",
@@ -2495,499 +2165,59 @@
     "change_qty": -4.32,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-21T09:00:00+00:00",
-    "id": 250
+    "user_id": 4,
+    "timestamp": "2026-09-07T09:00:00+00:00",
+    "id": 217
   },
   {
     "item_type": "material",
-    "item_id": 4,
+    "item_id": 2,
     "change_qty": -72.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-21T09:00:00+00:00",
-    "id": 251
+    "user_id": 4,
+    "timestamp": "2026-09-07T09:00:00+00:00",
+    "id": 218
   },
   {
     "item_type": "material",
-    "item_id": 2,
+    "item_id": 3,
     "change_qty": -1.92,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-21T09:00:00+00:00",
-    "id": 252
+    "user_id": 4,
+    "timestamp": "2026-09-07T09:00:00+00:00",
+    "id": 219
   },
   {
     "item_type": "material",
-    "item_id": 6,
+    "item_id": 17,
     "change_qty": -24.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-21T09:00:00+00:00",
-    "id": 253
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -24.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-21T09:00:00+00:00",
-    "id": 254
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -24.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-21T09:00:00+00:00",
-    "id": 255
+    "user_id": 4,
+    "timestamp": "2026-09-07T09:00:00+00:00",
+    "id": 220
   },
   {
     "item_type": "product",
-    "item_id": 2,
-    "change_qty": 32.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-21T09:00:00+00:00",
-    "id": 256
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -10.24,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-21T09:00:00+00:00",
-    "id": 257
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -32.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-21T09:00:00+00:00",
-    "id": 258
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -32.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-21T09:00:00+00:00",
-    "id": 259
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -32.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-21T09:00:00+00:00",
-    "id": 260
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": 34.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-22T09:00:00+00:00",
-    "id": 261
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -47.599999999999994,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-22T09:00:00+00:00",
-    "id": 262
-  },
-  {
-    "item_type": "material",
-    "item_id": 9,
-    "change_qty": -34.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-22T09:00:00+00:00",
-    "id": 263
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -34.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-22T09:00:00+00:00",
-    "id": 264
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -34.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-22T09:00:00+00:00",
-    "id": 265
-  },
-  {
-    "item_type": "product",
-    "item_id": 4,
-    "change_qty": -34.0,
+    "item_id": 13,
+    "change_qty": -23.0,
     "txn_type": "sold",
     "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-09-22T15:00:00+00:00",
-    "id": 266
+    "user_id": 5,
+    "timestamp": "2026-09-07T10:00:00+00:00",
+    "id": 221
   },
   {
     "item_type": "product",
-    "item_id": 4,
-    "change_qty": 39.0,
+    "item_id": 13,
+    "change_qty": 30.0,
     "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-22T09:00:00+00:00",
-    "id": 267
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -5.85,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-22T09:00:00+00:00",
-    "id": 268
-  },
-  {
-    "item_type": "material",
-    "item_id": 3,
-    "change_qty": -1.9500000000000002,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-22T09:00:00+00:00",
-    "id": 269
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -1.9500000000000002,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-22T09:00:00+00:00",
-    "id": 270
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -39.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-22T09:00:00+00:00",
-    "id": 271
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -39.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-22T09:00:00+00:00",
-    "id": 272
-  },
-  {
-    "item_type": "product",
-    "item_id": 5,
-    "change_qty": -38.0,
-    "txn_type": "sold",
     "reference_id": "seed-history",
     "user_id": 4,
-    "timestamp": "2026-09-24T13:00:00+00:00",
-    "id": 273
-  },
-  {
-    "item_type": "product",
-    "item_id": 5,
-    "change_qty": 45.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-23T09:00:00+00:00",
-    "id": 274
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -7.2,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-23T09:00:00+00:00",
-    "id": 275
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -4.05,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-23T09:00:00+00:00",
-    "id": 276
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -45.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-23T09:00:00+00:00",
-    "id": 277
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -45.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-23T09:00:00+00:00",
-    "id": 278
-  },
-  {
-    "item_type": "material",
-    "item_id": 18,
-    "change_qty": 29.0,
-    "txn_type": "received",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-24T09:00:00+00:00",
-    "id": 279
-  },
-  {
-    "item_type": "product",
-    "item_id": 1,
-    "change_qty": 27.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-30T09:00:00+00:00",
-    "id": 280
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -4.859999999999999,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-30T09:00:00+00:00",
-    "id": 281
-  },
-  {
-    "item_type": "material",
-    "item_id": 4,
-    "change_qty": -81.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-30T09:00:00+00:00",
-    "id": 282
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -2.16,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-30T09:00:00+00:00",
-    "id": 283
-  },
-  {
-    "item_type": "material",
-    "item_id": 6,
-    "change_qty": -27.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-30T09:00:00+00:00",
-    "id": 284
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -27.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-30T09:00:00+00:00",
-    "id": 285
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -27.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-30T09:00:00+00:00",
-    "id": 286
-  },
-  {
-    "item_type": "product",
-    "item_id": 2,
-    "change_qty": 29.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-29T09:00:00+00:00",
-    "id": 287
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -9.28,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-29T09:00:00+00:00",
-    "id": 288
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -29.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-29T09:00:00+00:00",
-    "id": 289
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -29.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-29T09:00:00+00:00",
-    "id": 290
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -29.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-29T09:00:00+00:00",
-    "id": 291
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": -29.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-10-02T11:00:00+00:00",
-    "id": 292
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": 35.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 293
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -49.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 294
-  },
-  {
-    "item_type": "material",
-    "item_id": 9,
-    "change_qty": -35.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 295
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -35.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 296
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -35.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 297
-  },
-  {
-    "item_type": "product",
-    "item_id": 4,
-    "change_qty": -35.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-09-28T10:00:00+00:00",
-    "id": 298
-  },
-  {
-    "item_type": "product",
-    "item_id": 4,
-    "change_qty": 40.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 299
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 222
   },
   {
     "item_type": "material",
@@ -2995,629 +2225,219 @@
     "change_qty": -6.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 300
-  },
-  {
-    "item_type": "material",
-    "item_id": 3,
-    "change_qty": -2.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 301
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -2.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 302
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -40.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 303
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -40.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 304
-  },
-  {
-    "item_type": "product",
-    "item_id": 5,
-    "change_qty": 45.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 305
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -7.2,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 306
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -4.05,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 307
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -45.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 308
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -45.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-09-28T09:00:00+00:00",
-    "id": 309
-  },
-  {
-    "item_type": "product",
-    "item_id": 1,
-    "change_qty": 27.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 310
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -4.859999999999999,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 311
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 223
   },
   {
     "item_type": "material",
     "item_id": 4,
-    "change_qty": -81.0,
+    "change_qty": -1.5,
     "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 312
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -2.16,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 313
-  },
-  {
-    "item_type": "material",
-    "item_id": 6,
-    "change_qty": -27.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 314
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -27.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 315
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -27.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 316
-  },
-  {
-    "item_type": "product",
-    "item_id": 2,
-    "change_qty": -27.0,
-    "txn_type": "sold",
     "reference_id": "seed-history",
     "user_id": 4,
-    "timestamp": "2026-10-07T12:00:00+00:00",
-    "id": 317
-  },
-  {
-    "item_type": "product",
-    "item_id": 2,
-    "change_qty": 32.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 318
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -10.24,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 319
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -32.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 320
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -32.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 321
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -32.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 322
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": -31.0,
-    "txn_type": "sold",
-    "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-10-07T16:00:00+00:00",
-    "id": 323
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": 39.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 324
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -54.599999999999994,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 325
-  },
-  {
-    "item_type": "material",
-    "item_id": 9,
-    "change_qty": -39.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 326
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -39.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 327
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -39.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 328
-  },
-  {
-    "item_type": "product",
-    "item_id": 4,
-    "change_qty": 38.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 329
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -5.7,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 330
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 224
   },
   {
     "item_type": "material",
     "item_id": 3,
-    "change_qty": -1.9000000000000001,
+    "change_qty": -1.5,
     "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 331
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -1.9000000000000001,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 332
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -38.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 333
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -38.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-05T09:00:00+00:00",
-    "id": 334
-  },
-  {
-    "item_type": "product",
-    "item_id": 5,
-    "change_qty": -39.0,
-    "txn_type": "sold",
     "reference_id": "seed-history",
     "user_id": 4,
-    "timestamp": "2026-10-06T14:00:00+00:00",
-    "id": 335
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 225
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -30.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 226
   },
   {
     "item_type": "product",
-    "item_id": 5,
-    "change_qty": 42.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-06T09:00:00+00:00",
-    "id": 336
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -6.72,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-06T09:00:00+00:00",
-    "id": 337
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": -3.78,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-06T09:00:00+00:00",
-    "id": 338
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -42.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-06T09:00:00+00:00",
-    "id": 339
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -42.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-06T09:00:00+00:00",
-    "id": 340
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": 48.0,
-    "txn_type": "received",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-06T09:00:00+00:00",
-    "id": 341
-  },
-  {
-    "item_type": "product",
-    "item_id": 1,
+    "item_id": 15,
     "change_qty": -26.0,
     "txn_type": "sold",
     "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-10-14T17:00:00+00:00",
-    "id": 342
+    "user_id": 5,
+    "timestamp": "2026-09-09T13:00:00+00:00",
+    "id": 227
   },
   {
     "item_type": "product",
-    "item_id": 1,
+    "item_id": 15,
     "change_qty": 33.0,
     "txn_type": "produced",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-14T09:00:00+00:00",
-    "id": 343
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 228
   },
   {
     "item_type": "material",
     "item_id": 1,
-    "change_qty": -5.9399999999999995,
+    "change_qty": -6.6000000000000005,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-14T09:00:00+00:00",
-    "id": 344
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 229
   },
   {
     "item_type": "material",
-    "item_id": 4,
-    "change_qty": -99.0,
+    "item_id": 3,
+    "change_qty": -2.9699999999999998,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-14T09:00:00+00:00",
-    "id": 345
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 230
   },
   {
     "item_type": "material",
-    "item_id": 2,
-    "change_qty": -2.64,
+    "item_id": 17,
+    "change_qty": -33.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-14T09:00:00+00:00",
-    "id": 346
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 231
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": -13.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-09-09T15:00:00+00:00",
+    "id": 232
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": 20.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 233
   },
   {
     "item_type": "material",
     "item_id": 6,
-    "change_qty": -33.0,
+    "change_qty": -5.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-14T09:00:00+00:00",
-    "id": 347
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 234
   },
   {
     "item_type": "material",
-    "item_id": 10,
-    "change_qty": -33.0,
+    "item_id": 28,
+    "change_qty": -20.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-14T09:00:00+00:00",
-    "id": 348
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 235
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": 21.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 236
   },
   {
     "item_type": "material",
     "item_id": 11,
-    "change_qty": -33.0,
+    "change_qty": -3.15,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-14T09:00:00+00:00",
-    "id": 349
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 237
+  },
+  {
+    "item_type": "material",
+    "item_id": 25,
+    "change_qty": -21.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 238
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": 25.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 239
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -3.75,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 240
+  },
+  {
+    "item_type": "material",
+    "item_id": 26,
+    "change_qty": -25.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-09T09:00:00+00:00",
+    "id": 241
+  },
+  {
+    "item_type": "material",
+    "item_id": 5,
+    "change_qty": 79.0,
+    "txn_type": "received",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-08T09:00:00+00:00",
+    "id": 242
   },
   {
     "item_type": "product",
     "item_id": 2,
-    "change_qty": -27.0,
+    "change_qty": -14.0,
     "txn_type": "sold",
     "reference_id": "seed-history",
-    "user_id": 4,
-    "timestamp": "2026-10-12T11:00:00+00:00",
-    "id": 350
+    "user_id": 5,
+    "timestamp": "2026-09-14T12:00:00+00:00",
+    "id": 243
   },
   {
     "item_type": "product",
     "item_id": 2,
-    "change_qty": 29.0,
+    "change_qty": 18.0,
     "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-12T09:00:00+00:00",
-    "id": 351
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -9.28,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-12T09:00:00+00:00",
-    "id": 352
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -29.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-12T09:00:00+00:00",
-    "id": 353
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -29.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-12T09:00:00+00:00",
-    "id": 354
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -29.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-12T09:00:00+00:00",
-    "id": 355
-  },
-  {
-    "item_type": "product",
-    "item_id": 3,
-    "change_qty": 39.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-12T09:00:00+00:00",
-    "id": 356
-  },
-  {
-    "item_type": "material",
-    "item_id": 1,
-    "change_qty": -54.599999999999994,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-12T09:00:00+00:00",
-    "id": 357
-  },
-  {
-    "item_type": "material",
-    "item_id": 9,
-    "change_qty": -39.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-12T09:00:00+00:00",
-    "id": 358
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -39.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-12T09:00:00+00:00",
-    "id": 359
-  },
-  {
-    "item_type": "material",
-    "item_id": 11,
-    "change_qty": -39.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-12T09:00:00+00:00",
-    "id": 360
-  },
-  {
-    "item_type": "product",
-    "item_id": 4,
-    "change_qty": -37.0,
-    "txn_type": "sold",
     "reference_id": "seed-history",
     "user_id": 4,
-    "timestamp": "2026-10-13T13:00:00+00:00",
-    "id": 361
-  },
-  {
-    "item_type": "product",
-    "item_id": 4,
-    "change_qty": 42.0,
-    "txn_type": "produced",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-13T09:00:00+00:00",
-    "id": 362
+    "timestamp": "2026-09-14T09:00:00+00:00",
+    "id": 244
   },
   {
     "item_type": "material",
@@ -3625,189 +2445,1779 @@
     "change_qty": -6.3,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-13T09:00:00+00:00",
-    "id": 363
+    "user_id": 4,
+    "timestamp": "2026-09-14T09:00:00+00:00",
+    "id": 245
   },
   {
     "item_type": "material",
-    "item_id": 3,
-    "change_qty": -2.1,
+    "item_id": 16,
+    "change_qty": -18.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-13T09:00:00+00:00",
-    "id": 364
+    "user_id": 4,
+    "timestamp": "2026-09-14T09:00:00+00:00",
+    "id": 246
   },
   {
     "item_type": "material",
-    "item_id": 2,
-    "change_qty": -2.1,
+    "item_id": 31,
+    "change_qty": -18.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-13T09:00:00+00:00",
-    "id": 365
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -42.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-13T09:00:00+00:00",
-    "id": 366
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -42.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-13T09:00:00+00:00",
-    "id": 367
+    "user_id": 4,
+    "timestamp": "2026-09-14T09:00:00+00:00",
+    "id": 247
   },
   {
     "item_type": "product",
-    "item_id": 5,
-    "change_qty": 50.0,
+    "item_id": 4,
+    "change_qty": 26.0,
     "txn_type": "produced",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-13T09:00:00+00:00",
-    "id": 368
+    "user_id": 4,
+    "timestamp": "2026-09-16T09:00:00+00:00",
+    "id": 248
   },
   {
     "item_type": "material",
     "item_id": 1,
-    "change_qty": -8.0,
+    "change_qty": -36.4,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-13T09:00:00+00:00",
-    "id": 369
+    "user_id": 4,
+    "timestamp": "2026-09-16T09:00:00+00:00",
+    "id": 249
+  },
+  {
+    "item_type": "material",
+    "item_id": 19,
+    "change_qty": -26.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-16T09:00:00+00:00",
+    "id": 250
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": 24.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 251
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -4.32,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 252
   },
   {
     "item_type": "material",
     "item_id": 2,
-    "change_qty": -4.5,
+    "change_qty": -72.0,
     "txn_type": "consumed",
     "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-13T09:00:00+00:00",
-    "id": 370
-  },
-  {
-    "item_type": "material",
-    "item_id": 8,
-    "change_qty": -50.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-13T09:00:00+00:00",
-    "id": 371
-  },
-  {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": -50.0,
-    "txn_type": "consumed",
-    "reference_id": "seed-history",
-    "user_id": 3,
-    "timestamp": "2026-10-13T09:00:00+00:00",
-    "id": 372
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": 11.4,
-    "txn_type": "received",
-    "reference_id": "RB-1",
-    "user_id": 3,
-    "timestamp": "2026-10-14T13:50:23.859022+00:00",
-    "id": 373
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": 11.4,
-    "txn_type": "received",
-    "reference_id": "RB-2",
-    "user_id": 3,
-    "timestamp": "2026-10-14T13:50:24.126385+00:00",
-    "id": 374
-  },
-  {
-    "item_type": "material",
-    "item_id": 2,
-    "change_qty": 11.4,
-    "txn_type": "received",
-    "reference_id": "RB-3",
-    "user_id": 3,
-    "timestamp": "2026-10-14T13:50:24.302117+00:00",
-    "id": 375
-  },
-  {
-    "item_type": "material",
-    "item_id": 4,
-    "change_qty": 116.0,
-    "txn_type": "received",
-    "reference_id": "RB-4",
-    "user_id": 3,
-    "timestamp": "2026-10-14T13:50:24.597044+00:00",
-    "id": 376
-  },
-  {
-    "item_type": "material",
-    "item_id": 4,
-    "change_qty": 116.0,
-    "txn_type": "received",
-    "reference_id": "RB-5",
-    "user_id": 3,
-    "timestamp": "2026-10-14T13:50:24.796858+00:00",
-    "id": 377
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 253
   },
   {
     "item_type": "material",
     "item_id": 3,
-    "change_qty": 8.0,
+    "change_qty": -1.92,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 254
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -24.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 255
+  },
+  {
+    "item_type": "product",
+    "item_id": 13,
+    "change_qty": 26.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 256
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -5.2,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 257
+  },
+  {
+    "item_type": "material",
+    "item_id": 4,
+    "change_qty": -1.3,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 258
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.3,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 259
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -26.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 260
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": 33.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 261
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -6.6000000000000005,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 262
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -2.9699999999999998,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 263
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -33.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 264
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": -14.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-09-14T10:00:00+00:00",
+    "id": 265
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": 22.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 266
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -5.5,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 267
+  },
+  {
+    "item_type": "material",
+    "item_id": 28,
+    "change_qty": -22.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-15T09:00:00+00:00",
+    "id": 268
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": -16.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-09-16T11:00:00+00:00",
+    "id": 269
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": 19.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-16T09:00:00+00:00",
+    "id": 270
+  },
+  {
+    "item_type": "material",
+    "item_id": 11,
+    "change_qty": -2.85,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-16T09:00:00+00:00",
+    "id": 271
+  },
+  {
+    "item_type": "material",
+    "item_id": 25,
+    "change_qty": -19.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-16T09:00:00+00:00",
+    "id": 272
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": 23.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-14T09:00:00+00:00",
+    "id": 273
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -3.4499999999999997,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-14T09:00:00+00:00",
+    "id": 274
+  },
+  {
+    "item_type": "material",
+    "item_id": 26,
+    "change_qty": -23.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-14T09:00:00+00:00",
+    "id": 275
+  },
+  {
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": 26.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-22T09:00:00+00:00",
+    "id": 276
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -9.1,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-22T09:00:00+00:00",
+    "id": 277
+  },
+  {
+    "item_type": "material",
+    "item_id": 16,
+    "change_qty": -26.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-22T09:00:00+00:00",
+    "id": 278
+  },
+  {
+    "item_type": "material",
+    "item_id": 31,
+    "change_qty": -26.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-22T09:00:00+00:00",
+    "id": 279
+  },
+  {
+    "item_type": "product",
+    "item_id": 4,
+    "change_qty": -20.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-09-22T15:00:00+00:00",
+    "id": 280
+  },
+  {
+    "item_type": "product",
+    "item_id": 4,
+    "change_qty": 22.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-22T09:00:00+00:00",
+    "id": 281
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -30.799999999999997,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-22T09:00:00+00:00",
+    "id": 282
+  },
+  {
+    "item_type": "material",
+    "item_id": 19,
+    "change_qty": -22.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-22T09:00:00+00:00",
+    "id": 283
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": 28.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 284
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -5.04,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 285
+  },
+  {
+    "item_type": "material",
+    "item_id": 2,
+    "change_qty": -84.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 286
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -2.24,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 287
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -28.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 288
+  },
+  {
+    "item_type": "product",
+    "item_id": 13,
+    "change_qty": -26.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-09-23T17:00:00+00:00",
+    "id": 289
+  },
+  {
+    "item_type": "product",
+    "item_id": 13,
+    "change_qty": 32.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-23T09:00:00+00:00",
+    "id": 290
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -6.4,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-23T09:00:00+00:00",
+    "id": 291
+  },
+  {
+    "item_type": "material",
+    "item_id": 4,
+    "change_qty": -1.6,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-23T09:00:00+00:00",
+    "id": 292
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.6,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-23T09:00:00+00:00",
+    "id": 293
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -32.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-23T09:00:00+00:00",
+    "id": 294
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": 31.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 295
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -6.2,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 296
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -2.79,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 297
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -31.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 298
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": 18.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 299
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -4.5,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 300
+  },
+  {
+    "item_type": "material",
+    "item_id": 28,
+    "change_qty": -18.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 301
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": 29.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-22T09:00:00+00:00",
+    "id": 302
+  },
+  {
+    "item_type": "material",
+    "item_id": 11,
+    "change_qty": -4.35,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-22T09:00:00+00:00",
+    "id": 303
+  },
+  {
+    "item_type": "material",
+    "item_id": 25,
+    "change_qty": -29.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-22T09:00:00+00:00",
+    "id": 304
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": -21.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-09-24T14:00:00+00:00",
+    "id": 305
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": 29.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 306
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -4.35,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 307
+  },
+  {
+    "item_type": "material",
+    "item_id": 26,
+    "change_qty": -29.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 308
+  },
+  {
+    "item_type": "material",
+    "item_id": 4,
+    "change_qty": 62.0,
     "txn_type": "received",
-    "reference_id": "RB-6",
-    "user_id": 3,
-    "timestamp": "2026-10-14T13:50:25.078880+00:00",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-21T09:00:00+00:00",
+    "id": 309
+  },
+  {
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": 24.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-29T09:00:00+00:00",
+    "id": 310
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -8.399999999999999,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-29T09:00:00+00:00",
+    "id": 311
+  },
+  {
+    "item_type": "material",
+    "item_id": 16,
+    "change_qty": -24.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-29T09:00:00+00:00",
+    "id": 312
+  },
+  {
+    "item_type": "material",
+    "item_id": 31,
+    "change_qty": -24.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-29T09:00:00+00:00",
+    "id": 313
+  },
+  {
+    "item_type": "product",
+    "item_id": 4,
+    "change_qty": -20.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-10-02T15:00:00+00:00",
+    "id": 314
+  },
+  {
+    "item_type": "product",
+    "item_id": 4,
+    "change_qty": 24.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-28T09:00:00+00:00",
+    "id": 315
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -33.599999999999994,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-28T09:00:00+00:00",
+    "id": 316
+  },
+  {
+    "item_type": "material",
+    "item_id": 19,
+    "change_qty": -24.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-28T09:00:00+00:00",
+    "id": 317
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": -21.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-09-30T11:00:00+00:00",
+    "id": 318
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": 25.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-28T09:00:00+00:00",
+    "id": 319
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -4.5,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-28T09:00:00+00:00",
+    "id": 320
+  },
+  {
+    "item_type": "material",
+    "item_id": 2,
+    "change_qty": -75.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-28T09:00:00+00:00",
+    "id": 321
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -2.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-28T09:00:00+00:00",
+    "id": 322
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -25.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-28T09:00:00+00:00",
+    "id": 323
+  },
+  {
+    "item_type": "product",
+    "item_id": 13,
+    "change_qty": 29.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-30T09:00:00+00:00",
+    "id": 324
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -5.800000000000001,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-30T09:00:00+00:00",
+    "id": 325
+  },
+  {
+    "item_type": "material",
+    "item_id": 4,
+    "change_qty": -1.4500000000000002,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-30T09:00:00+00:00",
+    "id": 326
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.4500000000000002,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-30T09:00:00+00:00",
+    "id": 327
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -29.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-30T09:00:00+00:00",
+    "id": 328
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": -32.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-09-28T15:00:00+00:00",
+    "id": 329
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": 35.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-29T09:00:00+00:00",
+    "id": 330
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -7.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-29T09:00:00+00:00",
+    "id": 331
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -3.15,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-29T09:00:00+00:00",
+    "id": 332
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -35.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-29T09:00:00+00:00",
+    "id": 333
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": -15.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-10-01T09:00:00+00:00",
+    "id": 334
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": 23.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-30T09:00:00+00:00",
+    "id": 335
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -5.75,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-30T09:00:00+00:00",
+    "id": 336
+  },
+  {
+    "item_type": "material",
+    "item_id": 28,
+    "change_qty": -23.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-30T09:00:00+00:00",
+    "id": 337
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": 23.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-30T09:00:00+00:00",
+    "id": 338
+  },
+  {
+    "item_type": "material",
+    "item_id": 11,
+    "change_qty": -3.4499999999999997,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-30T09:00:00+00:00",
+    "id": 339
+  },
+  {
+    "item_type": "material",
+    "item_id": 25,
+    "change_qty": -23.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-30T09:00:00+00:00",
+    "id": 340
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": -25.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-10-02T14:00:00+00:00",
+    "id": 341
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": 32.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-29T09:00:00+00:00",
+    "id": 342
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -4.8,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-29T09:00:00+00:00",
+    "id": 343
+  },
+  {
+    "item_type": "material",
+    "item_id": 26,
+    "change_qty": -32.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-09-29T09:00:00+00:00",
+    "id": 344
+  },
+  {
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": -19.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-10-08T14:00:00+00:00",
+    "id": 345
+  },
+  {
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": 26.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-06T09:00:00+00:00",
+    "id": 346
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -9.1,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-06T09:00:00+00:00",
+    "id": 347
+  },
+  {
+    "item_type": "material",
+    "item_id": 16,
+    "change_qty": -26.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-06T09:00:00+00:00",
+    "id": 348
+  },
+  {
+    "item_type": "material",
+    "item_id": 31,
+    "change_qty": -26.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-06T09:00:00+00:00",
+    "id": 349
+  },
+  {
+    "item_type": "product",
+    "item_id": 4,
+    "change_qty": 29.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-07T09:00:00+00:00",
+    "id": 350
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -40.599999999999994,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-07T09:00:00+00:00",
+    "id": 351
+  },
+  {
+    "item_type": "material",
+    "item_id": 19,
+    "change_qty": -29.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-07T09:00:00+00:00",
+    "id": 352
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": -27.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-10-09T13:00:00+00:00",
+    "id": 353
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": 33.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-05T09:00:00+00:00",
+    "id": 354
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -5.9399999999999995,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-05T09:00:00+00:00",
+    "id": 355
+  },
+  {
+    "item_type": "material",
+    "item_id": 2,
+    "change_qty": -99.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-05T09:00:00+00:00",
+    "id": 356
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -2.64,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-05T09:00:00+00:00",
+    "id": 357
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -33.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-05T09:00:00+00:00",
+    "id": 358
+  },
+  {
+    "item_type": "product",
+    "item_id": 13,
+    "change_qty": 33.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-07T09:00:00+00:00",
+    "id": 359
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -6.6000000000000005,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-07T09:00:00+00:00",
+    "id": 360
+  },
+  {
+    "item_type": "material",
+    "item_id": 4,
+    "change_qty": -1.6500000000000001,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-07T09:00:00+00:00",
+    "id": 361
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.6500000000000001,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-07T09:00:00+00:00",
+    "id": 362
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -33.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-07T09:00:00+00:00",
+    "id": 363
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": -30.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-10-08T16:00:00+00:00",
+    "id": 364
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": 36.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-06T09:00:00+00:00",
+    "id": 365
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -7.2,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-06T09:00:00+00:00",
+    "id": 366
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -3.2399999999999998,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-06T09:00:00+00:00",
+    "id": 367
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -36.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-06T09:00:00+00:00",
+    "id": 368
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": 26.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-07T09:00:00+00:00",
+    "id": 369
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -6.5,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-07T09:00:00+00:00",
+    "id": 370
+  },
+  {
+    "item_type": "material",
+    "item_id": 28,
+    "change_qty": -26.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-07T09:00:00+00:00",
+    "id": 371
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": -22.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-10-07T10:00:00+00:00",
+    "id": 372
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": 29.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-06T09:00:00+00:00",
+    "id": 373
+  },
+  {
+    "item_type": "material",
+    "item_id": 11,
+    "change_qty": -4.35,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-06T09:00:00+00:00",
+    "id": 374
+  },
+  {
+    "item_type": "material",
+    "item_id": 25,
+    "change_qty": -29.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-06T09:00:00+00:00",
+    "id": 375
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": 25.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-05T09:00:00+00:00",
+    "id": 376
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -3.75,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-05T09:00:00+00:00",
+    "id": 377
+  },
+  {
+    "item_type": "material",
+    "item_id": 26,
+    "change_qty": -25.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-05T09:00:00+00:00",
     "id": 378
   },
   {
     "item_type": "material",
-    "item_id": 6,
-    "change_qty": 200.0,
+    "item_id": 8,
+    "change_qty": 49.0,
     "txn_type": "received",
-    "reference_id": "RB-7",
-    "user_id": 3,
-    "timestamp": "2026-10-14T13:50:25.375269+00:00",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-05T09:00:00+00:00",
     "id": 379
   },
   {
-    "item_type": "material",
-    "item_id": 6,
-    "change_qty": 200.0,
-    "txn_type": "received",
-    "reference_id": "RB-8",
-    "user_id": 3,
-    "timestamp": "2026-10-14T13:50:25.490726+00:00",
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": -19.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-10-16T12:00:00+00:00",
     "id": 380
   },
   {
-    "item_type": "material",
-    "item_id": 10,
-    "change_qty": 500.0,
-    "txn_type": "received",
-    "reference_id": "RB-9",
-    "user_id": 3,
-    "timestamp": "2026-10-14T13:50:25.702341+00:00",
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": 24.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-13T09:00:00+00:00",
     "id": 381
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -8.399999999999999,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-13T09:00:00+00:00",
+    "id": 382
+  },
+  {
+    "item_type": "material",
+    "item_id": 16,
+    "change_qty": -24.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-13T09:00:00+00:00",
+    "id": 383
+  },
+  {
+    "item_type": "material",
+    "item_id": 31,
+    "change_qty": -24.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-13T09:00:00+00:00",
+    "id": 384
+  },
+  {
+    "item_type": "product",
+    "item_id": 4,
+    "change_qty": -21.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-10-12T10:00:00+00:00",
+    "id": 385
+  },
+  {
+    "item_type": "product",
+    "item_id": 4,
+    "change_qty": 24.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-12T09:00:00+00:00",
+    "id": 386
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -33.599999999999994,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-12T09:00:00+00:00",
+    "id": 387
+  },
+  {
+    "item_type": "material",
+    "item_id": 19,
+    "change_qty": -24.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-12T09:00:00+00:00",
+    "id": 388
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": 33.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-12T09:00:00+00:00",
+    "id": 389
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -5.9399999999999995,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-12T09:00:00+00:00",
+    "id": 390
+  },
+  {
+    "item_type": "material",
+    "item_id": 2,
+    "change_qty": -99.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-12T09:00:00+00:00",
+    "id": 391
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -2.64,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-12T09:00:00+00:00",
+    "id": 392
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -33.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-12T09:00:00+00:00",
+    "id": 393
+  },
+  {
+    "item_type": "product",
+    "item_id": 13,
+    "change_qty": -31.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-10-12T16:00:00+00:00",
+    "id": 394
+  },
+  {
+    "item_type": "product",
+    "item_id": 13,
+    "change_qty": 39.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-13T09:00:00+00:00",
+    "id": 395
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -7.800000000000001,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-13T09:00:00+00:00",
+    "id": 396
+  },
+  {
+    "item_type": "material",
+    "item_id": 4,
+    "change_qty": -1.9500000000000002,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-13T09:00:00+00:00",
+    "id": 397
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.9500000000000002,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-13T09:00:00+00:00",
+    "id": 398
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -39.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-13T09:00:00+00:00",
+    "id": 399
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": 39.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-14T09:00:00+00:00",
+    "id": 400
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -7.800000000000001,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-14T09:00:00+00:00",
+    "id": 401
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -3.51,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-14T09:00:00+00:00",
+    "id": 402
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -39.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-14T09:00:00+00:00",
+    "id": 403
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": 25.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-14T09:00:00+00:00",
+    "id": 404
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -6.25,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-14T09:00:00+00:00",
+    "id": 405
+  },
+  {
+    "item_type": "material",
+    "item_id": 28,
+    "change_qty": -25.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-14T09:00:00+00:00",
+    "id": 406
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": -25.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-10-15T13:00:00+00:00",
+    "id": 407
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": 33.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-14T09:00:00+00:00",
+    "id": 408
+  },
+  {
+    "item_type": "material",
+    "item_id": 11,
+    "change_qty": -4.95,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-14T09:00:00+00:00",
+    "id": 409
+  },
+  {
+    "item_type": "material",
+    "item_id": 25,
+    "change_qty": -33.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-14T09:00:00+00:00",
+    "id": 410
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": -25.0,
+    "txn_type": "sold",
+    "reference_id": "seed-history",
+    "user_id": 5,
+    "timestamp": "2026-10-16T16:00:00+00:00",
+    "id": 411
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": 29.0,
+    "txn_type": "produced",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-13T09:00:00+00:00",
+    "id": 412
+  },
+  {
+    "item_type": "material",
+    "item_id": 6,
+    "change_qty": -4.35,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-13T09:00:00+00:00",
+    "id": 413
+  },
+  {
+    "item_type": "material",
+    "item_id": 26,
+    "change_qty": -29.0,
+    "txn_type": "consumed",
+    "reference_id": "seed-history",
+    "user_id": 4,
+    "timestamp": "2026-10-13T09:00:00+00:00",
+    "id": 414
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": 11.0,
+    "txn_type": "received",
+    "reference_id": "RB-1",
+    "user_id": 4,
+    "timestamp": "2026-10-16T05:39:31.374904+00:00",
+    "id": 415
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": 11.0,
+    "txn_type": "received",
+    "reference_id": "RB-2",
+    "user_id": 4,
+    "timestamp": "2026-10-16T05:39:31.566005+00:00",
+    "id": 416
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": 11.0,
+    "txn_type": "received",
+    "reference_id": "RB-3",
+    "user_id": 4,
+    "timestamp": "2026-10-16T05:39:31.788133+00:00",
+    "id": 417
+  },
+  {
+    "item_type": "material",
+    "item_id": 2,
+    "change_qty": 110.0,
+    "txn_type": "received",
+    "reference_id": "RB-4",
+    "user_id": 4,
+    "timestamp": "2026-10-16T05:39:32.013578+00:00",
+    "id": 418
+  },
+  {
+    "item_type": "material",
+    "item_id": 2,
+    "change_qty": 110.0,
+    "txn_type": "received",
+    "reference_id": "RB-5",
+    "user_id": 4,
+    "timestamp": "2026-10-16T05:39:32.227530+00:00",
+    "id": 419
+  },
+  {
+    "item_type": "material",
+    "item_id": 4,
+    "change_qty": 8.0,
+    "txn_type": "received",
+    "reference_id": "RB-6",
+    "user_id": 4,
+    "timestamp": "2026-10-16T05:39:32.462142+00:00",
+    "id": 420
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": 200.0,
+    "txn_type": "received",
+    "reference_id": "RB-7",
+    "user_id": 4,
+    "timestamp": "2026-10-16T05:39:32.917047+00:00",
+    "id": 421
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": 200.0,
+    "txn_type": "received",
+    "reference_id": "RB-8",
+    "user_id": 4,
+    "timestamp": "2026-10-16T05:39:33.067977+00:00",
+    "id": 422
   },
   {
     "item_type": "material",
@@ -3815,9 +4225,9 @@
     "change_qty": 28.5,
     "txn_type": "qc_passed",
     "reference_id": "HC-1",
-    "user_id": 3,
-    "timestamp": "2026-10-14T13:50:26.172912+00:00",
-    "id": 382
+    "user_id": 4,
+    "timestamp": "2026-10-16T05:39:33.898289+00:00",
+    "id": 423
   },
   {
     "item_type": "material",
@@ -3825,9 +4235,9 @@
     "change_qty": 31.0,
     "txn_type": "qc_passed",
     "reference_id": "HC-2",
-    "user_id": 3,
-    "timestamp": "2026-10-14T13:50:26.350151+00:00",
-    "id": 383
+    "user_id": 4,
+    "timestamp": "2026-10-16T05:39:34.207475+00:00",
+    "id": 424
   },
   {
     "item_type": "material",
@@ -3835,19 +4245,39 @@
     "change_qty": 26.2,
     "txn_type": "qc_passed",
     "reference_id": "HC-3",
-    "user_id": 3,
-    "timestamp": "2026-10-14T13:50:26.512605+00:00",
-    "id": 384
+    "user_id": 4,
+    "timestamp": "2026-10-16T05:39:34.479593+00:00",
+    "id": 425
+  },
+  {
+    "item_type": "material",
+    "item_id": 74,
+    "change_qty": 24.8,
+    "txn_type": "qc_failed",
+    "reference_id": "HC-4",
+    "user_id": 4,
+    "timestamp": "2026-10-16T05:39:34.733477+00:00",
+    "id": 426
+  },
+  {
+    "item_type": "material",
+    "item_id": 74,
+    "change_qty": 29.4,
+    "txn_type": "qc_failed",
+    "reference_id": "HC-5",
+    "user_id": 4,
+    "timestamp": "2026-10-16T05:39:35.022229+00:00",
+    "id": 427
   },
   {
     "item_type": "product",
-    "item_id": 1,
+    "item_id": 9,
     "change_qty": -12.0,
     "txn_type": "packed",
     "reference_id": "PK-1",
-    "user_id": 4,
-    "timestamp": "2026-10-14T13:50:27.051768+00:00",
-    "id": 385
+    "user_id": 5,
+    "timestamp": "2026-10-16T05:39:35.402710+00:00",
+    "id": 428
   },
   {
     "item_type": "product",
@@ -3855,88 +4285,428 @@
     "change_qty": -6.0,
     "txn_type": "packed",
     "reference_id": "PK-1",
-    "user_id": 4,
-    "timestamp": "2026-10-14T13:50:27.111843+00:00",
-    "id": 386
+    "user_id": 5,
+    "timestamp": "2026-10-16T05:39:35.479530+00:00",
+    "id": 429
+  },
+  {
+    "item_type": "product",
+    "item_id": 7,
+    "change_qty": -8.0,
+    "txn_type": "packed",
+    "reference_id": "PK-2",
+    "user_id": 5,
+    "timestamp": "2026-10-16T05:39:35.685430+00:00",
+    "id": 430
+  },
+  {
+    "item_type": "product",
+    "item_id": 13,
+    "change_qty": -4.0,
+    "txn_type": "packed",
+    "reference_id": "PK-2",
+    "user_id": 5,
+    "timestamp": "2026-10-16T05:39:35.770889+00:00",
+    "id": 431
   },
   {
     "item_type": "product",
     "item_id": 2,
-    "change_qty": -8.0,
+    "change_qty": -10.0,
     "txn_type": "packed",
-    "reference_id": "PK-2",
+    "reference_id": "PK-3",
+    "user_id": 5,
+    "timestamp": "2026-10-16T05:39:36.025238+00:00",
+    "id": 432
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": -10.0,
+    "txn_type": "packed",
+    "reference_id": "PK-3",
+    "user_id": 5,
+    "timestamp": "2026-10-16T05:39:36.104890+00:00",
+    "id": 433
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": -9.0,
+    "txn_type": "packed",
+    "reference_id": "PK-4",
+    "user_id": 5,
+    "timestamp": "2026-10-16T05:39:36.322959+00:00",
+    "id": 434
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": -5.0,
+    "txn_type": "packed",
+    "reference_id": "PK-4",
+    "user_id": 5,
+    "timestamp": "2026-10-16T05:39:36.401537+00:00",
+    "id": 435
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": -3.0,
+    "txn_type": "packed",
+    "reference_id": "PK-5",
+    "user_id": 5,
+    "timestamp": "2026-10-16T05:39:36.577835+00:00",
+    "id": 436
+  },
+  {
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": -4.0,
+    "txn_type": "packed",
+    "reference_id": "PK-6",
+    "user_id": 5,
+    "timestamp": "2026-10-16T05:39:36.821021+00:00",
+    "id": 437
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": -2.0,
+    "txn_type": "packed",
+    "reference_id": "PK-6",
+    "user_id": 5,
+    "timestamp": "2026-10-16T05:39:36.909851+00:00",
+    "id": 438
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": -12.0,
+    "txn_type": "sold",
+    "reference_id": 1,
+    "user_id": 5,
+    "timestamp": "2026-10-16T05:39:37.364552+00:00",
+    "id": 439
+  },
+  {
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": -6.0,
+    "txn_type": "sold",
+    "reference_id": 1,
+    "user_id": 5,
+    "timestamp": "2026-10-16T05:39:37.454890+00:00",
+    "id": 440
+  },
+  {
+    "item_type": "material",
+    "item_id": 24,
+    "change_qty": 300.0,
+    "txn_type": "stock_in",
+    "reference_id": "SM-1",
+    "user_id": 8,
+    "timestamp": "2026-09-26T14:15:00+00:00",
+    "id": 441
+  },
+  {
+    "item_type": "material",
+    "item_id": 16,
+    "change_qty": -120.0,
+    "txn_type": "stock_out",
+    "reference_id": "SM-2",
+    "user_id": 8,
+    "timestamp": "2026-09-28T14:15:00+00:00",
+    "id": 442
+  },
+  {
+    "item_type": "material",
+    "item_id": 43,
+    "change_qty": -2.0,
+    "txn_type": "stock_out",
+    "reference_id": "SM-3",
+    "user_id": 8,
+    "timestamp": "2026-10-01T14:15:00+00:00",
+    "id": 443
+  },
+  {
+    "item_type": "material",
+    "item_id": 53,
+    "change_qty": -2.0,
+    "txn_type": "stock_out",
+    "reference_id": "SM-4",
+    "user_id": 8,
+    "timestamp": "2026-10-03T14:15:00+00:00",
+    "id": 444
+  },
+  {
+    "item_type": "material",
+    "item_id": 36,
+    "change_qty": 12.0,
+    "txn_type": "stock_in",
+    "reference_id": "SM-5",
+    "user_id": 8,
+    "timestamp": "2026-10-05T14:15:00+00:00",
+    "id": 445
+  },
+  {
+    "item_type": "material",
+    "item_id": 31,
+    "change_qty": -150.0,
+    "txn_type": "stock_out",
+    "reference_id": "SM-6",
+    "user_id": 8,
+    "timestamp": "2026-10-07T14:15:00+00:00",
+    "id": 446
+  },
+  {
+    "item_type": "material",
+    "item_id": 46,
+    "change_qty": -1.0,
+    "txn_type": "stock_out",
+    "reference_id": "SM-7",
+    "user_id": 8,
+    "timestamp": "2026-10-09T14:15:00+00:00",
+    "id": 447
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -8.0,
+    "txn_type": "stock_out",
+    "reference_id": "SM-8",
+    "user_id": 8,
+    "timestamp": "2026-10-11T14:15:00+00:00",
+    "id": 448
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -6.0,
+    "txn_type": "stock_out",
+    "reference_id": "SM-9",
+    "user_id": 8,
+    "timestamp": "2026-10-13T14:15:00+00:00",
+    "id": 449
+  },
+  {
+    "item_type": "material",
+    "item_id": 35,
+    "change_qty": -2.0,
+    "txn_type": "stock_out",
+    "reference_id": "SM-10",
+    "user_id": 8,
+    "timestamp": "2026-10-15T14:15:00+00:00",
+    "id": 450
+  },
+  {
+    "item_type": "material",
+    "item_id": 7,
+    "change_qty": -7.2,
+    "txn_type": "consumed",
+    "reference_id": "BMR-2026-0001",
     "user_id": 4,
-    "timestamp": "2026-10-14T13:50:27.318099+00:00",
-    "id": 387
+    "timestamp": "2026-10-06T08:30:00+00:00",
+    "id": 451
+  },
+  {
+    "item_type": "material",
+    "item_id": 24,
+    "change_qty": -12.0,
+    "txn_type": "consumed",
+    "reference_id": "BMR-2026-0001",
+    "user_id": 4,
+    "timestamp": "2026-10-06T08:30:00+00:00",
+    "id": 452
+  },
+  {
+    "item_type": "product",
+    "item_id": 28,
+    "change_qty": 12.0,
+    "txn_type": "produced",
+    "reference_id": "BMR-2026-0001",
+    "user_id": 4,
+    "timestamp": "2026-10-06T08:30:00+00:00",
+    "id": 453
+  },
+  {
+    "item_type": "material",
+    "item_id": 1,
+    "change_qty": -4.32,
+    "txn_type": "consumed",
+    "reference_id": "BMR-2026-0002",
+    "user_id": 4,
+    "timestamp": "2026-10-10T08:30:00+00:00",
+    "id": 454
+  },
+  {
+    "item_type": "material",
+    "item_id": 2,
+    "change_qty": -72.0,
+    "txn_type": "consumed",
+    "reference_id": "BMR-2026-0002",
+    "user_id": 4,
+    "timestamp": "2026-10-10T08:30:00+00:00",
+    "id": 455
+  },
+  {
+    "item_type": "material",
+    "item_id": 3,
+    "change_qty": -1.92,
+    "txn_type": "consumed",
+    "reference_id": "BMR-2026-0002",
+    "user_id": 4,
+    "timestamp": "2026-10-10T08:30:00+00:00",
+    "id": 456
+  },
+  {
+    "item_type": "material",
+    "item_id": 17,
+    "change_qty": -24.0,
+    "txn_type": "consumed",
+    "reference_id": "BMR-2026-0002",
+    "user_id": 4,
+    "timestamp": "2026-10-10T08:30:00+00:00",
+    "id": 457
+  },
+  {
+    "item_type": "product",
+    "item_id": 9,
+    "change_qty": 24.0,
+    "txn_type": "produced",
+    "reference_id": "BMR-2026-0002",
+    "user_id": 4,
+    "timestamp": "2026-10-10T08:30:00+00:00",
+    "id": 458
+  },
+  {
+    "item_type": "product",
+    "item_id": 2,
+    "change_qty": 81.0,
+    "txn_type": "adjusted",
+    "reference_id": "opening balance",
+    "user_id": null,
+    "timestamp": "2026-07-27T08:59:00+00:00",
+    "id": 459
   },
   {
     "item_type": "product",
     "item_id": 4,
-    "change_qty": -4.0,
-    "txn_type": "packed",
-    "reference_id": "PK-2",
-    "user_id": 4,
-    "timestamp": "2026-10-14T13:50:27.386894+00:00",
-    "id": 388
+    "change_qty": 119.0,
+    "txn_type": "adjusted",
+    "reference_id": "opening balance",
+    "user_id": null,
+    "timestamp": "2026-07-27T08:59:00+00:00",
+    "id": 460
   },
   {
     "item_type": "product",
-    "item_id": 1,
-    "change_qty": -9.0,
-    "txn_type": "packed",
-    "reference_id": "PK-3",
-    "user_id": 4,
-    "timestamp": "2026-10-14T13:50:27.627452+00:00",
-    "id": 389
+    "item_id": 9,
+    "change_qty": 78.0,
+    "txn_type": "adjusted",
+    "reference_id": "opening balance",
+    "user_id": null,
+    "timestamp": "2026-07-27T08:59:00+00:00",
+    "id": 461
   },
   {
     "item_type": "product",
+    "item_id": 13,
+    "change_qty": 155.0,
+    "txn_type": "adjusted",
+    "reference_id": "opening balance",
+    "user_id": null,
+    "timestamp": "2026-07-29T08:59:00+00:00",
+    "id": 462
+  },
+  {
+    "item_type": "material",
+    "item_id": 4,
+    "change_qty": 37.35,
+    "txn_type": "adjusted",
+    "reference_id": "opening balance",
+    "user_id": null,
+    "timestamp": "2026-07-29T08:59:00+00:00",
+    "id": 463
+  },
+  {
+    "item_type": "product",
+    "item_id": 15,
+    "change_qty": 187.0,
+    "txn_type": "adjusted",
+    "reference_id": "opening balance",
+    "user_id": null,
+    "timestamp": "2026-07-27T10:59:00+00:00",
+    "id": 464
+  },
+  {
+    "item_type": "product",
+    "item_id": 18,
+    "change_qty": 130.0,
+    "txn_type": "adjusted",
+    "reference_id": "opening balance",
+    "user_id": null,
+    "timestamp": "2026-07-27T08:59:00+00:00",
+    "id": 465
+  },
+  {
+    "item_type": "product",
+    "item_id": 26,
+    "change_qty": 120.0,
+    "txn_type": "adjusted",
+    "reference_id": "opening balance",
+    "user_id": null,
+    "timestamp": "2026-07-28T08:59:00+00:00",
+    "id": 466
+  },
+  {
+    "item_type": "material",
+    "item_id": 11,
+    "change_qty": 18.6,
+    "txn_type": "adjusted",
+    "reference_id": "opening balance",
+    "user_id": null,
+    "timestamp": "2026-07-28T08:59:00+00:00",
+    "id": 467
+  },
+  {
+    "item_type": "product",
+    "item_id": 22,
+    "change_qty": 131.0,
+    "txn_type": "adjusted",
+    "reference_id": "opening balance",
+    "user_id": null,
+    "timestamp": "2026-07-29T08:59:00+00:00",
+    "id": 468
+  },
+  {
+    "item_type": "material",
+    "item_id": 10,
+    "change_qty": 52.0,
+    "txn_type": "adjusted",
+    "reference_id": "opening balance",
+    "user_id": null,
+    "timestamp": "2026-07-29T08:59:00+00:00",
+    "id": 469
+  },
+  {
+    "item_type": "material",
     "item_id": 5,
-    "change_qty": -5.0,
-    "txn_type": "packed",
-    "reference_id": "PK-3",
-    "user_id": 4,
-    "timestamp": "2026-10-14T13:50:27.689386+00:00",
-    "id": 390
+    "change_qty": 67.0,
+    "txn_type": "adjusted",
+    "reference_id": "opening balance",
+    "user_id": null,
+    "timestamp": "2026-09-08T08:59:00+00:00",
+    "id": 470
   },
   {
-    "item_type": "product",
-    "item_id": 2,
-    "change_qty": -10.0,
-    "txn_type": "packed",
-    "reference_id": "PK-4",
-    "user_id": 4,
-    "timestamp": "2026-10-14T13:50:27.828319+00:00",
-    "id": 391
-  },
-  {
-    "item_type": "product",
-    "item_id": 1,
-    "change_qty": -10.0,
-    "txn_type": "packed",
-    "reference_id": "PK-4",
-    "user_id": 4,
-    "timestamp": "2026-10-14T13:50:27.889157+00:00",
-    "id": 392
-  },
-  {
-    "item_type": "product",
-    "item_id": 1,
-    "change_qty": -12.0,
-    "txn_type": "sold",
-    "reference_id": 1,
-    "user_id": 4,
-    "timestamp": "2026-10-14T13:50:28.396658+00:00",
-    "id": 393
-  },
-  {
-    "item_type": "product",
-    "item_id": 2,
-    "change_qty": -6.0,
-    "txn_type": "sold",
-    "reference_id": 1,
-    "user_id": 4,
-    "timestamp": "2026-10-14T13:50:28.471577+00:00",
-    "id": 394
+    "item_type": "material",
+    "item_id": 8,
+    "change_qty": 43.0,
+    "txn_type": "adjusted",
+    "reference_id": "opening balance",
+    "user_id": null,
+    "timestamp": "2026-10-05T08:59:00+00:00",
+    "id": 471
   }
 ]

@@ -1,225 +1,45 @@
 {% extends "base.html" %}
-{% block title %}Dashboard{% endblock %}
+{% block title %}Home{% endblock %}
 {% block content %}
-<div class="page-head">
-  <div>
-    <h1 class="page-title">Dashboard</h1>
-    <p class="page-sub">
-      Welcome, {{ current_user.name }} — {{ stats.role_label }} view ·
-      {{ stats.platform_orders }} platform order(s) on record
-    </p>
-  </div>
-  <div class="page-head-actions">
-    {% if can('qr') %}<a class="btn btn-primary btn-sm" href="{{ url_for('qr.scan') }}">Scan a code</a>{% endif %}
-  </div>
+<div class="home-hello">
+  <h1>{{ greeting }}, {{ current_user.name }}</h1>
+  <p>{{ role_labels.get(current_user.role, current_user.role) }} · What would you like to do?</p>
 </div>
 
-{% macro stat(label, value, caption, primary=false, alert=false) %}
-  <div class="stat-card {{ 'is-primary' if primary }}">
-    <div class="stat-top">
-      <span class="stat-label">{{ label }}</span>
-      <span class="stat-arrow">{{ icon('arrow-up-right', 14) }}</span>
-    </div>
-    <div class="stat-value" {% if alert %}style="color:var(--danger)"{% endif %}>{{ value }}</div>
-    <div class="stat-caption">{{ caption }}</div>
-  </div>
-{% endmacro %}
-
-<div class="stat-grid mb">
-  {% if role in ('super_admin', 'admin') %}
-    {{ stat('Pending Approvals', stats.pending_purchase_count, 'Requests awaiting your decision', primary=true) }}
-    {{ stat('Boxes to Check', stats.boxes_pending, stats.open_batches ~ ' open receiving batch(es)', alert=(stats.boxes_pending>0)) }}
-    {{ stat('Honey Awaiting QC', stats.honey_pending, stats.honey_pass_rate ~ '% pass rate so far') }}
-    {{ stat('Low Stock', stats.low_stock_count, 'Materials at/below reorder level', alert=(stats.low_stock_count>0)) }}
-    {{ stat('Packed Today', stats.packed_today, stats.packing_open ~ ' run(s) still open') }}
-    {{ stat('Platform Sales', '₱' ~ '{:,.0f}'.format(stats.platform_net), 'Net, imported from marketplaces') }}
-  {% elif role == 'production_head' %}
-    {{ stat('Boxes to Check', stats.boxes_pending, stats.boxes_today ~ ' box(es) logged today', primary=true, alert=(stats.boxes_pending>0)) }}
-    {{ stat('Honey Awaiting QC', stats.honey_pending, stats.honey_passed ~ ' passed · ' ~ stats.honey_failed ~ ' failed') }}
-    {{ stat('Low Stock', stats.low_stock_count, 'Ingredients at/below reorder level', alert=(stats.low_stock_count>0)) }}
-    {{ stat('My Requests', stats.my_request_count, stats.pending_mine ~ ' pending approval') }}
-    {{ stat('Damaged on Receipt', stats.damaged_total, 'Total counted across all boxes') }}
-    {{ stat('Sales to Fulfil', stats.approved_sales_count, 'Approved stock releases') }}
-  {% elif role == 'packing_head' %}
-    {{ stat('Open Packing Runs', stats.packing_open, stats.packed_today ~ ' packed today', primary=true) }}
-    {{ stat('Items Packed', stats.packing_qty, 'Across every channel') }}
-    {{ stat('Platform Sales', '₱' ~ '{:,.0f}'.format(stats.platform_net), stats.platform_orders ~ ' imported order(s)') }}
-    {{ stat('Open Orders', stats.open_order_count, 'Customer sales orders in progress') }}
-    {{ stat('Deliveries', stats.open_delivery_count, 'Scheduled / in transit') }}
-    {{ stat('Finished Units', stats.finished_units, 'Ready to pack') }}
-  {% elif role == 'assets_head' %}
-    {{ stat('Maintenance Due', stats.maintenance_due|length, 'Within the next 14 days', primary=true, alert=(stats.maintenance_due|length>0)) }}
-    {{ stat('My Requests', stats.my_request_count, stats.pending_mine ~ ' pending approval') }}
-    {{ stat('Low Stock', stats.low_stock_count, 'Supplies at/below reorder level', alert=(stats.low_stock_count>0)) }}
-    {{ stat('Materials Tracked', stats.material_count, 'Including equipment & cleaning') }}
-  {% else %}
-    {{ stat('Products', stats.product_count, 'In catalog', primary=true) }}
-    {{ stat('Materials', stats.material_count, 'Tracked') }}
-    {{ stat('Low Stock', stats.low_stock_count, 'At/below reorder level', alert=(stats.low_stock_count>0)) }}
-    {{ stat('Finished Units', stats.finished_units, 'In stock') }}
-  {% endif %}
+<div class="task-grid">
+  {% for t in tasks %}
+  <a class="task-card {{ 'is-primary' if t.primary }}" href="{{ t.url }}" style="animation-delay: {{ loop.index0 * 40 }}ms">
+    <span class="task-icon">{{ icon(t.icon, 22) }}</span>
+    <span><span class="task-title">{{ t.title }}</span><span class="task-sub">{{ t.sub }}</span></span>
+    {% if t.count %}<span class="task-count" aria-label="{{ t.count }} waiting">{{ t.count }}</span>{% endif %}
+  </a>
+  {% endfor %}
 </div>
 
-{% if can('packing') and stats.packing_channels %}
-<div class="card mb">
-  <div class="card-title">Packing by channel <span class="muted">— {{ stats.packing_qty }} item(s) in total</span></div>
-  {% set max_qty = stats.packing_channels|map(attribute='qty')|max %}
-  <div class="bars">
-    {% for row in stats.packing_channels %}
-    <div class="bar-row">
-      <span class="bar-label">{{ row.channel }}</span>
-      <span class="bar-track">
-        <span class="bar-fill" style="width: {{ (100 * row.qty / max_qty)|round(1) if max_qty else 0 }}%"></span>
-      </span>
-      <span class="bar-value">{{ '%g'|format(row.qty) }}</span>
-    </div>
-    {% endfor %}
-  </div>
+{% if figures %}
+<div class="section-label">At a glance</div>
+<div class="figures">
+  {% for f in figures %}
+  <div class="figure {{ 'is-good' if f.good }}"><div class="figure-label">{{ f.label }}</div><div class="figure-value">{{ f.value }}</div></div>
+  {% endfor %}
 </div>
 {% endif %}
 
-{% if charts %}
-<div class="grid grid-2 mb">
-  <div class="card">
-    <div class="card-title">Demand — units requested per week</div>
-    <div class="chart">{{ charts.demand|safe }}</div>
-  </div>
-  <div class="card">
-    <div class="card-title">Inventory movements</div>
-    <div class="chart">{{ charts.movements|safe }}</div>
-  </div>
+<div class="section-label">Waiting for you</div>
+{% if waiting %}
+<div class="queue">
+  {% for w in waiting %}
+  <a class="queue-item" href="{{ w.url }}">
+    <span class="queue-main"><span class="queue-title">{{ w.title }}</span>{% if w.sub %}<span class="queue-sub">{{ w.sub }}</span>{% endif %}</span>
+    <span class="queue-go">Open {{ icon('arrow-right', 14) }}</span>
+  </a>
+  {% endfor %}
 </div>
+{% else %}
+<div class="card"><div class="empty" style="padding:24px">
+  <div class="empty-icon">{{ icon('check', 28) }}</div>
+  <div class="empty-title">All caught up</div>
+  <p class="muted">Nothing is waiting for you right now.</p>
+</div></div>
 {% endif %}
-
-{% if stats.maintenance_due and can('assets') %}
-<div class="card mb">
-  <div class="card-title">Maintenance falling due</div>
-  <div class="table-wrap">
-    <table class="table">
-      <thead><tr><th>Asset</th><th>Type</th><th>Due</th><th>Status</th></tr></thead>
-      <tbody>
-        {% for d in stats.maintenance_due %}
-        <tr>
-          <td>{{ d.asset_name }}</td>
-          <td>{{ d.type }}</td>
-          <td>{{ d.due }}</td>
-          <td>
-            {% if d.overdue %}<span class="badge badge-danger">{{ -d.days }} day(s) overdue</span>
-            {% else %}<span class="badge badge-warn">in {{ d.days }} day(s)</span>{% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-{% endif %}
-
-{% if stats.low_stock and can('inventory') %}
-<div class="card mb">
-  <div class="card-title">Low-stock materials</div>
-  <div class="table-wrap">
-    <table class="table">
-      <thead><tr><th>Material</th><th>Category</th><th class="num">On hand</th><th class="num">Reorder level</th></tr></thead>
-      <tbody>
-        {% for m in stats.low_stock %}
-        <tr>
-          <td>{{ m.name }}</td>
-          <td class="muted">{{ m.category }}</td>
-          <td class="num">{{ '%g'|format(m.stock_qty|float) }} {{ m.unit }}</td>
-          <td class="num">{{ '%g'|format(m.reorder_level|float) }} {{ m.unit }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-{% endif %}
-
-{% if manager and stats.platform_rows %}
-<div class="card mb">
-  <div class="card-title">Sales platforms</div>
-  <div class="table-wrap">
-    <table class="table">
-      <thead><tr><th>Platform</th><th class="num">Orders</th><th class="num">Qty</th><th class="num">Net</th></tr></thead>
-      <tbody>
-        {% for row in stats.platform_rows %}
-        <tr>
-          <td>{{ row.platform }}</td>
-          <td class="num">{{ row.orders }}</td>
-          <td class="num">{{ '%g'|format(row.qty) }}</td>
-          <td class="num">₱{{ '{:,.2f}'.format(row.net) }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-{% endif %}
-
-<div class="grid grid-3">
-  {% if can('receiving') %}
-  <div class="card">
-    <div class="card-title">Receiving area</div>
-    <p class="muted small">Log cage boxes, count good vs damaged, print QR labels.</p>
-    <a class="btn btn-primary btn-sm" href="{{ url_for('receiving.index') }}">Open receiving</a>
-  </div>
-  {% endif %}
-  {% if can('honey') %}
-  <div class="card">
-    <div class="card-title">Honey quality check</div>
-    <p class="muted small">{{ stats.honey_pending }} container(s) awaiting a moisture &amp; appearance check.</p>
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('honey.index') }}">Run QC</a>
-  </div>
-  {% endif %}
-  {% if can('packing') %}
-  <div class="card">
-    <div class="card-title">Packing area</div>
-    <p class="muted small">VIP, Shopee, TikTok, Lazada and walk-in runs.</p>
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('packing.new') }}">New packing run</a>
-  </div>
-  {% endif %}
-  {% if can('platforms') %}
-  <div class="card">
-    <div class="card-title">Sales platforms</div>
-    <p class="muted small">Import marketplace exports and track them in one place.</p>
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('platforms.import_file') }}">Import a file</a>
-  </div>
-  {% endif %}
-  {% if can('approvals') %}
-  <div class="card">
-    <div class="card-title">Approvals</div>
-    <p class="muted small">{{ stats.pending_purchase_count }} purchase · {{ stats.pending_sales_count }} stock release pending.</p>
-    <a class="btn btn-primary btn-sm" href="{{ url_for('approvals.index') }}">Review approvals</a>
-  </div>
-  {% endif %}
-  {% if can('requests') %}
-  <div class="card">
-    <div class="card-title">Requests</div>
-    <p class="muted small">Ask the admin to buy recipe ingredients or supplies.</p>
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('requests.index') }}">My requests</a>
-  </div>
-  {% endif %}
-  {% if can('production') %}
-  <div class="card">
-    <div class="card-title">Production</div>
-    <p class="muted small">Check the recipe, then record a run.</p>
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('production.new') }}">New run</a>
-  </div>
-  {% endif %}
-  {% if can('assets') %}
-  <div class="card">
-    <div class="card-title">Assets &amp; maintenance</div>
-    <p class="muted small">{{ stats.maintenance_due|length }} service(s) falling due.</p>
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('assets.index') }}">Open assets</a>
-  </div>
-  {% endif %}
-  {% if can('reports') %}
-  <div class="card">
-    <div class="card-title">Reports</div>
-    <p class="muted small">Receiving, QC, packing, platforms and AI insight.</p>
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('reports.index') }}">Open reports</a>
-  </div>
-  {% endif %}
-</div>
 {% endblock %}

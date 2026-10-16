@@ -1,11 +1,10 @@
 """Authentication, dashboard and user-management blueprint (auth_bp)."""
-from flask import (Blueprint, flash, redirect, render_template, request,
-                   session, url_for)
+from flask import (Blueprint, flash, jsonify, redirect, render_template,
+                   request, session, url_for)
 from werkzeug.security import check_password_hash, generate_password_hash
 
-import ai
 import db
-import platform_service as ps
+import home
 import services
 from security import (ROLE_DESCRIPTIONS, ROLE_KEYS, ROLE_LABELS, current_user,
                       is_admin, is_super_admin, login_required, normalize_role,
@@ -42,6 +41,43 @@ def login():
     return render_template("login.html")
 
 
+THEMES = ("light", "dark", "system")
+
+
+def theme_of(user):
+    """A user's colour theme: light, dark, or system (match the device)."""
+    theme = (user or {}).get("theme")
+    return theme if theme in THEMES else "dark"
+
+
+@auth_bp.route("/settings/theme", methods=["POST"])
+@login_required
+def set_theme():
+    """Save the user's colour theme (the topbar sun / moon menu)."""
+    theme = request.form.get("theme") or (request.get_json(silent=True) or {}).get("theme")
+    if theme not in THEMES:
+        return jsonify({"message": "Choose light, dark or system."}), 400
+    db.update("users", current_user()["id"], {"theme": theme})
+    if request.is_json or request.headers.get("X-Requested-With") == "fetch":
+        return jsonify({"theme": theme})
+    back = request.referrer or url_for("auth.dashboard")
+    return redirect(back if back.startswith(request.host_url) else
+                    url_for("auth.dashboard"))
+
+
+@auth_bp.route("/settings/notes", methods=["POST"])
+@login_required
+def set_notes():
+    """Show or hide the 'About this page' notes for this user."""
+    show = request.form.get("show") == "1"
+    db.update("users", current_user()["id"], {"hide_notes": not show})
+    if request.headers.get("X-Requested-With") == "fetch":
+        return jsonify({"show": show})
+    back = request.referrer or url_for("auth.dashboard")
+    return redirect(back if back.startswith(request.host_url) else
+                    url_for("auth.dashboard"))
+
+
 @auth_bp.route("/logout")
 def logout():
     session.pop("user_id", None)
@@ -52,106 +88,8 @@ def logout():
 @auth_bp.route("/dashboard")
 @login_required
 def dashboard():
-    user = current_user()
-    role = normalize_role(user.get("role"))
-
-    materials = db.read("raw_materials")
-    products = db.read("products")
-    low_stock = services.low_stock_materials()
-    boxes = db.read("receiving_boxes")
-    runs = db.read("packing_runs")
-
-    pending_purchase = [r for r in db.read("purchase_requests")
-                        if r.get("status") == "Pending Approval"]
-    pending_sales = [r for r in db.read("sales_requests")
-                     if r.get("status") == "Pending Approval"]
-    my_purchase = [r for r in db.read("purchase_requests")
-                   if r.get("requestor_id") == user["id"]]
-    my_sales = [r for r in db.read("sales_requests")
-                if r.get("requestor_id") == user["id"]]
-    approved_sales = [r for r in db.read("sales_requests")
-                      if r.get("status") in ("Approved", "In Fulfilment")]
-    open_orders = [o for o in db.read("sales_orders")
-                   if o.get("status") in ("Pending", "Confirmed")]
-    open_deliveries = [d for d in db.read("deliveries")
-                       if d.get("status") in ("Scheduled", "In Transit")]
-
-    honey = services.honey_summary()
-    packing = services.packing_summary(runs)
-    platform_rows, platform_totals = ps.platform_summary()
-    today = services.today_iso()
-
-    stats = {
-        "role_label": ROLE_LABELS.get(role, role),
-        "product_count": len(products),
-        "material_count": len(materials),
-        "low_stock": low_stock,
-        "low_stock_count": len(low_stock),
-        "pending_purchase_count": len(pending_purchase),
-        "pending_sales_count": len(pending_sales),
-        "my_request_count": len(my_purchase),
-        "pending_mine": len([r for r in my_purchase
-                             if r.get("status") == "Pending Approval"]),
-        "my_sales_count": len(my_sales),
-        "pending_sales_mine": len([r for r in my_sales
-                                   if r.get("status") == "Pending Approval"]),
-        "approved_sales_count": len(approved_sales),
-        "open_order_count": len(open_orders),
-        "open_delivery_count": len(open_deliveries),
-        "customer_count": len(db.read("customers")),
-        "supplier_count": len(db.read("suppliers")),
-        "recommendation_count": len(ai.all_recommendations()),
-        "finished_units": round(sum(float(p.get("stock_qty") or 0)
-                                    for p in products), 2),
-
-        # Receiving area
-        "open_batches": len([b for b in db.read("receiving_batches")
-                             if b.get("status") == "Open"]),
-        "boxes_pending": len([b for b in boxes
-                              if b.get("status") == "Pending Check"]),
-        "boxes_today": len([b for b in boxes
-                            if (b.get("created_at") or "")[:10] == today]),
-        "damaged_total": round(sum(services._to_float(b.get("damaged_qty"))
-                                   for b in boxes), 2),
-
-        # Honey QC
-        "honey_pending": honey["pending"],
-        "honey_passed": honey["passed"],
-        "honey_failed": honey["failed"],
-        "honey_pass_rate": honey["pass_rate"],
-        "honey_passed_kg": honey["passed_kg"],
-
-        # Packing
-        "packing_open": packing["open_runs"],
-        "packing_packed": packing["packed_runs"],
-        "packing_qty": packing["total_qty"],
-        "packing_channels": packing["per_channel"],
-        "packed_today": len([r for r in runs
-                             if (r.get("pack_date") or "") == today
-                             and r.get("status") != "Cancelled"]),
-
-        # Sales platforms
-        "platform_rows": platform_rows,
-        "platform_net": platform_totals["net"],
-        "platform_orders": platform_totals["orders"],
-
-        # Assets
-        "maintenance_due": services.maintenance_due(),
-    }
-
-    charts = None
-    if is_admin(user):
-        charts = {
-            "demand": ai.svg_line_chart(ai.demand_series(),
-                                        label="Units requested / week",
-                                        height=240),
-            "movements": ai.svg_bar_chart(list(ai.movement_totals().items()),
-                                          colors=[ai.OK, ai.WARN, ai.VIOLET,
-                                                  ai.MAGENTA], height=240),
-        }
-
-    return render_template("dashboard.html", role=role, stats=stats,
-                           charts=charts, manager=is_admin(user))
+    """Home: the few things this user does, and what is waiting for them."""
+    return render_template("dashboard.html", **home.context(current_user()))
 
 
 @auth_bp.route("/users", methods=["GET", "POST"])

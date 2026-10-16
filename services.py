@@ -53,11 +53,9 @@ RECEIVING_BADGE = {
     "Cancelled": "badge-danger",
 }
 BOX_BADGE = {
-    "Pending Check": "badge-warn",
-    "Checked": "badge-ok",
-    "Stored": "badge-ok",
-    "Released": "badge-muted",
-    "Consumed": "badge-muted",
+    "Awaiting Inspection": "badge-warn",
+    "On Hold": "badge-warn",
+    "Accepted": "badge-ok",
     "Rejected": "badge-danger",
 }
 QC_BADGE = {
@@ -67,7 +65,9 @@ QC_BADGE = {
 }
 PACKING_BADGE = {
     "In Progress": "badge-warn",
-    "Packed": "badge-ok",
+    "Packed": "badge-warn",
+    "Disbursed": "badge-ok",
+    "Handed to Courier": "badge-ok",
     "Handed Over": "badge-ok",
     "Cancelled": "badge-danger",
 }
@@ -81,6 +81,32 @@ TRACK_MODES = [
     ("unit", "By unit / bundle"),
 ]
 TRACK_MODE_LABELS = dict(TRACK_MODES)
+
+# Stocked items, grouped the way the client's month-end reports are.
+MATERIAL_CATEGORIES = [
+    ("raw", "Raw materials"),
+    ("packaging", "Jars, bottles & packaging"),
+    ("cleaning", "Production & cleaning supplies"),
+    ("office", "Office supplies"),
+]
+MATERIAL_CATEGORY_LABELS = dict(MATERIAL_CATEGORIES)
+
+
+def material_category(material):
+    """Category key, folding older spellings into the current four."""
+    cat = (material.get("category") or "raw").strip().lower()
+    return {"ingredient": "raw", "packing": "packaging"}.get(cat, cat)
+
+
+def stocked_materials(categories=None):
+    """Materials sorted by category then name (assets are not materials)."""
+    order = [c[0] for c in MATERIAL_CATEGORIES]
+    rows = [m for m in db.read("raw_materials")
+            if material_category(m) in order
+            and (not categories or material_category(m) in categories)]
+    rows.sort(key=lambda m: (order.index(material_category(m)),
+                             m.get("subcategory") or "", m.get("name") or ""))
+    return rows
 
 # Packing channels the client ships through.
 PACKING_CHANNELS = ["VIP", "Shopee", "TikTok", "Lazada", "Walk-in"]
@@ -124,9 +150,44 @@ def today_iso():
     return date.today().isoformat()
 
 
+def month_start_iso():
+    return date.today().replace(day=1).isoformat()
+
+
+def this_month():
+    """'2026-10' — the period key used by monthly records."""
+    return date.today().strftime("%Y-%m")
+
+
 def fmt_dt(value, length=16):
     """'2026-10-14T08:30:00+00:00' -> '2026-10-14 08:30' for templates."""
     return (value or "")[:length].replace("T", " ")
+
+
+def fmt_qty(value, unit=""):
+    """12.0 -> '12', 11.4 -> '11.4', None -> '—'; optional unit appended."""
+    if value in (None, ""):
+        return "—"
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return str(value)
+    text = ("%.3f" % number).rstrip("0").rstrip(".")
+    if text == "-0":
+        text = "0"
+    if abs(number) >= 1000:
+        whole, _, frac = text.partition(".")
+        sign = "-" if whole.startswith("-") else ""
+        text = sign + "{:,}".format(int(whole.lstrip("-"))) + (("." + frac) if frac else "")
+    return ("%s %s" % (text, unit)).strip() if unit else text
+
+
+def fmt_peso(value):
+    """1234.5 -> '₱1,234.50'."""
+    try:
+        return "₱{:,.2f}".format(float(value or 0))
+    except (TypeError, ValueError):
+        return "₱0.00"
 
 
 # --- Item / stock primitives ----------------------------------------------
@@ -336,6 +397,23 @@ def notify_admins(message, link=None):
         if user.get("active", True) and security.is_admin(user):
             created.append(notify(user["id"], message, link=link))
     return created
+
+
+def notify_team(roles, message, link=None, admins=True):
+    """One notification to every active user in ``roles`` (and the admins).
+
+    This is how the floor tells the next team something has arrived from a
+    given area — e.g. a delivery received at the Receiving Area tells the
+    production team there are boxes to inspect."""
+    rows, now = [], now_iso()
+    for user in db.read("users"):
+        if not user.get("active", True):
+            continue
+        role = security.normalize_role(user.get("role"))
+        if role in roles or (admins and security.is_admin(user)):
+            rows.append({"user_id": int(user["id"]), "message": message,
+                         "link": link, "is_read": False, "created_at": now})
+    return db.insert_many("notifications", rows)
 
 
 def unread_count(user_id):
@@ -886,17 +964,53 @@ def save_ai_recommendations(recs):
 
 
 # ===========================================================================
-#  RECEIVING AREA - crates / cage boxes, weight or piece, with damage count
+#  MODULE 1 - RECEIVING AREA, then INSPECTION & CLEANING
 # ===========================================================================
-# Physical flow the client described:
-#   delivery arrives -> a receiving batch is opened for the date/supplier
-#   -> each cage box is logged with its material and declared quantity and
-#      gets its own QR code
-#   -> the checker scans a box, counts GOOD vs DAMAGED (kg for ginger, pcs for
-#      lemon, ...) and accepts it; only the good quantity joins stock
-#   -> every box keeps its own stage so stock can be located at any moment.
+# Part 1 (Receiving Team Head): a delivery arrives -> it is recorded once,
+#   with every box / crate logged with its item and quantity (kg for ginger,
+#   pieces for lemon, units for bottles) -> each box gets its own QR label
+#   carrying the code, item, quantity and delivery details -> the production
+#   team is notified that boxes are waiting at the Receiving Area.
+# Part 2 (inspection & cleaning): the box is scanned, cleaned and checked,
+#   and its content is split into USABLE / CAN'T BE USED / DAMAGED.  The
+#   decision is Accepted, Rejected or Hold (pending test / document / QA).
+#   Only the usable quantity of an accepted box joins stock; the rest goes
+#   to the damage ledger with its reason.
+# Every box keeps its own stage so stock can be located at any moment.
 
-BOX_STAGES = ["Receiving Area", "Storage", "Production Floor", "Consumed"]
+BOX_STAGES = ["Receiving Area", "Storage Area", "Production Area", "Consumed"]
+# The order a box moves through the site — drawn as a track on its page.
+BOX_TRACK = ["Received", "Inspected & cleaned", "Storage Area",
+             "Production Area", "Consumed"]
+
+BOX_AWAITING = "Awaiting Inspection"
+BOX_HOLD = "On Hold"
+BOX_ACCEPTED = "Accepted"
+BOX_REJECTED = "Rejected"
+
+ACCEPTANCE = ["Accepted", "Rejected", "Hold"]
+PACKAGING_CONDITIONS = ["Good / intact", "Slightly dented / torn",
+                        "Wet / soiled", "Badly damaged"]
+INSPECTION_RESULTS = ["Pass", "Fail", "Not applicable"]
+COA_RESULTS = ["Complete", "Incomplete", "Not required"]
+SAMPLING_RESULTS = ["Passed", "Failed", "Pending result", "Not required"]
+
+# Statuses written by earlier versions of the system.
+_LEGACY_BOX_STATUS = {"Pending Check": BOX_AWAITING, "Checked": BOX_ACCEPTED,
+                      "Stored": BOX_ACCEPTED, "Released": BOX_ACCEPTED,
+                      "Consumed": BOX_ACCEPTED}
+_LEGACY_STAGE = {"Storage": "Storage Area",
+                 "Production Floor": "Production Area"}
+
+
+def box_status(box):
+    status = box.get("status")
+    return _LEGACY_BOX_STATUS.get(status, status)
+
+
+def box_stage(box):
+    stage = box.get("stage")
+    return _LEGACY_STAGE.get(stage, stage)
 
 
 def box_token(box_id):
@@ -927,22 +1041,27 @@ def _next_ref(prefix, collection, field="ref_no"):
 
 
 def create_receiving_batch(supplier_id, received_date, user_id,
-                           delivery_ref="", remarks=""):
-    """Open a receiving session.  Boxes are added to it one by one."""
+                           delivery_ref="", remarks="", po_no=""):
+    """Open a delivery record.  Boxes are added to it next."""
     supplier = db.get("suppliers", supplier_id) if supplier_id else None
     batch = db.insert("receiving_batches", {
         "ref_no": _next_ref("RCV", "receiving_batches"),
         "supplier_id": int(supplier_id) if supplier_id else None,
         "supplier_name": supplier.get("name") if supplier
                          else "Walk-in / own harvest",
+        "po_no": (po_no or "").strip(),
         "delivery_ref": (delivery_ref or "").strip(),
         "received_date": received_date or today_iso(),
         "received_by": user_id,
         "status": "Open",
         "remarks": (remarks or "").strip(),
         "box_count": 0,
+        "total_declared": 0.0,
         "total_good": 0.0,
+        "total_unusable": 0.0,
         "total_damaged": 0.0,
+        "checked_by_name": "",
+        "approved_by_name": "",
         "created_at": now_iso(),
         "closed_at": None,
     })
@@ -950,23 +1069,28 @@ def create_receiving_batch(supplier_id, received_date, user_id,
 
 
 def add_receiving_box(batch_id, material_id, declared_qty, user_id,
-                      location="Receiving Area", count=1):
-    """Add ``count`` cage boxes to a batch, each with its own QR code."""
+                      location="Receiving Area", count=1, lot_no="",
+                      expiry_date="", packaging_condition="",
+                      temperature_c=None):
+    """Add ``count`` boxes of one item to a delivery, each with a QR code."""
     batch = db.get("receiving_batches", batch_id)
     if not batch:
-        return [], "Receiving batch not found."
+        return [], "Delivery not found."
     if batch.get("status") != "Open":
-        return [], "This batch is already closed."
+        return [], "This delivery is already closed."
     material = db.get("raw_materials", material_id)
     if not material:
-        return [], "Material not found."
+        return [], "Choose the item that arrived."
     declared = _to_float(declared_qty)
     if declared <= 0:
-        return [], "Declared quantity must be greater than zero."
+        return [], "The quantity per box must be greater than zero."
     try:
         count = max(1, min(int(count), 100))
     except (TypeError, ValueError):
         count = 1
+    temp = None
+    if temperature_c not in (None, ""):
+        temp = _to_float(temperature_c, None)
 
     existing = len(db.query("receiving_boxes", batch_id=int(batch_id)))
     created = []
@@ -980,16 +1104,31 @@ def add_receiving_box(batch_id, material_id, declared_qty, user_id,
             "unit": material.get("unit"),
             "track_mode": material.get("track_mode") or "weight",
             "declared_qty": declared,
+            "lot_no": (lot_no or "").strip(),
+            "expiry_date": (expiry_date or "").strip(),
+            "packaging_condition": (packaging_condition or "").strip(),
+            "temperature_c": temp,
             "good_qty": None,
+            "unusable_qty": 0.0,
+            "unusable_reason": "",
             "damaged_qty": 0.0,
             "damage_reason": "",
-            "status": "Pending Check",
-            "stage": "Receiving Area",
-            "location": location,
+            "cleaned": False,
+            "visual_inspection": "",
+            "coa_check": "",
+            "sampling_test": "",
+            "acceptance_status": "",
+            "nonconformity": "",
+            "action_taken": "",
+            "verified_by_name": "",
             "checked_by": None,
             "checked_at": None,
+            "status": BOX_AWAITING,
+            "stage": "Receiving Area",
+            "location": location,
             "released_to": "",
             "released_at": None,
+            "received_by": user_id,
             "created_at": now_iso(),
         })
         box = db.update("receiving_boxes", box["id"],
@@ -999,84 +1138,224 @@ def add_receiving_box(batch_id, material_id, declared_qty, user_id,
     return created, None
 
 
+def receive_delivery(user_id, supplier_id, received_date, lines, po_no="",
+                     delivery_ref="", remarks=""):
+    """Part 1 in one go: the delivery, its boxes, their QR codes, and a
+    notification to the team that inspects them.
+
+    lines: [{material_id, qty_per_box, boxes, lot_no, expiry_date,
+             packaging_condition, temperature_c}]
+    Returns ``(batch, boxes, None)`` or ``(None, [], message)``."""
+    clean = []
+    for line in lines:
+        if not line.get("material_id"):
+            continue
+        material = db.get("raw_materials", line.get("material_id"))
+        if not material:
+            return None, [], "One of the items no longer exists."
+        if _to_float(line.get("qty_per_box")) <= 0:
+            return None, [], ("Enter how much is in each box of %s."
+                              % material.get("name"))
+        clean.append((material, line))
+    if not clean:
+        return None, [], "Add at least one item that arrived."
+
+    batch = create_receiving_batch(supplier_id, received_date, user_id,
+                                   delivery_ref=delivery_ref, remarks=remarks,
+                                   po_no=po_no)
+    boxes = []
+    for material, line in clean:
+        created, err = add_receiving_box(
+            batch["id"], material["id"], line.get("qty_per_box"), user_id,
+            count=line.get("boxes") or 1, lot_no=line.get("lot_no") or "",
+            expiry_date=line.get("expiry_date") or "",
+            packaging_condition=line.get("packaging_condition") or "",
+            temperature_c=line.get("temperature_c"))
+        if err:
+            return None, [], err
+        boxes.extend(created)
+
+    batch = db.get("receiving_batches", batch["id"])
+    summary = "; ".join(
+        "%s %s in %d box(es)" % (
+            material.get("name"),
+            fmt_qty(_to_float(line.get("qty_per_box"))
+                    * max(1, int(_to_float(line.get("boxes"), 1))),
+                    material.get("unit") or ""),
+            max(1, int(_to_float(line.get("boxes"), 1))))
+        for material, line in clean)
+    notify_team({"production_head", "receiving_head"},
+                "Received at the Receiving Area — %s from %s: %s. Ready for "
+                "inspection & cleaning."
+                % (batch.get("ref_no"), batch.get("supplier_name"), summary),
+                link="/receiving/%d" % batch["id"])
+    return batch, boxes, None
+
+
 def _refresh_batch_totals(batch_id):
     boxes = db.query("receiving_boxes", batch_id=int(batch_id))
-    return db.update("receiving_batches", batch_id, {
+    accepted = [b for b in boxes if box_status(b) == BOX_ACCEPTED]
+    open_boxes = [b for b in boxes if box_status(b) in (BOX_AWAITING, BOX_HOLD)]
+    changes = {
         "box_count": len(boxes),
-        "total_good": round(sum(_to_float(b.get("good_qty")) for b in boxes), 3),
+        "total_declared": round(sum(_to_float(b.get("declared_qty"))
+                                    for b in boxes), 3),
+        "total_good": round(sum(_to_float(b.get("good_qty"))
+                                for b in accepted), 3),
+        "total_unusable": round(sum(_to_float(b.get("unusable_qty"))
+                                    for b in boxes), 3),
         "total_damaged": round(sum(_to_float(b.get("damaged_qty"))
                                    for b in boxes), 3),
-    })
+    }
+    batch = db.get("receiving_batches", batch_id) or {}
+    # A delivery completes itself once every box has a final decision.
+    if boxes and not open_boxes and batch.get("status") == "Open":
+        changes.update({"status": "Completed", "closed_at": now_iso()})
+    return db.update("receiving_batches", batch_id, changes)
 
 
-def check_receiving_box(box_id, good_qty, damaged_qty, damage_reason="",
-                        user_id=None):
-    """Record the good/damaged split for one box and move good stock in.
+def _post_box_decision(box, material, user_id):
+    """Move stock / write damage for a box whose decision is final."""
+    status = box_status(box)
+    good = _to_float(box.get("good_qty"))
+    unusable = _to_float(box.get("unusable_qty"))
+    damaged = _to_float(box.get("damaged_qty"))
+    code = box.get("box_code")
+    unit = material.get("unit")
+    if status == BOX_ACCEPTED and good > 0:
+        adjust_stock("material", material["id"], good, "received",
+                     reference_id=code, user_id=user_id)
+    if unusable > 0:
+        record_damage("inspection", code, "material", material["id"],
+                      material.get("name"), unusable, unit,
+                      "Can't be used: %s" % (box.get("unusable_reason") or "-"),
+                      stage="Inspection & Cleaning", user_id=user_id)
+    if damaged > 0:
+        record_damage("inspection", code, "material", material["id"],
+                      material.get("name"), damaged, unit,
+                      "Damaged: %s" % (box.get("damage_reason") or "-"),
+                      stage="Inspection & Cleaning", user_id=user_id)
 
-    Returns ``(box, None)`` or ``(None, message)``.  Stock only ever rises by
-    the GOOD quantity; the damaged quantity is logged separately so the client
-    can report on spoilage per box, per material and per supplier."""
+
+def inspect_receiving_box(box_id, user_id, usable_qty, unusable_qty=0,
+                          damaged_qty=0, unusable_reason="", damage_reason="",
+                          cleaned=False, visual_inspection="", coa_check="",
+                          sampling_test="", acceptance="Accepted",
+                          nonconformity="", action_taken="",
+                          verified_by_name=""):
+    """Part 2: record the inspection & cleaning of one box.
+
+    Returns ``(box, None)`` or ``(None, message)``."""
     box = db.get("receiving_boxes", box_id)
     if not box:
         return None, "Box not found."
-    if box.get("status") in ("Checked", "Stored", "Released", "Consumed"):
-        return None, "Box %s was already checked." % box.get("box_code")
-    good = _to_float(good_qty)
+    if box_status(box) != BOX_AWAITING:
+        return None, ("Box %s was already inspected (%s)."
+                      % (box.get("box_code"), box_status(box)))
+    usable = _to_float(usable_qty)
+    unusable = _to_float(unusable_qty)
     damaged = _to_float(damaged_qty)
-    if good < 0 or damaged < 0:
+    if min(usable, unusable, damaged) < 0:
         return None, "Quantities cannot be negative."
-    if good + damaged <= 0:
-        return None, "Enter the good and/or damaged quantity."
+    if usable + unusable + damaged <= 0:
+        return None, "Enter how much is usable, can't be used or damaged."
+    if unusable > 0 and not (unusable_reason or "").strip():
+        return None, "Say why part of the box can't be used."
     if damaged > 0 and not (damage_reason or "").strip():
-        return None, "A reason is required when damage is recorded."
+        return None, "Say what the damage is."
+    if acceptance not in ACCEPTANCE:
+        return None, "Choose Accepted, Rejected or Hold."
+    if acceptance in ("Rejected", "Hold") and not (nonconformity or "").strip():
+        return None, "Describe the nonconformity behind this decision."
 
     material = db.get("raw_materials", box.get("material_id"))
     if not material:
-        return None, "The material for this box no longer exists."
+        return None, "The item in this box no longer exists."
 
-    if good > 0:
-        adjust_stock("material", material["id"], good, "received",
-                     reference_id=box.get("box_code"), user_id=user_id)
-    if damaged > 0:
-        record_damage("receiving", box.get("box_code"), "material",
-                      material["id"], material.get("name"), damaged,
-                      material.get("unit"), damage_reason,
-                      stage="Receiving Area", user_id=user_id)
-
+    status = {"Accepted": BOX_ACCEPTED, "Rejected": BOX_REJECTED,
+              "Hold": BOX_HOLD}[acceptance]
+    stage = {"Accepted": "Storage Area", "Rejected": "Receiving Area",
+             "Hold": "Receiving Area"}[acceptance]
     box = db.update("receiving_boxes", box_id, {
-        "good_qty": good,
+        "good_qty": usable,
+        "unusable_qty": unusable,
+        "unusable_reason": (unusable_reason or "").strip(),
         "damaged_qty": damaged,
         "damage_reason": (damage_reason or "").strip(),
-        "status": "Checked",
-        "stage": "Storage",
+        "cleaned": bool(cleaned),
+        "visual_inspection": visual_inspection or "",
+        "coa_check": coa_check or "",
+        "sampling_test": sampling_test or "",
+        "acceptance_status": acceptance,
+        "nonconformity": (nonconformity or "").strip(),
+        "action_taken": (action_taken or "").strip(),
+        "verified_by_name": (verified_by_name or "").strip(),
+        "status": status,
+        "stage": stage,
         "checked_by": user_id,
         "checked_at": now_iso(),
     })
+    if status != BOX_HOLD:
+        _post_box_decision(box, material, user_id)
     _refresh_batch_totals(box.get("batch_id"))
-    if damaged > 0:
-        notify_admins("Damage recorded on box %s - %g %s of %s."
-                      % (box.get("box_code"), damaged,
-                         material.get("unit") or "", material.get("name")),
-                      link="/receiving/")
+
+    unit = material.get("unit") or ""
+    message = ("Inspected %s (%s): %s usable, %s can't be used, %s damaged — %s."
+               % (box.get("box_code"), material.get("name"),
+                  fmt_qty(usable, unit), fmt_qty(unusable, unit),
+                  fmt_qty(damaged, unit), acceptance))
+    if status == BOX_ACCEPTED:
+        message += " Moved to the Storage Area."
+    notify_team({"receiving_head", "production_head"}, message,
+                link="/receiving/box/%d" % int(box_id))
+    return box, None
+
+
+def decide_held_box(box_id, decision, user_id, note=""):
+    """Close a box that was put on Hold: Accepted or Rejected."""
+    box = db.get("receiving_boxes", box_id)
+    if not box:
+        return None, "Box not found."
+    if box_status(box) != BOX_HOLD:
+        return None, "Only a box on hold waits for this decision."
+    if decision not in ("Accepted", "Rejected"):
+        return None, "Choose Accepted or Rejected."
+    material = db.get("raw_materials", box.get("material_id"))
+    if not material:
+        return None, "The item in this box no longer exists."
+    action = (box.get("action_taken") or "").strip()
+    if (note or "").strip():
+        action = ("%s\n%s" % (action, note.strip())).strip()
+    box = db.update("receiving_boxes", box_id, {
+        "acceptance_status": decision,
+        "status": BOX_ACCEPTED if decision == "Accepted" else BOX_REJECTED,
+        "stage": "Storage Area" if decision == "Accepted" else "Receiving Area",
+        "action_taken": action,
+        "checked_by": user_id,
+        "checked_at": now_iso(),
+    })
+    _post_box_decision(box, material, user_id)
+    _refresh_batch_totals(box.get("batch_id"))
+    notify_team({"receiving_head", "production_head"},
+                "Box %s on hold is now %s." % (box.get("box_code"), decision),
+                link="/receiving/box/%d" % int(box_id))
     return box, None
 
 
 def move_receiving_box(box_id, stage, user_id=None, released_to=""):
-    """Move a box along the floor so its current location is always known."""
+    """Move an accepted box along the floor so its location is always known."""
     box = db.get("receiving_boxes", box_id)
     if not box:
         return None, "Box not found."
-    if stage not in BOX_STAGES:
-        return None, "Unknown stage."
-    if box.get("status") == "Pending Check":
-        return None, "Check the box before moving it."
-    status = {"Storage": "Stored", "Production Floor": "Released",
-              "Consumed": "Consumed", "Receiving Area": "Checked"}[stage]
+    if stage not in BOX_STAGES[1:]:
+        return None, "Unknown area."
+    if box_status(box) != BOX_ACCEPTED:
+        return None, "Only an accepted box can be moved."
     box = db.update("receiving_boxes", box_id, {
         "stage": stage,
-        "status": status,
+        "status": BOX_ACCEPTED,
         "released_to": (released_to or box.get("released_to") or "").strip(),
-        "released_at": now_iso() if stage in ("Production Floor", "Consumed")
+        "released_at": now_iso() if stage in ("Production Area", "Consumed")
                        else box.get("released_at"),
     })
     return box, None
@@ -1085,18 +1364,55 @@ def move_receiving_box(box_id, stage, user_id=None, released_to=""):
 def close_receiving_batch(batch_id, user_id=None):
     batch = db.get("receiving_batches", batch_id)
     if not batch:
-        return None, "Batch not found."
+        return None, "Delivery not found."
     boxes = db.query("receiving_boxes", batch_id=int(batch_id))
     if not boxes:
-        return None, "Add at least one box before closing the batch."
-    pending = [b for b in boxes if b.get("status") == "Pending Check"]
+        return None, "Add at least one box before closing the delivery."
+    pending = [b for b in boxes if box_status(b) in (BOX_AWAITING, BOX_HOLD)]
     if pending:
-        return None, ("%d box(es) still need checking before this batch can be "
-                      "closed." % len(pending))
+        return None, ("%d box(es) still need a decision before this delivery "
+                      "can be closed." % len(pending))
     _refresh_batch_totals(batch_id)
     batch = db.update("receiving_batches", batch_id,
                       {"status": "Completed", "closed_at": now_iso()})
     return batch, None
+
+
+def box_qr_text(box, batch=None):
+    """What a box's QR code carries: the code first (so any scanner finds it),
+    then the item, quantity and delivery details, all on one line."""
+    batch = batch or db.get("receiving_batches", box.get("batch_id")) or {}
+    parts = [box.get("box_code") or box_token(box["id"]),
+             box.get("material_name") or "",
+             fmt_qty(box.get("declared_qty"), box.get("unit") or "")]
+    if box.get("lot_no"):
+        parts.append("Lot %s" % box.get("lot_no"))
+    if box.get("expiry_date"):
+        parts.append("Exp %s" % box.get("expiry_date"))
+    parts += [batch.get("ref_no") or "",
+              "Rcvd %s" % (batch.get("received_date") or ""),
+              batch.get("supplier_name") or "",
+              "Amamio Farm Products - Receiving Area"]
+    return " | ".join(p for p in parts if p)
+
+
+def box_track(box):
+    """[(label, state)] for the flow track on a box's page."""
+    status, stage = box_status(box), box_stage(box)
+    if status == BOX_AWAITING:
+        reached = 0
+    elif status in (BOX_HOLD, BOX_REJECTED):
+        reached = 1
+    else:
+        reached = {"Storage Area": 2, "Production Area": 3,
+                   "Consumed": 4}.get(stage, 2)
+    steps = []
+    for i, label in enumerate(BOX_TRACK):
+        if status == BOX_REJECTED and i > 1:
+            break
+        state = "done" if i < reached else ("now" if i == reached else "")
+        steps.append((label, state))
+    return steps
 
 
 def receiving_box_rows(batch_id=None, status=None, limit=None):
@@ -1105,26 +1421,46 @@ def receiving_box_rows(batch_id=None, status=None, limit=None):
     if batch_id is not None:
         boxes = [b for b in boxes if b.get("batch_id") == int(batch_id)]
     if status:
-        boxes = [b for b in boxes if b.get("status") == status]
+        wanted = status if isinstance(status, (list, tuple, set)) else [status]
+        boxes = [b for b in boxes if box_status(b) in wanted]
     boxes.sort(key=lambda b: (b.get("batch_id") or 0, b.get("seq") or 0))
     batches = {b["id"]: b for b in db.read("receiving_batches")}
     rows = []
     for b in boxes:
         batch = batches.get(b.get("batch_id"), {})
+        status_now = box_status(b)
         rows.append({
             "id": b["id"], "box_code": b.get("box_code"), "seq": b.get("seq"),
+            "material_id": b.get("material_id"),
             "material_name": b.get("material_name"), "unit": b.get("unit"),
             "track_mode": b.get("track_mode"),
             "track_label": TRACK_MODE_LABELS.get(b.get("track_mode"), ""),
             "declared_qty": b.get("declared_qty"),
-            "good_qty": b.get("good_qty"), "damaged_qty": b.get("damaged_qty"),
+            "lot_no": b.get("lot_no"), "expiry_date": b.get("expiry_date"),
+            "packaging_condition": b.get("packaging_condition"),
+            "temperature_c": b.get("temperature_c"),
+            "good_qty": b.get("good_qty"),
+            "unusable_qty": b.get("unusable_qty"),
+            "unusable_reason": b.get("unusable_reason"),
+            "damaged_qty": b.get("damaged_qty"),
             "damage_reason": b.get("damage_reason"),
-            "status": b.get("status"), "stage": b.get("stage"),
-            "badge": BOX_BADGE.get(b.get("status"), "badge-muted"),
+            "cleaned": b.get("cleaned"),
+            "visual_inspection": b.get("visual_inspection"),
+            "coa_check": b.get("coa_check"),
+            "sampling_test": b.get("sampling_test"),
+            "acceptance_status": b.get("acceptance_status"),
+            "nonconformity": b.get("nonconformity"),
+            "action_taken": b.get("action_taken"),
+            "verified_by_name": b.get("verified_by_name"),
+            "status": status_now, "stage": box_stage(b),
+            "badge": BOX_BADGE.get(status_now, "badge-muted"),
             "checked_by": user_name(b.get("checked_by")),
             "checked_at": fmt_dt(b.get("checked_at")),
+            "received_at": fmt_dt(b.get("created_at")),
             "batch_ref": batch.get("ref_no"),
             "batch_id": b.get("batch_id"),
+            "po_no": batch.get("po_no"),
+            "delivery_ref": batch.get("delivery_ref"),
             "supplier_name": batch.get("supplier_name"),
             "received_date": batch.get("received_date"),
         })
@@ -1168,11 +1504,39 @@ def damage_summary():
 
 
 # ===========================================================================
-#  HONEY PRODUCTION - containers, moisture / appearance QC, Pass or Failed
+#  MODULE 2 - HONEY: containers, moisture / appearance QC, PASS or FAILED
 # ===========================================================================
 # Each honey container carries a QR code.  QC records moisture content and
-# appearance; the result is Pass or Failed only.  Pass goes to selling stock,
-# Failed is routed to other products (never discarded).
+# appearance; the result is PASS or FAILED only.
+#   PASS   -> joins sellable honey stock and goes to the PASS products.
+#   FAILED -> is never discarded: it is kept as "honey for processing" and
+#             goes to the products that can still use it.
+# Each container's honey is then allocated (in kg) to the products it went
+# into, so every kilo can be traced.
+
+# --- PLACEHOLDER product routing ------------------------------------------
+# The client will confirm which products each kind of honey goes into; until
+# then these are stand-ins taken from the product catalog.  Replace the two
+# lists below (nothing else needs to change).
+HONEY_PASS_PRODUCTS = [
+    "Pure Honey",
+    "RFH (Raw Forest Honey) with Comb",
+]
+HONEY_FAIL_PRODUCTS = [
+    "Honey Lemon Ginger Concentrate",
+    "Honey Calamansi Concentrate",
+    "Honey Infused Turmeric Ginger",
+    "Honey Infused Ginger",
+    "Honey Vinegar",
+]
+
+HONEY_TRACK = ["Received", "Quality checked", "Routed", "Used in products"]
+PROCESSING_HONEY = "Honey for Processing (QC failed)"
+
+
+def honey_products_for(result):
+    return HONEY_PASS_PRODUCTS if result == "Pass" else HONEY_FAIL_PRODUCTS
+
 
 def create_honey_container(net_weight_kg, user_id, supplier_id=None,
                            source="Own harvest", harvest_date="",
@@ -1203,6 +1567,9 @@ def create_honey_container(net_weight_kg, user_id, supplier_id=None,
         "disposition": "",
         "allocated_to": "",
         "allocated_at": None,
+        "allocated_kg": 0.0,
+        "remaining_kg": net,
+        "allocations": [],
         "material_id": int(material_id) if material_id else None,
         "created_by": user_id,
         "created_at": now_iso(),
@@ -1210,6 +1577,34 @@ def create_honey_container(net_weight_kg, user_id, supplier_id=None,
     container = db.update("honey_containers", container["id"],
                           {"container_code": container_token(container["id"])})
     return container, None
+
+
+def log_honey_containers(count, net_weight_kg, user_id, **details):
+    """Log ``count`` containers of the same weight in one go; one shared batch
+    reference so they can be traced together.  Notifies production."""
+    try:
+        count = max(1, min(int(count), 50))
+    except (TypeError, ValueError):
+        count = 1
+    if _to_float(net_weight_kg) <= 0:
+        return [], "Net weight must be greater than zero."
+    if not (details.get("batch_ref") or "").strip():
+        details["batch_ref"] = _next_ref("HNY", "honey_containers",
+                                         field="batch_ref")
+    created = []
+    for _ in range(count):
+        container, err = create_honey_container(net_weight_kg, user_id,
+                                                **details)
+        if err:
+            return created, err
+        created.append(container)
+    notify_team({"production_head"},
+                "Honey received — %d container(s), %s kg in total (%s). "
+                "Ready for moisture & appearance check."
+                % (len(created), fmt_qty(_to_float(net_weight_kg) * len(created)),
+                   details["batch_ref"]),
+                link="/honey/")
+    return created, None
 
 
 def suggested_qc_result(moisture_pct, appearance):
@@ -1253,20 +1648,27 @@ def record_honey_qc(container_id, result, moisture_pct, appearance, notes="",
         "disposition": disposition,
     })
 
-    # Passed honey joins sellable raw-honey stock; failed honey is held for
-    # other products and is NOT added to the sellable pool.
-    material_id = container.get("material_id") or _honey_material_id()
-    if result == "Pass" and material_id:
-        adjust_stock("material", material_id,
-                     _to_float(container.get("net_weight_kg")), "qc_passed",
+    # Passed honey joins sellable raw-honey stock; failed honey is kept as its
+    # own stock line for processing and is NOT added to the sellable pool.
+    kg = _to_float(container.get("net_weight_kg"))
+    if result == "Pass":
+        material_id = container.get("material_id") or _honey_material_id()
+        txn = "qc_passed"
+    else:
+        material_id = _processing_honey_id()
+        txn = "qc_failed"
+    if material_id:
+        adjust_stock("material", material_id, kg, txn,
                      reference_id=container.get("container_code"),
                      user_id=user_id)
         db.update("honey_containers", container_id, {"material_id": material_id})
-    if result == "Failed":
-        notify_admins("Honey container %s FAILED QC (%.1f%% moisture, %s) - "
-                      "routed to other products."
-                      % (container.get("container_code"), moisture, appearance),
-                      link="/honey/")
+
+    notify_team({"production_head", "receiving_head"},
+                "Honey container %s %s QC (%.1f%% moisture, %s) — %s."
+                % (container.get("container_code"),
+                   "PASSED" if result == "Pass" else "FAILED", moisture,
+                   appearance.lower(), disposition.lower()),
+                link="/honey/%d" % int(container_id))
     return container, None
 
 
@@ -1279,19 +1681,85 @@ def _honey_material_id():
     return None
 
 
-def allocate_honey_container(container_id, allocated_to, user_id=None):
-    """Note which product a container was drawn into (both Pass and Failed)."""
+def _processing_honey_id():
+    """Stock line for failed honey, created the first time it is needed."""
+    found = db.query("raw_materials", name=PROCESSING_HONEY)
+    if found:
+        return found[0]["id"]
+    return db.insert("raw_materials", {
+        "name": PROCESSING_HONEY, "category": "raw", "subcategory": "Honey",
+        "unit": "kg", "track_mode": "weight", "stock_qty": 0.0,
+        "reorder_level": 0, "supplier_id": None, "unit_cost": 0.0,
+        "expiry_date": "", "storage_location": "Production Area",
+        "created_at": now_iso(),
+    })["id"]
+
+
+def allocate_honey_container(container_id, product, kg, user_id=None):
+    """Record how many kg of a checked container went into which product.
+
+    A PASS container can only go to PASS products and a FAILED container to
+    FAILED products.  Several allocations may be made until it is empty."""
     container = db.get("honey_containers", container_id)
     if not container:
         return None, "Container not found."
-    if container.get("status") not in QC_RESULTS:
-        return None, "Run the quality check before allocating this container."
-    if not (allocated_to or "").strip():
-        return None, "Say where the container was used."
+    result = container.get("status")
+    if result not in QC_RESULTS:
+        return None, "Run the quality check before using this container."
+    product = (product or "").strip()
+    if product not in honey_products_for(result):
+        return None, ("Choose one of the products %s honey goes into."
+                      % ("passed" if result == "Pass" else "failed"))
+    remaining = _to_float(container.get("remaining_kg",
+                                        container.get("net_weight_kg")))
+    amount = _to_float(kg)
+    if amount <= 0:
+        return None, "Enter how many kg were used."
+    if amount > remaining + 1e-9:
+        return None, "Only %s kg is left in this container." % fmt_qty(remaining)
+
+    allocations = list(container.get("allocations") or [])
+    allocations.append({"product": product, "kg": amount,
+                        "allocated_by": user_id, "allocated_at": now_iso()})
+    used = round(sum(_to_float(a.get("kg")) for a in allocations), 3)
+    names = []
+    for a in allocations:
+        if a["product"] not in names:
+            names.append(a["product"])
     return db.update("honey_containers", container_id, {
-        "allocated_to": allocated_to.strip(),
+        "allocations": allocations,
+        "allocated_kg": used,
+        "remaining_kg": round(max(0.0, remaining - amount), 3),
+        "allocated_to": ", ".join(names),
         "allocated_at": now_iso(),
     }), None
+
+
+def honey_track(container):
+    status = container.get("status")
+    remaining = _to_float(container.get("remaining_kg",
+                                        container.get("net_weight_kg")))
+    if status not in QC_RESULTS:
+        reached = 1
+    elif not container.get("allocations"):
+        reached = 2
+    else:
+        reached = 3 if remaining > 0 else 4
+    labels = list(HONEY_TRACK)
+    if status in QC_RESULTS:
+        labels[2] = "Routed: %s" % container.get("disposition")
+    return [(label, "done" if i < reached else ("now" if i == reached else ""))
+            for i, label in enumerate(labels)]
+
+
+def honey_qr_text(container):
+    parts = [container.get("container_code") or container_token(container["id"]),
+             "Honey", fmt_qty(container.get("net_weight_kg"), "kg"),
+             container.get("batch_ref") or "",
+             "Rcvd %s" % (container.get("received_date") or ""),
+             container.get("supplier_name") or container.get("source") or "",
+             "Amamio Farm Products - Honey"]
+    return " | ".join(p for p in parts if p)
 
 
 def honey_summary():
@@ -1304,11 +1772,15 @@ def honey_summary():
     passed = [c for c in containers if c.get("status") == "Pass"]
     failed = [c for c in containers if c.get("status") == "Failed"]
     checked = len(passed) + len(failed)
+    to_allocate = [c for c in passed + failed
+                   if _to_float(c.get("remaining_kg",
+                                      c.get("net_weight_kg"))) > 0]
     return {
         "total": len(containers), "pending": len(pending),
         "passed": len(passed), "failed": len(failed),
         "pending_kg": _kg(pending), "passed_kg": _kg(passed),
         "failed_kg": _kg(failed),
+        "to_allocate": len(to_allocate),
         "pass_rate": round(100.0 * len(passed) / checked, 1) if checked else 0.0,
         "avg_moisture": round(
             sum(_to_float(c.get("moisture_pct")) for c in passed + failed)
@@ -1316,13 +1788,53 @@ def honey_summary():
     }
 
 
+def honey_product_totals():
+    """kg of honey per destination product, split PASS / FAILED."""
+    totals = {}
+    for c in db.read("honey_containers"):
+        for a in c.get("allocations") or []:
+            key = (c.get("status"), a.get("product"))
+            totals[key] = totals.get(key, 0.0) + _to_float(a.get("kg"))
+    rows = [{"result": k[0], "product": k[1], "kg": round(v, 3)}
+            for k, v in totals.items()]
+    rows.sort(key=lambda r: (r["result"] != "Pass", -r["kg"]))
+    return rows
+
+
 # ===========================================================================
-#  PACKING AREA - one run per channel (VIP / Shopee / TikTok / Lazada / Walk-in)
+#  MODULE 4 - PACKING AREA: packed, then disbursed or handed to the courier
 # ===========================================================================
-# Packing is the last monitored step before hand-over to the courier.  A run
-# that is NOT tied to an internal sales order releases finished-goods stock on
-# pack (platform and walk-in sales); a run tied to a sales order does not,
-# because confirming that order already moved the stock.
+# The packing team records, per run and channel (VIP / Shopee / TikTok /
+# Lazada / Walk-in), how many items were PACKED, then whether the parcels
+# were DISBURSED (handed straight to the customer, VIP buyer, walk-in or an
+# internal requester) or DELIVERED TO THE LOGISTICS / COURIER (with the
+# courier name and tracking number).
+# A run that is NOT tied to an internal sales order releases finished-goods
+# stock when packed; a run tied to a sales order does not, because confirming
+# that order already moved the stock.
+
+DISPATCH_DISBURSED = "Disbursed"
+DISPATCH_COURIER = "Handed to Courier"
+DISPATCH_TYPES = [
+    (DISPATCH_DISBURSED, "Disbursed",
+     "Handed straight to the customer, VIP buyer, walk-in or another team"),
+    (DISPATCH_COURIER, "Delivered to logistics / courier",
+     "Picked up by J&T, SPX, Flash, LBC… with a tracking number"),
+]
+COURIERS = ["SPX Express (Shopee)", "J&T Express", "Flash Express", "LBC",
+            "Ninja Van", "Lalamove", "Grab Express", "Own delivery", "Other"]
+PACKING_FLOW = ["Packing", "Packed", "Disbursed / with courier"]
+_LEGACY_PACKING_STATUS = {"Handed Over": DISPATCH_COURIER}
+
+
+def packing_status(run):
+    status = run.get("status")
+    return _LEGACY_PACKING_STATUS.get(status, status)
+
+
+def is_dispatched(run):
+    return packing_status(run) in (DISPATCH_DISBURSED, DISPATCH_COURIER)
+
 
 def create_packing_run(channel, packer_id, lines, user_id, pack_date="",
                        order_ref="", sales_order_id=None, remarks="",
@@ -1340,6 +1852,8 @@ def create_packing_run(channel, packer_id, lines, user_id, pack_date="",
         if qty <= 0:
             continue
         dmg = _to_float(line.get("damaged_qty"))
+        if dmg < 0:
+            return None, "Damaged quantities cannot be negative."
         total += qty
         damaged_total += dmg
         items.append({
@@ -1351,7 +1865,7 @@ def create_packing_run(channel, packer_id, lines, user_id, pack_date="",
             "notes": (line.get("notes") or "").strip(),
         })
     if not items:
-        return None, "Add at least one product line with a quantity."
+        return None, "Add at least one product with the quantity packed."
 
     run = db.insert("packing_runs", {
         "run_code": "",
@@ -1365,10 +1879,14 @@ def create_packing_run(channel, packer_id, lines, user_id, pack_date="",
         "total_qty": total,
         "damaged_qty": damaged_total,
         "stock_released": False,
+        "dispatch_type": "",
         "handed_to": "",
         "handed_at": None,
         "courier": (courier or "").strip(),
         "tracking_no": (tracking_no or "").strip(),
+        "parcel_count": None,
+        "dispatch_notes": "",
+        "dispatched_by": None,
         "remarks": (remarks or "").strip(),
         "items": items,
         "created_by": user_id,
@@ -1398,8 +1916,9 @@ def mark_packed(run_id, user_id=None):
         for pid, qty in needed.items():
             if qty > current_stock("product", pid):
                 product = db.get("products", pid)
-                return None, ("Not enough stock of %s to pack this run."
-                              % (product.get("name") if product else pid))
+                return None, ("Not enough %s in stock to pack this run (%s on "
+                              "hand)." % (product.get("name") if product else pid,
+                                          fmt_qty(current_stock("product", pid))))
         for pid, qty in needed.items():
             adjust_stock("product", pid, -qty, "packed",
                          reference_id=run.get("run_code"), user_id=user_id)
@@ -1409,7 +1928,8 @@ def mark_packed(run_id, user_id=None):
         if dmg > 0:
             record_damage("packing", run.get("run_code"), "product",
                           item.get("product_id"), item.get("name"), dmg,
-                          item.get("unit"), "Damaged during packing",
+                          item.get("unit"),
+                          item.get("notes") or "Damaged during packing",
                           stage="Packing Area", user_id=user_id)
 
     run = db.update("packing_runs", run_id, {
@@ -1420,27 +1940,71 @@ def mark_packed(run_id, user_id=None):
     return run, None
 
 
-def hand_over_packing_run(run_id, handed_to, courier="", tracking_no="",
-                          user_id=None):
+def pack_now(channel, packer_id, lines, user_id, **details):
+    """Create a run and mark it packed in one step — the usual case on the
+    floor, where the record is made once the parcels are ready."""
+    run, err = create_packing_run(channel, packer_id, lines, user_id, **details)
+    if err:
+        return None, err
+    packed, err = mark_packed(run["id"], user_id=user_id)
+    if err:
+        # Keep the run so nothing typed is lost; it stays In Progress.
+        return run, err
+    return packed, None
+
+
+def dispatch_packing_run(run_id, dispatch_type, handed_to, user_id=None,
+                         courier="", tracking_no="", parcel_count=None,
+                         notes=""):
+    """Record where packed parcels went: disbursed, or to the courier."""
     run = db.get("packing_runs", run_id)
     if not run:
         return None, "Packing run not found."
     if run.get("status") != "Packed":
-        return None, "Mark the run packed before handing it over."
+        return None, "Only a packed run can be disbursed or handed over."
+    if dispatch_type not in (DISPATCH_DISBURSED, DISPATCH_COURIER):
+        return None, "Choose disbursed or delivered to the courier."
     if not (handed_to or "").strip():
-        return None, "Record who the parcels were handed to."
+        return None, ("Record who received the parcels."
+                      if dispatch_type == DISPATCH_DISBURSED
+                      else "Record the rider / courier staff who picked up.")
+    if dispatch_type == DISPATCH_COURIER and not (courier or "").strip():
+        return None, "Choose the courier."
+    count = None
+    if parcel_count not in (None, ""):
+        try:
+            count = max(0, int(parcel_count))
+        except (TypeError, ValueError):
+            return None, "The number of parcels must be a whole number."
     run = db.update("packing_runs", run_id, {
-        "status": "Handed Over",
+        "status": dispatch_type,
+        "dispatch_type": dispatch_type,
         "handed_to": handed_to.strip(),
         "handed_at": now_iso(),
-        "courier": (courier or run.get("courier") or "").strip(),
+        "courier": (courier or "").strip() if dispatch_type == DISPATCH_COURIER
+                   else "",
         "tracking_no": (tracking_no or run.get("tracking_no") or "").strip(),
+        "parcel_count": count,
+        "dispatch_notes": (notes or "").strip(),
+        "dispatched_by": user_id,
     })
-    notify_admins("Packing run %s (%s) handed over to %s."
-                  % (run.get("run_code"), run.get("channel"),
-                     handed_to.strip()),
-                  link="/packing/%d" % run_id)
+    where = ("disbursed to %s" % handed_to.strip()
+             if dispatch_type == DISPATCH_DISBURSED
+             else "handed to %s (%s)" % (courier.strip(), handed_to.strip()))
+    notify_team({"packing_head"},
+                "Packing run %s (%s, %s item(s)) %s."
+                % (run.get("run_code"), run.get("channel"),
+                   fmt_qty(run.get("total_qty")), where),
+                link="/packing/%d" % int(run_id))
     return run, None
+
+
+def hand_over_packing_run(run_id, handed_to, courier="", tracking_no="",
+                          user_id=None):
+    """Older entry point: a hand-over is a delivery to the courier."""
+    return dispatch_packing_run(run_id, DISPATCH_COURIER, handed_to,
+                                user_id=user_id, courier=courier or "Other",
+                                tracking_no=tracking_no)
 
 
 def cancel_packing_run(run_id, user_id=None):
@@ -1448,8 +2012,10 @@ def cancel_packing_run(run_id, user_id=None):
     run = db.get("packing_runs", run_id)
     if not run:
         return None, "Packing run not found."
-    if run.get("status") == "Handed Over":
-        return None, "A handed-over run can no longer be cancelled."
+    if is_dispatched(run):
+        return None, "A run that has left the packing area can't be cancelled."
+    if run.get("status") == "Cancelled":
+        return None, "This run is already cancelled."
     if run.get("stock_released"):
         for item in run.get("items", []):
             adjust_stock("product", item.get("product_id"),
@@ -1459,27 +2025,73 @@ def cancel_packing_run(run_id, user_id=None):
                      {"status": "Cancelled", "stock_released": False}), None
 
 
-def packing_summary(runs=None):
-    """Per-channel totals for the packing dashboard and reports."""
+def packing_track(run):
+    status = packing_status(run)
+    reached = {"In Progress": 0, "Packed": 1}.get(status, 2)
+    labels = list(PACKING_FLOW)
+    if is_dispatched(run):
+        labels[2] = status
+    return [(label, "done" if i < reached else ("now" if i == reached else ""))
+            for i, label in enumerate(labels)]
+
+
+def packing_qr_text(run):
+    parts = [run.get("run_code") or packing_token(run["id"]),
+             "Packed for %s" % (run.get("channel") or ""),
+             "%s item(s)" % fmt_qty(run.get("total_qty")),
+             run.get("order_ref") or "",
+             run.get("pack_date") or "",
+             "Packer %s" % (run.get("packer_name") or "-"),
+             "Amamio Farm Products - Packing Area"]
+    return " | ".join(p for p in parts if p)
+
+
+def packing_summary(runs=None, date_from="", date_to=""):
+    """Packed / disbursed / with-courier totals, per channel and overall."""
     runs = db.read("packing_runs") if runs is None else runs
     live = [r for r in runs if r.get("status") != "Cancelled"]
+    if date_from:
+        live = [r for r in live if (r.get("pack_date") or "") >= date_from]
+    if date_to:
+        live = [r for r in live if (r.get("pack_date") or "") <= date_to]
+
+    def _qty(rows):
+        return round(sum(_to_float(r.get("total_qty")) for r in rows), 2)
+
+    def _split(rows):
+        packed = [r for r in rows if r.get("status") != "In Progress"]
+        disbursed = [r for r in rows if packing_status(r) == DISPATCH_DISBURSED]
+        courier = [r for r in rows if packing_status(r) == DISPATCH_COURIER]
+        waiting = [r for r in rows if r.get("status") == "Packed"]
+        return {
+            "runs": len(rows),
+            "packed_qty": _qty(packed),
+            "disbursed_qty": _qty(disbursed),
+            "courier_qty": _qty(courier),
+            "waiting_qty": _qty(waiting),
+            "damaged": round(sum(_to_float(r.get("damaged_qty")) for r in rows), 2),
+            "open": len([r for r in rows if r.get("status") == "In Progress"]),
+            "waiting": len(waiting),
+        }
+
     per_channel = []
     for channel in PACKING_CHANNELS:
-        rows = [r for r in live if r.get("channel") == channel]
-        per_channel.append({
-            "channel": channel,
-            "runs": len(rows),
-            "qty": round(sum(_to_float(r.get("total_qty")) for r in rows), 2),
-            "damaged": round(sum(_to_float(r.get("damaged_qty"))
-                                 for r in rows), 2),
-            "open": len([r for r in rows if r.get("status") == "In Progress"]),
-        })
+        row = _split([r for r in live if r.get("channel") == channel])
+        row["channel"] = channel
+        row["qty"] = row["packed_qty"]
+        per_channel.append(row)
+    overall = _split(live)
     return {
         "per_channel": per_channel,
         "total_runs": len(live),
-        "total_qty": round(sum(_to_float(r.get("total_qty")) for r in live), 2),
-        "open_runs": len([r for r in live if r.get("status") == "In Progress"]),
-        "packed_runs": len([r for r in live if r.get("status") == "Packed"]),
+        "total_qty": overall["packed_qty"],
+        "packed_qty": overall["packed_qty"],
+        "disbursed_qty": overall["disbursed_qty"],
+        "courier_qty": overall["courier_qty"],
+        "waiting_qty": overall["waiting_qty"],
+        "open_runs": overall["open"],
+        "packed_runs": overall["waiting"],
+        "damaged": overall["damaged"],
     }
 
 
@@ -1505,6 +2117,25 @@ def packer_leaderboard(limit=10):
     return rows[:limit]
 
 
+def qr_payload(token):
+    """The full text a printed QR label carries for a code."""
+    token = (token or "").strip().upper()
+    prefix, _, rest = token.partition("-")
+    try:
+        if prefix == "RB":
+            box = db.get("receiving_boxes", int(rest))
+            return box_qr_text(box) if box else token
+        if prefix == "HC":
+            container = db.get("honey_containers", int(rest))
+            return honey_qr_text(container) if container else token
+        if prefix == "PK":
+            run = db.get("packing_runs", int(rest))
+            return packing_qr_text(run) if run else token
+    except (TypeError, ValueError):
+        pass
+    return token
+
+
 # ===========================================================================
 #  ASSETS & MAINTENANCE
 # ===========================================================================
@@ -1517,62 +2148,4 @@ MAINTENANCE_BADGE = {
     "Completed": "badge-ok",
     "Overdue": "badge-danger",
 }
-
-
-def record_maintenance(asset_id, mtype, performed_on, performed_by, status,
-                       cost=0.0, next_due="", downtime_hours=0.0, notes="",
-                       user_id=None):
-    asset = db.get("raw_materials", asset_id)
-    if not asset:
-        return None, "Asset not found."
-    if mtype not in MAINTENANCE_TYPES:
-        return None, "Choose a maintenance type."
-    if status not in MAINTENANCE_STATUS:
-        return None, "Choose a status."
-    log = db.insert("maintenance_logs", {
-        "asset_id": asset["id"],
-        "asset_name": asset.get("name"),
-        "type": mtype,
-        "performed_on": performed_on or today_iso(),
-        "performed_by": (performed_by or "").strip(),
-        "cost": _to_float(cost),
-        "next_due": (next_due or "").strip(),
-        "status": status,
-        "downtime_hours": _to_float(downtime_hours),
-        "notes": (notes or "").strip(),
-        "recorded_by": user_id,
-        "created_at": now_iso(),
-    })
-    return log, None
-
-
-def maintenance_due(within_days=14):
-    """Assets whose next service falls due soon (or is already overdue).
-
-    Only each asset's most recent log counts: its next-due date is the
-    reminder, whatever that log's own status — a completed service that sets
-    the next date is exactly the case that needs reminding."""
-    latest = {}
-    for log in db.read("maintenance_logs"):
-        key = log.get("asset_id")
-        stamp = (log.get("performed_on") or "", log.get("id") or 0)
-        if key not in latest or stamp > latest[key][0]:
-            latest[key] = (stamp, log)
-
-    today = date.today()
-    rows = []
-    for _, log in latest.values():
-        due = (log.get("next_due") or "").strip()
-        if not due:
-            continue
-        try:
-            due_date = date.fromisoformat(due[:10])
-        except ValueError:
-            continue
-        days = (due_date - today).days
-        if days <= within_days:
-            rows.append({"asset_name": log.get("asset_name"), "due": due[:10],
-                         "days": days, "type": log.get("type"),
-                         "overdue": days < 0})
-    rows.sort(key=lambda r: r["days"])
-    return rows
+# Recording maintenance and what falls due live in assets_service.

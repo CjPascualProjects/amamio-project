@@ -1,112 +1,130 @@
 {% extends "base.html" %}
-{% block title %}Maintenance log{% endblock %}
+{% block title %}Log maintenance{% endblock %}
 {% block content %}
-<div class="page-head">
-  <div>
-    <h1 class="page-title">Maintenance log</h1>
-    <p class="page-sub">Every service, repair and inspection, with its date, cost and next due date.</p>
-  </div>
-  <div class="page-head-actions">
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('assets.index') }}">Back to assets</a>
-  </div>
-</div>
+{% set back = url_for('assets.detail', asset_id=chosen) if chosen else url_for('assets.index') %}
+<a class="back-link" href="{{ back }}">{{ icon('arrow-left', 15) }} {{ 'Back to the equipment' if chosen else 'Equipment & Assets' }}</a>
 
-<div class="card mb">
-  <div class="card-title">Record maintenance</div>
-  <form method="post" class="form">
-    <div class="form-grid cols-3">
+<form method="post" action="{{ url_for('assets.maintenance') }}" class="wizard" data-wizard id="mntForm"
+      data-wizard-start="{{ start }}" data-submit-label="Save to the maintenance log" data-cancel="{{ back }}">
+
+  <section class="wz-step" data-title="Which equipment?" data-hint="One Equipment Maintenance Log per machine.">
+    <div class="wz-body">
       <div class="form-row">
-        <label class="form-label" for="asset_id">Asset <span class="req">*</span></label>
-        <select id="asset_id" name="asset_id" required>
-          <option value="">Choose an asset…</option>
-          {% for a in assets %}
-            <option value="{{ a.id }}" {{ 'selected' if asset_id and a.id|string == asset_id }}>
-              {{ a.name }}
-            </option>
+        <label class="form-label" for="asset_id">Equipment <span class="req">*</span></label>
+        <select id="asset_id" name="asset_id" required data-review-label="Equipment">
+          <option value="">Choose the equipment…</option>
+          {% for category, rows in groups %}
+          <optgroup label="{{ category }}">
+            {% for a in rows %}
+            <option value="{{ a.id }}" {{ 'selected' if (form.asset_id or chosen)|string == a.id|string }}>{{ a.item_no }} · {{ a.name }}</option>
+            {% endfor %}
+          </optgroup>
           {% endfor %}
         </select>
       </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="What was done?" id="stepWhat">
+    <div class="wz-body">
       <div class="form-row">
-        <label class="form-label" for="type">Type <span class="req">*</span></label>
-        <select id="type" name="type" required>
-          {% for t in types %}<option value="{{ t }}">{{ t }}</option>{% endfor %}
-        </select>
+        <div class="form-label">Kind of maintenance <span class="req">*</span></div>
+        <div class="chip-choices" data-review-label="Kind">
+          {% for t in types %}
+          <label class="chip-choice"><input type="radio" name="type" value="{{ t }}" required {{ 'checked' if form.type == t }}><span>{{ t }}</span></label>
+          {% endfor %}
+        </div>
       </div>
       <div class="form-row">
-        <label class="form-label" for="status">Status <span class="req">*</span></label>
-        <select id="status" name="status" required>
+        <label class="form-label" for="description">Maintenance description <span class="req">*</span></label>
+        <textarea id="description" name="description" rows="3" maxlength="400" required
+                  placeholder="e.g. Replaced the heating strip and teflon tape">{{ form.description or '' }}</textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="wz-step" data-title="When, and by whom?">
+    <div class="wz-body">
+      <div class="form-grid cols-2">
+        <div class="form-row">
+          <label class="form-label" for="performed_on">Date <span class="req">*</span></label>
+          <input type="date" id="performed_on" name="performed_on" required max="{{ today }}" value="{{ form.performed_on or today }}">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="performed_time">Time</label>
+          <input type="time" id="performed_time" name="performed_time" value="{{ form.performed_time or '' }}">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="performed_by">Maintenance performed by <span class="req">*</span></label>
+        <input type="text" id="performed_by" name="performed_by" maxlength="120" required value="{{ form.performed_by or '' }}"
+               placeholder="Name of the technician or team">
+      </div>
+      <div class="form-row">
+        <div class="form-label">Status <span class="req">*</span></div>
+        <div class="chip-choices" data-review-label="Status">
           {% for s in statuses %}
-            <option value="{{ s }}" {{ 'selected' if s == 'Completed' }}>{{ s }}</option>
+          <label class="chip-choice"><input type="radio" name="status" value="{{ s }}" required {{ 'checked' if (form.status or 'Completed') == s }}><span>{{ s }}</span></label>
           {% endfor %}
-        </select>
+        </div>
       </div>
+    </div>
+  </section>
 
-      <div class="form-row">
-        <label class="form-label" for="performed_on">Date performed <span class="req">*</span></label>
-        <input type="date" id="performed_on" name="performed_on" value="{{ today }}" required>
-      </div>
-      <div class="form-row">
-        <label class="form-label" for="performed_by">Performed by</label>
-        <input type="text" id="performed_by" name="performed_by"
-               placeholder="In-house technician / contractor">
-      </div>
-      <div class="form-row">
-        <label class="form-label" for="next_due">Next due</label>
-        <input type="date" id="next_due" name="next_due">
-        <div class="form-hint">Sets the reminder on the dashboard.</div>
-      </div>
-
-      <div class="form-row">
-        <label class="form-label" for="cost">Cost (₱)</label>
-        <input type="number" step="0.01" min="0" id="cost" name="cost" value="0">
-      </div>
-      <div class="form-row">
-        <label class="form-label" for="downtime_hours">Downtime (hours)</label>
-        <input type="number" step="0.5" min="0" id="downtime_hours" name="downtime_hours" value="0">
+  <section class="wz-step" data-title="Next maintenance &amp; notes"
+           data-hint="The next maintenance date becomes a reminder on the home page.">
+    <div class="wz-body">
+      <div class="form-grid cols-2">
+        <div class="form-row">
+          <label class="form-label" for="next_due">Next maintenance date</label>
+          <input type="date" id="next_due" name="next_due" value="{{ form.next_due or '' }}">
+          <div class="chip-choices mt-sm" id="nextQuick">
+            <button type="button" class="btn btn-ghost btn-sm" data-days="30">+1 month</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-days="90">+3 months</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-days="180">+6 months</button>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="cost">Cost (₱)</label>
+          <input type="number" id="cost" name="cost" min="0" step="0.01" value="{{ form.cost or '' }}" placeholder="0.00">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="downtime_hours">Downtime (hours)</label>
+          <input type="number" id="downtime_hours" name="downtime_hours" min="0" step="0.5" value="{{ form.downtime_hours or '' }}" placeholder="0">
+        </div>
       </div>
       <div class="form-row">
         <label class="form-label" for="notes">Notes</label>
-        <input type="text" id="notes" name="notes" placeholder="What was done">
+        <textarea id="notes" name="notes" rows="2" maxlength="400" placeholder="e.g. Door seal slightly worn — watch it">{{ form.notes or '' }}</textarea>
       </div>
     </div>
-    <button class="btn btn-primary" type="submit">Save log entry</button>
-  </form>
-</div>
+  </section>
 
-<div class="card">
-  <div class="card-title">History</div>
-  {% if rows %}
-  <div class="table-wrap">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Date</th><th>Asset</th><th>Type</th><th>By</th>
-          <th class="num">Cost</th><th class="num">Downtime</th>
-          <th>Next due</th><th>Status</th><th class="wrap-sm">Notes</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for row in rows %}
-        <tr>
-          <td>{{ row.performed_on }}</td>
-          <td>{{ row.asset_name }}</td>
-          <td><span class="badge badge-muted">{{ row.type }}</span></td>
-          <td class="muted small">{{ row.performed_by or '—' }}</td>
-          <td class="num">₱{{ '{:,.2f}'.format(row.cost|float) }}</td>
-          <td class="num">{{ '%g'|format(row.downtime_hours|float) }} h</td>
-          <td>{{ row.next_due or '—' }}</td>
-          <td><span class="badge {{ row.badge }}">{{ row.status }}</span></td>
-          <td class="wrap-sm muted small">{{ row.notes or '—' }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% else %}
-  <div class="empty">
-    <div class="empty-title">Nothing logged yet</div>
-    <p class="muted">Record the first service above.</p>
-  </div>
-  {% endif %}
-</div>
+  <section class="wz-step" data-title="Check and save" data-review>
+    <div class="wz-body"></div>
+  </section>
+</form>
+
+<script>
+(function () {
+  var form = document.getElementById("mntForm");
+  var done = document.getElementById("performed_on");
+  var next = document.getElementById("next_due");
+  document.getElementById("nextQuick").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-days]");
+    if (!b) return;
+    var d = new Date((done.value || new Date().toISOString().slice(0, 10)) + "T00:00:00");
+    d.setDate(d.getDate() + parseInt(b.getAttribute("data-days"), 10));
+    var pad = function (x) { return (x < 10 ? "0" : "") + x; };
+    next.value = d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  });
+  var steps = form.querySelectorAll(".wz-step");
+  steps[3].addEventListener("wz:validate", function (e) {
+    if (next.value && done.value && next.value < done.value) {
+      e.preventDefault();
+      e.detail.message = "The next maintenance date must be after the service date.";
+    }
+  });
+})();
+</script>
 {% endblock %}

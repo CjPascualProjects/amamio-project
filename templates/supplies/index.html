@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Supplies In / Out{% endblock %}
+{% block content %}
+<style>
+  .sup-list .queue-item { padding-top: 10px; padding-bottom: 10px; }
+  .sup-qty { flex: none; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--heading); font-weight: 700; }
+  .sup-qty small { color: var(--muted); font-weight: 600; margin-left: 3px; }
+  .tabs .tab-count { font-size: .72rem; color: var(--muted-2); margin-left: 4px; }
+  .tabs .tab-low { display: inline-block; min-width: 18px; padding: 0 6px; margin-left: 6px; border-radius: 999px; font-size: .7rem; background: rgba(236, 125, 108, .14); color: var(--danger-ink); }
+</style>
+
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Supplies In / Out</h1>
+    <p class="page-sub">Raw materials, jars &amp; packaging, cleaning and office supplies — everything taken in or issued out.</p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('supplies.count', category=cat) }}">{{ icon('count', 15) }} Month-end count</a>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('supplies.report', category=cat) }}">{{ icon('printer', 15) }} Month-end report</a>
+    <a class="btn btn-primary" href="{{ url_for('supplies.move', category=cat) }}">{{ icon('swap', 16) }} Record IN / OUT</a>
+  </div>
+</div>
+
+<nav class="tabs">
+  {% for key, label in categories %}
+  <a href="{{ url_for('supplies.index', cat=key) }}" class="{{ 'is-active' if key == cat }}">{{ label }}<span class="tab-count">{{ counts[key]['items'] }}</span>{% if counts[key].low %}<span class="tab-low" title="{{ counts[key].low }} low">{{ counts[key].low }} low</span>{% endif %}</a>
+  {% endfor %}
+</nav>
+
+<div class="toolbar">
+  <span class="muted small">Tap an item to see its movements or record IN / OUT for it.</span>
+  <a class="small" href="{{ url_for('supplies.movements', cat=cat) }}">{{ icon('clipboard', 14) }} Every IN / OUT</a>
+</div>
+
+{% for sub, rows in groups %}
+<div class="section-label">{{ sub }}</div>
+<div class="queue sup-list">
+  {% for m in rows %}
+  <a class="queue-item" href="{{ url_for('supplies.item', material_id=m.id) }}"
+     {% if m.reorder_level %}title="Reorder at {{ m.reorder_level|qty(m.unit) }}"{% endif %}>
+    <span class="queue-main"><span class="queue-title">{{ m.name }}</span></span>
+    {% if is_low(m) %}<span class="badge badge-danger">Low</span>{% endif %}
+    <span class="sup-qty">{{ m.stock_qty|qty }}<small>{{ m.unit }}</small></span>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card"><div class="empty">
+  <div class="empty-icon">{{ icon('box', 30) }}</div>
+  <div class="empty-title">No items in this category</div>
+  <p class="muted">Items are added under Products &amp; Recipes, or when a delivery is received.</p>
+</div></div>
+{% endfor %}
+{% endblock %}

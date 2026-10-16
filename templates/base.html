@@ -1,11 +1,29 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme-pref="{{ theme_pref }}"{% if theme_pref != 'system' %} data-theme="{{ theme_pref }}"{% endif %}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    /* "Match my device": pick light or dark before the page paints, and
+       follow the device if it switches while the page is open. */
+    (function () {
+      var root = document.documentElement;
+      if (root.getAttribute("data-theme-pref") !== "system" || !window.matchMedia) return;
+      var mq = window.matchMedia("(prefers-color-scheme: light)");
+      function apply() {
+        if (root.getAttribute("data-theme-pref") === "system") {
+          root.setAttribute("data-theme", mq.matches ? "light" : "dark");
+        }
+      }
+      apply();
+      if (mq.addEventListener) mq.addEventListener("change", apply);
+    })();
+  </script>
   <title>{% block title %}Sales & Inventory{% endblock %} · Amamio</title>
   <link rel="icon" href="{{ url_for('static', filename='img/amamio-logo.jpg') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/flow.css') }}">
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </head>
 <body class="{{ 'has-sidebar' if current_user else 'no-sidebar' }}">
 {% if current_user %}
@@ -34,8 +52,7 @@
       {% for it in items %}
         {% if can(it[0]) %}
           {% set ns.any = true %}
-          {% set _bp = it[3].split('.')[0] %}
-          {% if request.endpoint == it[3] or (_bp != 'auth' and request.blueprint == _bp) %}{% set ns.active = true %}{% endif %}
+          {% if nav_active == it[3] %}{% set ns.active = true %}{% endif %}
           {% if it[0] == 'notifications' and nav_unread %}{% set ns.badge = true %}{% endif %}
         {% endif %}
       {% endfor %}
@@ -53,8 +70,7 @@
             <div class="side-group-inner">
               {% for module, label, ico, endpoint in items %}
                 {% if can(module) %}
-                  {% set bp = endpoint.split('.')[0] %}
-                  {% set active = (request.endpoint == endpoint) or (bp != 'auth' and request.blueprint == bp) %}
+                  {% set active = (nav_active == endpoint) %}
                   <a class="side-link {{ 'active' if active }}" href="{{ url_for(endpoint) }}"
                      {% if active %}aria-current="page"{% endif %}>
                     <span class="side-ico">{{ icon(ico, 18) }}</span>
@@ -94,6 +110,29 @@
   <div class="topbar-spacer"></div>
   <div class="topbar-actions">
     <span class="topbar-date">{{ today_label }}</span>
+    <details class="theme-switch" id="themeSwitch">
+      <summary class="icon-btn" aria-label="Appearance: light or dark" title="Appearance">
+        <span class="theme-ico-dark">{{ icon('moon', 18) }}</span><span class="theme-ico-light">{{ icon('sun', 18) }}</span>
+      </summary>
+      <div class="theme-menu">
+      <form method="post" action="{{ url_for('auth.set_theme') }}" id="themeForm">
+        <div class="theme-menu-title">Appearance</div>
+        {% for value, label, ico in [('light', 'Light', 'sun'), ('dark', 'Dark', 'moon'), ('system', 'Match my device', 'monitor')] %}
+        <button type="submit" name="theme" value="{{ value }}" class="theme-option {{ 'is-active' if theme_pref == value }}"
+                aria-pressed="{{ 'true' if theme_pref == value else 'false' }}">
+          {{ icon(ico, 16) }}<span>{{ label }}</span><span class="theme-check">{{ icon('check', 15) }}</span>
+        </button>
+        {% endfor %}
+      </form>
+      <form class="theme-menu-notes" method="post" action="{{ url_for('auth.set_notes') }}">
+        <div class="theme-menu-title">Page notes</div>
+        <input type="hidden" name="show" value="{{ '0' if show_notes else '1' }}">
+        <button type="submit" class="theme-option">
+          {{ icon('info', 16) }}<span>{{ 'Hide "About this page"' if show_notes else 'Show "About this page"' }}</span>
+        </button>
+      </form>
+      </div>
+    </details>
     <a class="icon-btn" href="{{ url_for('notifications.index') }}" aria-label="Notifications">
       {{ icon('notifications', 18) }}{% if nav_unread %}<span class="nav-badge">{{ nav_unread }}</span>{% endif %}
     </a>
@@ -122,13 +161,34 @@
           </div>
         {% endif %}
       {% endwith %}
+      {% if show_notes and page_note %}
+      <details class="page-note no-print" open data-note-key="{{ request.endpoint }}">
+        <summary>
+          <span class="page-note-ico">{{ icon('info', 16) }}</span>
+          <span class="page-note-head">About this page<span class="page-note-title"> · {{ page_note.title }}</span></span>
+          <span class="page-note-toggle">{{ icon('chevron-down', 15) }}</span>
+        </summary>
+        <div class="page-note-body">
+          <p>{{ page_note.what }}</p>
+          <dl class="page-note-facts">
+            <dt>Who uses it</dt><dd>{{ page_note.who }}</dd>
+            <dt>How it fits</dt><dd>{{ page_note.flow }}</dd>
+            {% if page_note.form %}<dt>Paper form</dt><dd>{{ page_note.form }}</dd>{% endif %}
+          </dl>
+          <form method="post" action="{{ url_for('auth.set_notes') }}" class="page-note-off">
+            <input type="hidden" name="show" value="0">
+            <button type="submit">Hide these notes on every page</button>
+            <span>— turn them back on from the {{ icon('sun', 13) }} / {{ icon('moon', 13) }} menu.</span>
+          </form>
+        </div>
+      </details>
+      {% endif %}
     {% endif %}
 
     {% block content %}{% endblock %}
   </div>
 </main>
 
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
 {% if current_user and can('chatbot') %}
 <!-- Floating AI assistant -->

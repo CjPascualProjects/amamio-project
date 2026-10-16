@@ -1,0 +1,72 @@
+[
+  {
+    "asset_id": 34,
+    "asset_name": "Plastic Chairs",
+    "direction": "OUT",
+    "qty": 4.0,
+    "reason": "Lent to another site",
+    "person": "Brgy. Kinabjangan Hall",
+    "destination": "Barangay assembly",
+    "expected_return": "2026-10-06",
+    "notes": "",
+    "recorded_by": 8,
+    "moved_at": "2026-10-04T10:15:00+00:00",
+    "id": 1
+  },
+  {
+    "asset_id": 34,
+    "asset_name": "Plastic Chairs",
+    "direction": "IN",
+    "qty": 4.0,
+    "reason": "Returned",
+    "person": "Brgy. Kinabjangan Hall",
+    "destination": "Barangay assembly",
+    "expected_return": "",
+    "notes": "All 4 back, no damage",
+    "recorded_by": 8,
+    "moved_at": "2026-10-07T10:15:00+00:00",
+    "id": 2
+  },
+  {
+    "asset_id": 30,
+    "asset_name": "Pressure Washer",
+    "direction": "OUT",
+    "qty": 1.0,
+    "reason": "Sent for repair",
+    "person": "Davao Machine Works",
+    "destination": "Bajada, Davao City",
+    "expected_return": "2026-10-20",
+    "notes": "Pump losing pressure",
+    "recorded_by": 8,
+    "moved_at": "2026-10-10T10:15:00+00:00",
+    "id": 3
+  },
+  {
+    "asset_id": 32,
+    "asset_name": "Round Tub",
+    "direction": "IN",
+    "qty": 2.0,
+    "reason": "New purchase / acquisition",
+    "person": "Assets Maintenance Head",
+    "destination": "Production Area",
+    "expected_return": "",
+    "notes": "Bought at Gaisano, OR 55102",
+    "recorded_by": 8,
+    "moved_at": "2026-10-11T10:15:00+00:00",
+    "id": 4
+  },
+  {
+    "asset_id": 24,
+    "asset_name": "Heat Gun",
+    "direction": "OUT",
+    "qty": 1.0,
+    "reason": "Borrowed / used elsewhere",
+    "person": "Packing Team Head",
+    "destination": "Packing Area",
+    "expected_return": "2026-10-17",
+    "notes": "For shrink-sealing gift boxes",
+    "recorded_by": 8,
+    "moved_at": "2026-10-14T10:15:00+00:00",
+    "id": 5
+  }
+]

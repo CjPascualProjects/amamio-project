@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Equipment IN / OUT log{% endblock %}
+{% block content %}
+<div class="focus">
+<a class="back-link" href="{{ url_for('assets.index') }}">{{ icon('arrow-left', 15) }} Equipment &amp; Assets</a>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Every IN / OUT</h1>
+    <p class="page-sub">Each time equipment left the site or came back, newest first.</p>
+  </div>
+  <div class="page-head-actions">
+    <a class="btn btn-primary" href="{{ url_for('assets.move') }}">{{ icon('swap', 16) }} Record IN / OUT</a>
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="seg">
+    <a href="{{ url_for('assets.movements') }}" class="{{ 'is-active' if not direction }}">All</a>
+    <a href="{{ url_for('assets.movements', direction='OUT') }}" class="{{ 'is-active' if direction == 'OUT' }}">OUT</a>
+    <a href="{{ url_for('assets.movements', direction='IN') }}" class="{{ 'is-active' if direction == 'IN' }}">IN</a>
+  </div>
+</div>
+
+{% if moves %}
+<div class="queue">
+  {% for m in moves %}
+  <a class="queue-item" href="{{ url_for('assets.detail', asset_id=m.asset_id) }}">
+    <span class="badge {{ 'badge-gold' if m.direction == 'IN' else 'badge-muted' }}" style="min-width:44px;text-align:center">{{ m.direction }}</span>
+    <span class="queue-main">
+      <span class="queue-title">{{ m.qty|qty }} × {{ m.asset_name }}</span>
+      <span class="queue-sub">{{ m.reason }}{% if m.person %} · {{ m.person }}{% endif %}{% if m.destination and m.destination != m.person %} · {{ m.destination }}{% endif %}{% if m.expected_return %} · back by {{ m.expected_return }}{% endif %}</span>
+    </span>
+    <span class="muted small nowrap">{{ m.when }}</span>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card"><div class="empty">
+  <div class="empty-icon">{{ icon('swap', 30) }}</div>
+  <div class="empty-title">Nothing recorded yet</div>
+  <p class="muted">Record IN / OUT every time equipment leaves or comes back.</p>
+</div></div>
+{% endif %}
+</div>
+{% endblock %}
