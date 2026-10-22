@@ -231,6 +231,22 @@
   --shadow-sm: 0 1px 0 rgba(0, 0, 0, .02) inset;
 }
 /* Light-theme touches that are not just a colour swap. */
+/* The sidebar stays dark (brand black + gold) on the light page too: its
+   tokens are reset to the dark-theme steps for everything inside it. */
+:root[data-theme="light"] .sidebar {
+  --bg-2: #1a1814;
+  --border: #2c2922;
+  --line-2: #3a362d;
+  --raise-1: #25221c;
+  --heading: #ffffff;
+  --text: #ece9e1;
+  --text-2: #d6d2c8;
+  --muted: #b0aa9c;
+  --muted-2: #8c8678;
+  --gold-ink: #e2c26a;
+  --grad-gold-text: linear-gradient(120deg, #f6e18c 0%, #d4af37 48%, #f0d27a 100%);
+  color-scheme: dark;
+}
 :root[data-theme="light"] .sidebar.open { box-shadow: 0 0 60px rgba(60, 50, 20, .25); }
 :root[data-theme="light"] .sidebar-overlay { background: rgba(30, 25, 10, .35); }
 :root[data-theme="light"] .btn:hover { box-shadow: 0 8px 20px rgba(60, 50, 20, .14), 0 0 0 3px rgba(212, 175, 55, .10); }
